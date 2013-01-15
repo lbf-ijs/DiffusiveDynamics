@@ -3,17 +3,26 @@
    
    A package for generating position dependent 2D diffusive processes *)
 
-BeginPackage["DiffusiveDynamics`"]
+BeginPackage["DiffusiveDynamics`Generate2D`",{"DiffusiveDynamics`Utils`"}]
 (* Exported symbols added here with SymbolName::usage *) 
 
+ClearAll[GenerateDiffusionTrajectory2D];
+GenerateDiffusionTrajectory2D::usage="USE";
 
+ClearAll[ParallelGenerateDiffusionTrajectory2D];
+ParallelGenerateDiffusionTrajectory2D::usage="USE"; 
+
+GradMatrix2D::usage="test";
+RotMatrix2D::usage="test";
 
 Begin["`Private`"]
 (* Implementation of the package *)
 
-ClearAll[RandomWalk2DAnizo];
-Options[RandomWalk2DAnizo] = {"InitialPosition"->{0.,0.}};
-RandomWalk2DAnizo[steps_Integer,DiffX_,DiffY_,\[Alpha]_,F_,kT_?NumberQ,dt_?NumberQ,{min_,max_},opt:OptionsPattern[]] :=
+
+
+Options[GenerateDiffusionTrajectory2D] = {"InitialPosition"->{0.,0.},"Verbose"->False};
+GenerateDiffusionTrajectory2D[steps_Integer,DiffX_,DiffY_,\[Alpha]_,F_,kT_?NumberQ,dt_?NumberQ,{min_,max_},opt:OptionsPattern[]] :=
+Block[{$VerbosePrint=$VerbosePrint||OptionValue["Verbose"]},   
     Module[ {data,g,width,halfwidth,gradD,gradF,stepfunction,compOpts,DD,DIFF,RM,stepfunctionexp,x,y,g1,g2},
         Off[CompiledFunction::cfsa];
         Puts["Initial Position: ",OptionValue["InitialPosition"]];
@@ -21,8 +30,7 @@ RandomWalk2DAnizo[steps_Integer,DiffX_,DiffY_,\[Alpha]_,F_,kT_?NumberQ,dt_?Numbe
         (*generate random numbers*)
         width = (max-min);
         halfwidth = width/2;
-        compOpts = {CompilationOptions->{"ExpressionOptimization"->True,"InlineCompiledFunctions"->True,"InlineExternalDefinitions"->True},
-        "RuntimeOptions"->"Speed"};
+        compOpts = {CompilationOptions->{"ExpressionOptimization"->True,"InlineCompiledFunctions"->True,"InlineExternalDefinitions"->True}};
         DD = Compile[{x,y}, Evaluate[
           {{DiffX[x,y],0},{0,DiffY[x,y]}}
         ]];
@@ -38,10 +46,10 @@ RandomWalk2DAnizo[steps_Integer,DiffX_,DiffY_,\[Alpha]_,F_,kT_?NumberQ,dt_?Numbe
         Puts[DIFF[0,0]];
         g = RandomVariate[NormalDistribution[0,1],{steps,2}];
         Quiet[
-          gradD = Grad2DMatrix[DIFF[x,y],x,y];
+          gradD = GradMatrix2D[DIFF[x,y],x,y];
           Puts["gradD not compiled:\n",gradD,DisplayFunction->Identity];
           gradD = Compile[{x,y},Evaluate[
-            Grad2DMatrix[DIFF[x,y],x,y]
+            GradMatrix2D[DIFF[x,y],x,y]
           ]];
           Puts["\ngradD:\n",gradD,DisplayFunction->Identity];
           Puts[gradD[0.,0.]]; 
@@ -56,10 +64,10 @@ RandomWalk2DAnizo[steps_Integer,DiffX_,DiffY_,\[Alpha]_,F_,kT_?NumberQ,dt_?Numbe
           Puts[gradF[0.,0.]];
         
         ,{CompiledFunction::cfsa}];
-        stepfunctionexp = Simplify[
+        stepfunctionexp = (*Simplify[*)
            ({x,y} + (gradD[x,y]-DIFF[x,y].gradF[x,y]/kT) dt +
-              RM[x,y].Sqrt[2 DD[x,y] dt].Transpose[RM[x,y]].{g1,g2})
-        ,TimeConstraint->1];
+              RM[x,y].Sqrt[2 DD[x,y] dt].Transpose[RM[x,y]].{g1,g2});
+        (*,TimeConstraint->1];*)
         (*Ensure periodic conditions after every step *)
         (*x*)
         stepfunctionexp[[1]] = Mod[stepfunctionexp[[1]]+halfwidth[[1]] ,width[[1]]]-halfwidth[[1]];
@@ -67,11 +75,12 @@ RandomWalk2DAnizo[steps_Integer,DiffX_,DiffY_,\[Alpha]_,F_,kT_?NumberQ,dt_?Numbe
         stepfunctionexp[[2]] = Mod[stepfunctionexp[[2]]+halfwidth[[2]] ,width[[2]]]-halfwidth[[2]];
 
    		(*stepfunctionexp=Experimental`OptimizeExpression[#]&/@stepfunctionexp;*)
-        stepfunction = Compile[{{xv,_Real,1},{rv,_Real,1}}, Block[ {x = xv[[1]],y = xv[[2]],g1 = rv[[1]],g2 = rv[[2]]},
+        $stepfunction=stepfunction = Compile[{{xv,_Real,1},{rv,_Real,1}}, Block[ {x = xv[[1]],y = xv[[2]],g1 = rv[[1]],g2 = rv[[2]]},
                                                                 stepfunctionexp
                                                             ],
             CompilationOptions->{"ExpressionOptimization"->True,"InlineCompiledFunctions"->True,"InlineExternalDefinitions"->True},
-            "RuntimeOptions"->"Speed"];
+            "RuntimeOptions" -> "Speed"
+            ];
 
 (*        <<CompiledFunctionTools`;
         Print["stepfunction:\n",CompiledFunctionTools`CompilePrint[stepfunction]];*)
@@ -91,7 +100,7 @@ RandomWalk2DAnizo[steps_Integer,DiffX_,DiffY_,\[Alpha]_,F_,kT_?NumberQ,dt_?Numbe
         Puts[stepfunction[{0.,0.},{10.,1.}]];
 
         (*Puts["InitialPosition ",OptionValue["InitialPosition"]];*)
-        data = FoldList[(stepfunction[#1,#2])&, OptionValue["InitialPosition"], g];
+        data = FoldList[(stepfunction[#1,#2])&, N@OptionValue["InitialPosition"], g];
 
 
 
@@ -105,11 +114,13 @@ RandomWalk2DAnizo[steps_Integer,DiffX_,DiffY_,\[Alpha]_,F_,kT_?NumberQ,dt_?Numbe
         data =(*ToPackedArray[*)
         Transpose[Prepend[Transpose[data],Range[Length[data]] ]](*,Real]*);
         Return[data]
-    ];
-ClearAll[ParallelRandomWalk2DAnizo];
-Options[ParallelRandomWalk2DAnizo] = {"ThreadCount"-> 2$ProcessorCount,
+    ]
+];
+
+ClearAll[ParallelGenerateDiffusionTrajectory2D];
+Options[ParallelGenerateDiffusionTrajectory2D] = {"ThreadCount"-> 2$ProcessorCount,
                                       "InitialPositions"->Random  (*takes a list of points or the default, Random, which generates uniformly randommly distributed points*)};
-ParallelRandomWalk2DAnizo[steps_Integer,DiffX_,DiffY_,\[Alpha]_,F_,kT_?NumberQ,dt_?NumberQ,{min_,max_},opt:OptionsPattern[]] :=
+ParallelGenerateDiffusionTrajectory2D[steps_Integer,DiffX_,DiffY_,\[Alpha]_,F_,kT_?NumberQ,dt_?NumberQ,{min_,max_},opt:OptionsPattern[]] :=
     Module[ {rw, initialPoints,numPoints,stepsPerPoint},
 (*Generate intial points*)
         numPoints = OptionValue["ThreadCount"];
@@ -120,12 +131,25 @@ ParallelRandomWalk2DAnizo[steps_Integer,DiffX_,DiffY_,\[Alpha]_,F_,kT_?NumberQ,d
                             OptionValue["InitialPositions"]
                         ];
         Puts["InitialPoints:\n",initialPoints];
-        DistributeDefinitions[RandomWalk2DAnizo,RotMatrix2D,Grad2DMatrix];
+        DistributeDefinitions[GenerateDiffusionTrajectory2D,RotMatrix2D,GradMatrix2D];
         rw = ParallelMap[
-          (Developer`ToPackedArray[RandomWalk2DAnizo[stepsPerPoint,DiffX,DiffY,\[Alpha],F,kT,dt,{min,max}, "InitialPosition"->#],Real])&,
+          (Developer`ToPackedArray[GenerateDiffusionTrajectory2D[stepsPerPoint,DiffX,DiffY,\[Alpha],F,kT,dt,{min,max}, "InitialPosition"->#],Real])&,
         initialPoints];
         Return[rw];
     ];
+
+Clear[RotMatrix2D];
+(*Returns a 2D rotation matrix. Angle given in degrees*) 
+RotMatrix2D = Compile[{\[Alpha]},{{Cos[\[Alpha]*\[Degree]],-Sin[\[Alpha]*\[Degree]]},{Sin[\[Alpha]*\[Degree]],Cos[\[Alpha]*\[Degree]]}}];
+Clear[GradMatrix2D];
+GradMatrix2D::usage="GradMatrix2D[mat_,x_,y_] returns the gradient derivative of the matrix 
+
+mat -- the matrix (a function of x and y)
+x,y -- the symbolic coordiantes
+"
+GradMatrix2D[mat_,x_,y_] :=
+	{D[mat[[1,1]],x]+D[mat[[1,2]],y],D[mat[[2,2]],y]+D[mat[[2,1]],x]};
+
 
 End[]
 

@@ -7,27 +7,42 @@ BeginPackage["DiffusiveDynamics`Generate2D`",{"DiffusiveDynamics`Utils`"}]
 (* Exported symbols added here with SymbolName::usage *) 
 
 ClearAll[GenerateDiffusionTrajectory2D];
-GenerateDiffusionTrajectory2D::usage="USE";
+GenerateDiffusionTrajectory2D::usage="GenerateDiffusionTrajectory2D[steps, DiffX, DiffY, DiffA, F, kT, dt, {min,max},opt]
+Generates a 2D diffusive process where the difusion tensor and energy optionally depend on the location of the particle.
+
+steps      -- number of steps to perform
+DiffX[x,y] -- a Function or CompiledFunction giving the difusion in the X and Y principal direction
+DiffY[x,y] -- as above for the Y direction
+DiffA[x,y] -- a Function or CompiledFunction giving the rotation of the principal direction
+F[x,y]     -- Free Energy as a function of position (must be either a Function or CompiledFunction)
+kT         -- set the temparature in units of kT (thermal energy = boltzman konstant* temperature
+dt         -- the time size of one step
+min        -- the minimum sizes of the periodic cell {minX, minY}
+max        -- the maximum sizes of the periodic cell {maxX, maxY}
+
+The equation used is: TODO
+";
 
 ClearAll[ParallelGenerateDiffusionTrajectory2D];
 ParallelGenerateDiffusionTrajectory2D::usage="USE"; 
 
-GradMatrix2D::usage="test";
-RotMatrix2D::usage="test";
 
 Begin["`Private`"]
 (* Implementation of the package *)
 
 
 
-Options[GenerateDiffusionTrajectory2D] = {"InitialPosition"->{0.,0.},"Verbose"->False};
-GenerateDiffusionTrajectory2D[steps_Integer,DiffX_,DiffY_,\[Alpha]_,F_,kT_?NumberQ,dt_?NumberQ,{min_,max_},opt:OptionsPattern[]] :=
+Options[GenerateDiffusionTrajectory2D] = {"InitialPosition"->{0.,0.} (*The starting point for the trajectory*),
+	                                      "Verbose"->False (*Log output*)};
+
+GenerateDiffusionTrajectory2D[steps_Integer, DiffX_, DiffY_, DiffA_, F_, kT_?NumberQ, dt_?NumberQ, 
+	                         {min_,max_},opt:OptionsPattern[]] :=
 Block[{$VerbosePrint=$VerbosePrint||OptionValue["Verbose"]},   
     Module[ {data,g,width,halfwidth,gradD,gradF,stepfunction,compOpts,DD,DIFF,RM,stepfunctionexp,x,y,g1,g2},
         Off[CompiledFunction::cfsa];
+        Puts["*****GenerateDiffusionTrajectory2D*****"];
         Puts["Initial Position: ",OptionValue["InitialPosition"]];
-
-        (*generate random numbers*)
+        
         width = (max-min);
         halfwidth = width/2;
         compOpts = {CompilationOptions->{"ExpressionOptimization"->True,"InlineCompiledFunctions"->True,"InlineExternalDefinitions"->True}};
@@ -37,14 +52,14 @@ Block[{$VerbosePrint=$VerbosePrint||OptionValue["Verbose"]},
         Puts["\nDD:\n",DD,DisplayFunction->Identity];
         Puts[DD[0,0]];
         RM = Compile[{x,y} ,
-             RotMatrix2D[\[Alpha][x,y]]   
+             RotMatrix2D[DiffA[x,y]]   
            ];
         DIFF = Compile[{x,y}, Evaluate[
          RM[x,y].DD[x,y].Transpose[RM[x,y]]
         ]];
         Puts["\nDIFF:\n",DIFF,DisplayFunction->Identity];
         Puts[DIFF[0,0]];
-        g = RandomVariate[NormalDistribution[0,1],{steps,2}];
+        
         Quiet[
           gradD = GradMatrix2D[DIFF[x,y],x,y];
           Puts["gradD not compiled:\n",gradD,DisplayFunction->Identity];
@@ -74,8 +89,9 @@ Block[{$VerbosePrint=$VerbosePrint||OptionValue["Verbose"]},
    		(*y*)
         stepfunctionexp[[2]] = Mod[stepfunctionexp[[2]]+halfwidth[[2]] ,width[[2]]]-halfwidth[[2]];
 
-   		(*stepfunctionexp=Experimental`OptimizeExpression[#]&/@stepfunctionexp;*)
-        $stepfunction=stepfunction = Compile[{{xv,_Real,1},{rv,_Real,1}}, Block[ {x = xv[[1]],y = xv[[2]],g1 = rv[[1]],g2 = rv[[2]]},
+   		
+        g = RandomVariate[NormalDistribution[0,1],{steps,2}];
+        stepfunction = Compile[{{xv,_Real,1},{rv,_Real,1}}, Block[ {x = xv[[1]],y = xv[[2]],g1 = rv[[1]],g2 = rv[[2]]},
                                                                 stepfunctionexp
                                                             ],
             CompilationOptions->{"ExpressionOptimization"->True,"InlineCompiledFunctions"->True,"InlineExternalDefinitions"->True},
@@ -112,7 +128,7 @@ Block[{$VerbosePrint=$VerbosePrint||OptionValue["Verbose"]},
         (*Add steps number*)
         (*data=ToPackedArray[Transpose[{Range[Length[data]],data}],Real];*)
         data =(*ToPackedArray[*)
-        Transpose[Prepend[Transpose[data],Range[Length[data]] ]](*,Real]*);
+        Transpose[Prepend[Transpose[data],N@Range[Length[data]] ]](*,Real]*);
         Return[data]
     ]
 ];

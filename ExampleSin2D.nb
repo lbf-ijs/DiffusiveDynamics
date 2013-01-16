@@ -70,28 +70,11 @@ Cell[BoxData[{
    RowBox[{"CELLRANGE", "=", 
     RowBox[{"{", 
      RowBox[{"1000.", ",", "500."}], "}"}]}], ";"}], 
-  "\n"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}], "\n", 
  RowBox[{
-  RowBox[{
-   RowBox[{"ClearAll", "[", 
-    RowBox[{"DIFFX", ",", "DIFFY", ",", "ALPHA"}], "]"}], ";"}], 
-  "\[IndentingNewLine]", "\[IndentingNewLine]", 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"DIFFX", "=", 
-   RowBox[{"Compile", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"x", ",", "y"}], "}"}], ",", "\[IndentingNewLine]", "1"}], 
-    "]"}]}], ";"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
-   RowBox[{"DIFFY", "=", 
-    RowBox[{"Compile", "[", 
-     RowBox[{
-      RowBox[{"{", 
-       RowBox[{"x", ",", "y"}], "}"}], ",", "\[IndentingNewLine]", "5"}], 
-     "]"}]}], ";"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+  RowBox[{"ClearAll", "[", 
+   RowBox[{"DIFFX", ",", "DIFFY", ",", "ALPHA"}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"DIFFX", "=", 
    RowBox[{"Compile", "[", 
@@ -107,28 +90,19 @@ Cell[BoxData[{
            RowBox[{"[", "1", "]"}], "]"}]}], " ", "\[Pi]"}], "]"}]}], " ", 
       "+", "10"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{
-   RowBox[{"DIFFY", "=", 
-    RowBox[{"Compile", "[", 
-     RowBox[{
-      RowBox[{"{", 
-       RowBox[{"x", ",", "y"}], "}"}], ",", "\[IndentingNewLine]", 
-      RowBox[{
-       RowBox[{"5", 
-        RowBox[{"Sin", "[", 
-         RowBox[{
-          RowBox[{"y", "/", " ", 
-           RowBox[{"CELLRANGE", "[", 
-            RowBox[{"[", "2", "]"}], "]"}]}], " ", "\[Pi]"}], "]"}]}], " ", 
-       "+", "10"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"ALPHA", "=", 
+  RowBox[{"DIFFY", "=", 
    RowBox[{"Compile", "[", 
     RowBox[{
      RowBox[{"{", 
-      RowBox[{"x", ",", "y"}], "}"}], ",", "0"}], "]"}]}], 
-  ";"}], "\[IndentingNewLine]", 
+      RowBox[{"x", ",", "y"}], "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"5", 
+       RowBox[{"Sin", "[", 
+        RowBox[{
+         RowBox[{"y", "/", " ", 
+          RowBox[{"CELLRANGE", "[", 
+           RowBox[{"[", "2", "]"}], "]"}]}], " ", "\[Pi]"}], "]"}]}], " ", 
+      "+", "10"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"ALPHA", "=", 
    RowBox[{"Compile", "[", 
@@ -166,10 +140,12 @@ Cell[BoxData[{
      RowBox[{"ALPHA", "[", 
       RowBox[{"x", ",", "y"}], "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"ClearAll", "[", "ENERGY", "]"}], ";", " ", 
+  RowBox[{
+   RowBox[{"ClearAll", "[", "ENERGY", "]"}], ";"}], " ", 
   RowBox[{"(*", 
-   RowBox[{"energija", " ", "v", " ", "enotah", " ", "kT"}], "*)"}], 
-  "\[IndentingNewLine]", 
+   RowBox[{"energija", " ", "v", " ", "enotah", " ", "kT"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
   RowBox[{"ENERGY", "=", 
    RowBox[{"Compile", "[", 
     RowBox[{
@@ -177,16 +153,7 @@ Cell[BoxData[{
       RowBox[{"x", ",", "y"}], "}"}], ",", "1"}], "]"}]}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"KT", "=", "1."}], ";"}], "\[IndentingNewLine]"}], "Input",
- CellChangeTimes->{{3.567167412352644*^9, 3.5671674150417976`*^9}, {
-   3.567167521135866*^9, 3.5671675337035847`*^9}, {3.567169268001781*^9, 
-   3.5671692682187934`*^9}, 3.567251427393649*^9, {3.56725478616776*^9, 
-   3.567254802321684*^9}, {3.567254847120246*^9, 3.5672548662053375`*^9}, {
-   3.5672556114899654`*^9, 3.5672556149311624`*^9}, {3.567255904645733*^9, 
-   3.5672559046897354`*^9}, {3.5672559536865377`*^9, 3.567255954331575*^9}, {
-   3.567256138548112*^9, 3.567256145218493*^9}, {3.5672562139494243`*^9, 
-   3.5672562255350866`*^9}, {3.5672562582529583`*^9, 3.567256277137038*^9}, {
-   3.567256331429144*^9, 3.567256333566266*^9}}],
+  RowBox[{"KT", "=", "1."}], ";"}], "\[IndentingNewLine]"}], "Input"],
 
 Cell[BoxData[
  RowBox[{"\[IndentingNewLine]", 
@@ -204,45 +171,44 @@ Cell[BoxData[
   3.5671677763804655`*^9, 3.5671677808777227`*^9}, {3.5671691366102657`*^9, 
   3.56716918337094*^9}, {3.567169263950549*^9, 3.5671692780803576`*^9}}],
 
-Cell[BoxData["."], "Input",
- CellChangeTimes->{3.567255617549312*^9}],
+Cell[BoxData[""], "Input"],
 
 Cell[BoxData[""], "Input",
  CellChangeTimes->{
   3.56717072505712*^9, {3.5672515703628263`*^9, 3.5672515780512657`*^9}}],
 
-Cell[BoxData[
- RowBox[{
-  RowBox[{"$VerbosePrint", "=", "True"}], ";"}]], "Input",
- CellChangeTimes->{{3.5671712836170673`*^9, 3.5671712887933636`*^9}}],
+Cell[BoxData[""], "Input"],
 
 Cell[BoxData[
  RowBox[{"\[IndentingNewLine]", 
   RowBox[{
-   RowBox[{"AbsoluteTiming", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"$VerbosePrint", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"BlockRandom", "[", 
     RowBox[{
-     RowBox[{"rw", "=", 
-      RowBox[{"GenerateDiffusionTrajectory2D", "[", 
-       RowBox[{
-       "STEPS", ",", "DIFFX", ",", "DIFFY", ",", "ALPHA", ",", "ENERGY", ",", 
-        "KT", ",", "STEP", ",", 
-        RowBox[{"{", 
+     RowBox[{"SeedRandom", "[", "1", "]"}], ";", "\[IndentingNewLine]", 
+     RowBox[{"AbsoluteTiming", "[", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"rw", "=", 
+        RowBox[{"GenerateDiffusionTrajectory2D", "[", 
          RowBox[{
-          RowBox[{"-", "CELLRANGE"}], ",", "CELLRANGE"}], "}"}], ",", 
-        RowBox[{"Verbose", "\[Rule]", "True"}], ",", 
-        RowBox[{"InitialPosition", "\[Rule]", 
-         RowBox[{"{", 
-          RowBox[{"0", ",", "0"}], "}"}]}]}], "]"}]}], ";"}], 
-    "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]", 
+          RowBox[{"STEPS", "=", "10"}], ",", "DIFFX", ",", "DIFFY", ",", 
+          "ALPHA", ",", "ENERGY", ",", "KT", ",", "STEP", ",", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"-", "CELLRANGE"}], ",", "CELLRANGE"}], "}"}], ",", 
+          RowBox[{"Verbose", "\[Rule]", "True"}], ",", 
+          RowBox[{"InitialPosition", "\[Rule]", 
+           RowBox[{"{", 
+            RowBox[{"0.", ",", "0."}], "}"}]}]}], "]"}]}], ";"}], 
+      "\[IndentingNewLine]", "]"}]}], "]"}], "\[IndentingNewLine]", 
    RowBox[{"rw", "[", 
     RowBox[{"[", 
-     RowBox[{";;", "10"}], "]"}], "]"}]}]}]], "Input",
- CellChangeTimes->{{3.567251579058324*^9, 3.567251591635043*^9}, {
-  3.567251723881607*^9, 3.5672517294839277`*^9}, {3.567254896703082*^9, 
-  3.567254912453983*^9}, {3.567256176688293*^9, 3.5672561944713097`*^9}, {
-  3.5672569457062783`*^9, 3.567256979283199*^9}, {3.567257568953926*^9, 
-  3.5672575988396354`*^9}, {3.5672578438366485`*^9, 3.5672578461287794`*^9}, {
-  3.5672579938482285`*^9, 3.567258064400264*^9}}],
+     RowBox[{";;", "10"}], "]"}], "]"}], "\[IndentingNewLine]", 
+   RowBox[{"PackedArrayQ", "@", 
+    RowBox[{"rw", "[", 
+     RowBox[{"[", 
+      RowBox[{";;", "10"}], "]"}], "]"}]}]}]}]], "Input"],
 
 Cell[BoxData[
  RowBox[{"AbsoluteTiming", "[", "\[IndentingNewLine]", 
@@ -306,8 +272,8 @@ Cell[BoxData[
       RowBox[{"\"\<FileOutlineCache\>\"", "\[Rule]", "False"}], "}"}]}], ",", 
     RowBox[{"TrackCellChangeTimes", "\[Rule]", "False"}]}], "]"}]}]], "Input"]
 },
-WindowSize->{1006, 551},
-WindowMargins->{{0, Automatic}, {0, Automatic}},
+WindowSize->{847, 1157},
+WindowMargins->{{Automatic, -1055}, {Automatic, -19}},
 PrivateNotebookOptions->{"FileOutlineCache"->False,
 "VersionedStylesheet"->{"Default.nb"[8.] -> False}},
 ShowSelection->True,

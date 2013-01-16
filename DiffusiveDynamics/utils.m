@@ -10,12 +10,20 @@ $VerbosePrint = False;
 $VerbosePrintFunction = Print;
 $VerbosePrintMemoryUsage = False;
 $PrintMemoryUsageBaseLine = 0;
-
+LogLevel::usage="LogLevel Option";
+ClearAll[Puts];
 Puts::usage = "Puts[msg, data, opt] Prints msg with a string representation of data.
 Puts[msg] prints a string ";
 
+ClearAll[Putsf];
+Putsf::usage="USE";
+
+ClearAll[PutsExp];
+PutsExp::usage="USE";
+
 ClearAll[StrideData];
 StrideData::usage="StrideData[data, maxPoints] Takes every n-th point from data so that the length of the result is less then maxPoints";
+
 Begin["`Private`"]
 (* Implementation of the package *)
 
@@ -25,26 +33,31 @@ Begin["`Private`"]
 (*Verbose not quite working*)
 
 SetAttributes[Puts,HoldAll];
-Options[Puts] = {DisplayFunction->Shallow};
-Puts[msg_,data_,n_Integer:1,opt:OptionsPattern[]] :=
-    (If[ $VerbosePrint &&($VerboseLevel>=n), (*then*)
-         $VerbosePrintFunction[msg,ToString[OptionValue[DisplayFunction][data]]]
-     ];
-     If[ $VerbosePrintMemoryUsage,
-         PrintMem[]
-     ]);
-Puts[msg__,n_Integer:1,opt:OptionsPattern[]] :=
-    (If[ $VerbosePrint &&($VerboseLevel>=n),
-         $VerbosePrintFunction[msg]
+Options[Puts] = {LogLevel->1};
+
+Puts[Shortest[msgs__], opt:OptionsPattern[]] :=
+    (If[ $VerbosePrint &&($VerboseLevel>=OptionValue["LogLevel"]),
+         (*Print["msg puts"];*)
+         $VerbosePrintFunction[msgs]
      ];
      If[ $VerbosePrintMemoryUsage,
          PrintMem[]
      ]);
 
 
-ClearAll[Putsf]
-Putsf[str_,args___,n_Integer:1,opt:OptionsPattern[]] :=
-    Puts[ToString@StringForm[str,args],n,opt];
+
+SetAttributes[PutsExp,HoldAll];
+Options[PutsExp] = {LogLevel->1,DisplayFunction->Short};
+PutsExp[data_, sparator_String:": ", opt:OptionsPattern[]] :=
+    ((*Print[opt];*)
+    Puts[ToString[Unevaluated[data]],sparator,ToString[data,StandardForm],Evaluate@FilterRules[{opt},Options[Puts]]]);
+
+
+
+SetAttributes[Putsf,HoldAll];
+Options[Putsf] = {LogLevel->1};
+Putsf[str_String,Shortest[args__], opt:OptionsPattern[]] :=
+    Puts[ToString@StringForm[str,args], Evaluate@opt];
 
 
 

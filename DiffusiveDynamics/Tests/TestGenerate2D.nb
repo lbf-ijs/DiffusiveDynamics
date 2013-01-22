@@ -2,8 +2,6 @@ Notebook[{
 Cell[BoxData[{
  RowBox[{
   RowBox[{"$HistoryLength", "=", "1"}], ";"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"On", "[", "Assert", "]"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{"Needs", "[", "\"\<Developer`\>\"", "]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"Needs", "[", "\"\<DiffusiveDynamics`\>\"", "]"}], 
@@ -58,7 +56,9 @@ Cell[BoxData[{
         RowBox[{"R", "[", 
          RowBox[{"\[Alpha]", " ", "\[Degree]"}], "]"}], "]"}]}], "]"}], 
      "]"}]}], ";"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]"}], "Input",
- InitializationCell->True],
+ CellChangeTimes->{{3.5671673147720623`*^9, 3.567167331877041*^9}, {
+  3.567167371279295*^9, 3.567167377979678*^9}, {3.567167428385561*^9, 
+  3.567167428800585*^9}}],
 
 Cell[BoxData[{
  RowBox[{
@@ -70,7 +70,7 @@ Cell[BoxData[{
    RowBox[{"CELLRANGE", "=", 
     RowBox[{"{", 
      RowBox[{"1000.", ",", "500."}], "}"}]}], ";"}], 
-  "\n"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}], "\n", 
  RowBox[{
   RowBox[{"ClearAll", "[", 
    RowBox[{"DIFFX", ",", "DIFFY", ",", "ALPHA"}], "]"}], 
@@ -140,10 +140,12 @@ Cell[BoxData[{
      RowBox[{"ALPHA", "[", 
       RowBox[{"x", ",", "y"}], "]"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"ClearAll", "[", "ENERGY", "]"}], ";", " ", 
+  RowBox[{
+   RowBox[{"ClearAll", "[", "ENERGY", "]"}], ";"}], " ", 
   RowBox[{"(*", 
-   RowBox[{"energija", " ", "v", " ", "enotah", " ", "kT"}], "*)"}], 
-  "\[IndentingNewLine]", 
+   RowBox[{"energija", " ", "v", " ", "enotah", " ", "kT"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
   RowBox[{"ENERGY", "=", 
    RowBox[{"Compile", "[", 
     RowBox[{
@@ -151,8 +153,7 @@ Cell[BoxData[{
       RowBox[{"x", ",", "y"}], "}"}], ",", "1"}], "]"}]}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"KT", "=", "1."}], ";"}], "\[IndentingNewLine]"}], "Input",
- InitializationCell->True],
+  RowBox[{"KT", "=", "1."}], ";"}], "\[IndentingNewLine]"}], "Input"],
 
 Cell[BoxData[
  RowBox[{"\[IndentingNewLine]", 
@@ -170,59 +171,79 @@ Cell[BoxData[
   3.5671677763804655`*^9, 3.5671677808777227`*^9}, {3.5671691366102657`*^9, 
   3.56716918337094*^9}, {3.567169263950549*^9, 3.5671692780803576`*^9}}],
 
-Cell[BoxData[
- RowBox[{
-  RowBox[{"(*", 
-   RowBox[{"serial", " ", "generations"}], "*)"}], "\[IndentingNewLine]", 
-  RowBox[{
-   RowBox[{"AbsoluteTiming", "[", "\[IndentingNewLine]", 
-    RowBox[{
-     RowBox[{"rw", "=", 
-      RowBox[{"List", "@", 
-       RowBox[{"GenerateDiffusionTrajectory2D", "[", 
-        RowBox[{
-        "STEPS", ",", "DIFFX", ",", "DIFFY", ",", "ALPHA", ",", "ENERGY", ",",
-          "KT", ",", "STEP", ",", 
-         RowBox[{"{", 
-          RowBox[{
-           RowBox[{"-", "CELLRANGE"}], ",", "CELLRANGE"}], "}"}], ",", 
-         RowBox[{"\"\<Verbose\>\"", "\[Rule]", "True"}], ",", 
-         RowBox[{"\"\<InitialPosition\>\"", "\[Rule]", 
-          RowBox[{"{", 
-           RowBox[{"0.", ",", "0."}], "}"}]}]}], "]"}]}]}], ";"}], 
-    "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]", 
-   RowBox[{
-    RowBox[{"rw", "[", 
-     RowBox[{"[", 
-      RowBox[{"1", ",", 
-       RowBox[{";;", "10"}]}], "]"}], "]"}], ";"}], 
-   "\[IndentingNewLine]"}]}]], "Input",
- InitializationCell->True],
+Cell[BoxData[""], "Input"],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{
+  3.56717072505712*^9, {3.5672515703628263`*^9, 3.5672515780512657`*^9}}],
+
+Cell[BoxData[""], "Input"],
 
 Cell[BoxData[
  RowBox[{
   RowBox[{"(*", 
-   RowBox[{"Parallel", " ", "generation"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+   "check", " ", "if", " ", "GenerateDiffusionTrajectory2D", " ", "works"}], 
+   "*)"}], "\[IndentingNewLine]", 
   RowBox[{
+   RowBox[{
+    RowBox[{"$VerbosePrint", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"BlockRandom", "[", 
+    RowBox[{
+     RowBox[{"SeedRandom", "[", "1", "]"}], ";", "\[IndentingNewLine]", 
+     RowBox[{"AbsoluteTiming", "[", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"rw", "=", 
+        RowBox[{"GenerateDiffusionTrajectory2D", "[", 
+         RowBox[{
+          RowBox[{"STEPS", "=", "10"}], ",", "DIFFX", ",", "DIFFY", ",", 
+          "ALPHA", ",", "ENERGY", ",", "KT", ",", "STEP", ",", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"-", "CELLRANGE"}], ",", "CELLRANGE"}], "}"}], ",", 
+          RowBox[{"Verbose", "\[Rule]", "True"}], ",", 
+          RowBox[{"\"\<VerboseLevel\>\"", "\[Rule]", "1"}], ",", 
+          RowBox[{"\"\<InitialPosition\>\"", "\[Rule]", 
+           RowBox[{"{", 
+            RowBox[{"0.", ",", "0."}], "}"}]}]}], "]"}]}], ";"}], 
+      "\[IndentingNewLine]", "]"}]}], "]"}], "\[IndentingNewLine]", "rw", 
+   "\[IndentingNewLine]", 
+   RowBox[{"PackedArrayQ", "@", 
+    RowBox[{"rw", "[", 
+     RowBox[{"[", 
+      RowBox[{";;", "10"}], "]"}], "]"}]}]}]}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$VerbosePrint", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"$VerboseLevel", "=", "2"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"BlockRandom", "[", 
+  RowBox[{
+   RowBox[{"SeedRandom", "[", "1", "]"}], ";", "\[IndentingNewLine]", 
    RowBox[{"AbsoluteTiming", "[", "\[IndentingNewLine]", 
     RowBox[{
      RowBox[{"rw", "=", 
       RowBox[{"ParallelGenerateDiffusionTrajectory2D", "[", 
        RowBox[{
-       "STEPS", ",", "DIFFX", ",", "DIFFY", ",", "ALPHA", ",", "ENERGY", ",", 
-        "KT", ",", "STEP", ",", 
+        RowBox[{"STEPS", "=", "20"}], ",", "DIFFX", ",", "DIFFY", ",", 
+        "ALPHA", ",", "ENERGY", ",", "KT", ",", "STEP", ",", 
         RowBox[{"{", 
          RowBox[{
           RowBox[{"-", "CELLRANGE"}], ",", "CELLRANGE"}], "}"}], ",", 
-        RowBox[{"\"\<ProcessCount\>\"", "\[Rule]", "2"}]}], "]"}]}], ";"}], 
-    "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]", 
-   RowBox[{"(*", 
-    RowBox[{"Chek", " ", "frist", " ", "three", " ", "points"}], "*)"}], 
-   "\[IndentingNewLine]", 
-   RowBox[{"rw", "[", 
-    RowBox[{"[", 
-     RowBox[{"All", ",", 
-      RowBox[{"1", ";;", "3"}]}], "]"}], "]"}]}]}]], "Input"],
+        RowBox[{"Verbose", "\[Rule]", "True"}], ",", 
+        RowBox[{"\"\<InitialPosition\>\"", "\[Rule]", 
+         RowBox[{"{", 
+          RowBox[{"0.", ",", "0."}], "}"}]}], ",", 
+        RowBox[{"\"\<ProcessCount\>\"", "\[Rule]", "12"}]}], "]"}]}], ";"}], 
+    "\[IndentingNewLine]", "]"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"rw", "[", 
+  RowBox[{"[", 
+   RowBox[{"All", ",", 
+    RowBox[{"1", ";;", "3"}]}], "]"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"PackedArrayQ", "/@", "rw"}]}], "Input"],
+
+Cell[BoxData[""], "Input"],
 
 Cell[BoxData[{
  RowBox[{"AbsoluteTiming", "[", "\[IndentingNewLine]", 
@@ -230,79 +251,25 @@ Cell[BoxData[{
    RowBox[{"rw", "=", 
     RowBox[{"ParallelGenerateDiffusionTrajectory2D", "[", 
      RowBox[{
-     "200000", ",", "DIFFX", ",", "DIFFY", ",", "ALPHA", ",", "ENERGY", ",", 
-      "KT", ",", "STEP", ",", 
+      RowBox[{"STEPS", "=", "2000000"}], ",", "DIFFX", ",", "DIFFY", ",", 
+      "ALPHA", ",", "ENERGY", ",", "KT", ",", "STEP", ",", 
       RowBox[{"{", 
        RowBox[{
         RowBox[{"-", "CELLRANGE"}], ",", "CELLRANGE"}], "}"}], ",", 
-      RowBox[{"\"\<ProcessCount\>\"", "\[Rule]", "2"}], ",", 
-      RowBox[{"\"\<InitialPositions\>\"", "\[Rule]", 
+      RowBox[{"Verbose", "\[Rule]", "True"}], ",", 
+      RowBox[{"\"\<InitialPosition\>\"", "\[Rule]", 
        RowBox[{"{", 
-        RowBox[{
-         RowBox[{"{", 
-          RowBox[{"0", ",", "0"}], "}"}], ",", 
-         RowBox[{"{", 
-          RowBox[{"0", ",", "0"}], "}"}]}], "}"}]}]}], "]"}]}], ";"}], 
+        RowBox[{"0.", ",", "0."}], "}"}]}], ",", 
+      RowBox[{"\"\<ProcessCount\>\"", "\[Rule]", "1"}]}], "]"}]}], ";"}], 
   "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]", 
- RowBox[{"ListPlot", "[", 
-  RowBox[{
-   RowBox[{"rw", "[", 
-    RowBox[{"[", 
-     RowBox[{"All", ",", 
-      RowBox[{";;", ";;", 
-       RowBox[{"Ceiling", "[", 
-        RowBox[{"STEPS", "/", "10000"}], "]"}]}], ",", 
-      RowBox[{"{", 
-       RowBox[{"2", ",", "3"}], "}"}]}], "]"}], "]"}], ",", 
-   RowBox[{"PlotRange", "\[Rule]", 
-    RowBox[{"Transpose", "@", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"-", "CELLRANGE"}], ",", "CELLRANGE"}], "}"}]}]}], ",", ",", 
-   RowBox[{"GridLines", "\[Rule]", 
-    RowBox[{"Transpose", "@", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"-", "CELLRANGE"}], ",", "CELLRANGE"}], "}"}]}]}], ",", 
-   RowBox[{"GridLinesStyle", "\[Rule]", 
-    RowBox[{"Directive", "[", 
-     RowBox[{"Red", ",", "Thick", ",", "Dashed"}], "]"}]}]}], 
+ RowBox[{"AbsoluteTiming", "[", " ", 
+  RowBox[{"Export", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
+     "\"\<Data/2D_2.10E6.mx.gz\>\""}], ",", "rw", ",", 
+    RowBox[{"\"\<CompressionLevel\>\"", "\[Rule]", ".1"}]}], "]"}], 
   "]"}]}], "Input"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"(*", 
-   RowBox[{"Poglej", " ", "D", " ", "v", " ", "enem", " ", "binu"}], "*)"}], 
-  "\[IndentingNewLine]", "\[IndentingNewLine]", 
-  RowBox[{
-   RowBox[{
-    RowBox[{"w", "=", 
-     RowBox[{"{", 
-      RowBox[{"250", ",", "125"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
-   RowBox[{
-    RowBox[{"w", "=", 
-     RowBox[{
-      RowBox[{"{", 
-       RowBox[{"250", ",", "125"}], "}"}], "*", "4"}]}], ";"}], 
-   "\[IndentingNewLine]", 
-   RowBox[{
-    RowBox[{"$VerboseLevel", "=", "5"}], ";"}], "\[IndentingNewLine]", 
-   RowBox[{"AbsoluteTiming", "[", "\[IndentingNewLine]", 
-    RowBox[{"diffs", "=", 
-     RowBox[{"GetDiffFromBin", "[", 
-      RowBox[{"rw", ",", "STEP", ",", 
-       RowBox[{"{", 
-        RowBox[{
-         RowBox[{"{", 
-          RowBox[{"0", ",", "0"}], "}"}], ",", " ", "w"}], "}"}], ",", 
-       RowBox[{"{", 
-        RowBox[{
-         RowBox[{"-", "CELLRANGE"}], ",", "CELLRANGE"}], "}"}], ",", 
-       RowBox[{"\"\<StepDeltas\>\"", "\[Rule]", "100."}], ",", 
-       RowBox[{"Verbose", "\[Rule]", "True"}], ",", 
-       RowBox[{"\"\<PadSteps\>\"", "\[Rule]", "False"}], ",", 
-       RowBox[{"\"\<Parallel\>\"", "\[Rule]", "False"}]}], "]"}]}], 
-    "\[IndentingNewLine]", "]"}]}]}]], "Input"],
 
 Cell[BoxData[
  RowBox[{
@@ -339,8 +306,8 @@ Cell[BoxData[
 },
 NotebookEventActions->{
  "WindowClose" :> FrontEndTokenExecute["DeleteGeneratedCells"]},
-WindowSize->{1006, 714},
-WindowMargins->{{-14, Automatic}, {Automatic, 6}},
+WindowSize->{1006, 411},
+WindowMargins->{{8, Automatic}, {Automatic, 5}},
 PrivateNotebookOptions->{"FileOutlineCache"->False,
 "VersionedStylesheet"->{"Default.nb"[8.] -> False}},
 ShowSelection->True,

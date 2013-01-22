@@ -1,7 +1,6 @@
 (* Mathematica Test File *)
 
 ClearAll[DIFFX, DIFFY, ALPHA,CELLRANGE,ENERGY,KT,rw];
-Test[ (*Checks if GenerateDiffusionTrajectory2D result change. TODO: This is a very brittle test. Maek more robust*)
     STEPS = 9;
     STEP = 1;
     CELLRANGE = {1000., 500.};
@@ -10,6 +9,9 @@ Test[ (*Checks if GenerateDiffusionTrajectory2D result change. TODO: This is a v
     ALPHA = Compile[{x, y}, (((x/2)/CELLRANGE[[1]])^2 + ((y/2)/ CELLRANGE[[2]])^2)*180];
     ENERGY = Compile[{x, y}, 1];
     KT = 1.;
+
+
+Test[ (*Checks if GenerateDiffusionTrajectory2D result change. TODO: This is a very brittle test. Make more robust*)
     BlockRandom[SeedRandom[1];
                 rw = GenerateDiffusionTrajectory2D[STEPS, DIFFX, DIFFY, ALPHA, ENERGY, KT, STEP, 
                                   {-CELLRANGE, CELLRANGE}, InitialPosition -> {0., 0.}]
@@ -29,8 +31,50 @@ Test[ (*Checks if GenerateDiffusionTrajectory2D result change. TODO: This is a v
     ,
     True
     ,
-    TestID->"Generate2DTest->GenerateDiffusionTrajectory2D rezultati ponovljivi..."
+    TestID->"Generate2DTest->GenerateDiffusionTrajectory2D results are working..."
 ]
+
+
+Test[ (**)
+    ips={{0, 0},{1,1}};
+    BlockRandom[SeedRandom[1];
+                rw = ParallelGenerateDiffusionTrajectory2D[STEPS, DIFFX, DIFFY, ALPHA, ENERGY, KT, STEP, 
+                                  {-CELLRANGE, CELLRANGE}, "InitialPositions" -> ips,"ProcessCount" -> 2]
+    ];
+	rw[[All,1]]
+    ,
+    N@ips
+    ,
+    TestID->"Generate2DTest->GenerateDiffusionTrajectory2D initial points work..."
+]
+
+Test[ (**)
+    ips={{0, 0}};
+    BlockRandom[SeedRandom[1];
+                rw = ParallelGenerateDiffusionTrajectory2D[STEPS, DIFFX, DIFFY, ALPHA, ENERGY, KT, STEP, 
+                                  {-CELLRANGE, CELLRANGE}, "InitialPositions" -> ips,"ProcessCount" -> 2]
+    ];
+	Length@rw
+    ,
+    2
+    ,
+    TestID->"Generate2DTest->GenerateDiffusionTrajectory2D initial points get added if less then ProcessCount..."
+]
+
+Test[ (**)
+    ips={{0, 0},{0, 0},{0, 0},{0, 0}};
+    BlockRandom[SeedRandom[1];
+                rw = ParallelGenerateDiffusionTrajectory2D[STEPS, DIFFX, DIFFY, ALPHA, ENERGY, KT, STEP, 
+                                  {-CELLRANGE, CELLRANGE}, "InitialPositions" -> ips,"ProcessCount" -> 2]
+    ];
+	Length@rw
+    ,
+    2
+    ,
+    TestID->"Generate2DTest->GenerateDiffusionTrajectory2D initial points get truncated if more than..."
+]
+
+
 ClearAll[DIFFX, DIFFY, ALPHA,CELLRANGE,ENERGY,KT,rw];
 
 

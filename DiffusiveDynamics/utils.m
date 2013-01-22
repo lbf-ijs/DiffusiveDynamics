@@ -8,27 +8,42 @@ BeginPackage["DiffusiveDynamics`Utils`"]
 $VerboseLevel = 3;
 $VerbosePrint = False;
 $VerbosePrintFunction = Print;
+
 $VerbosePrintMemoryUsage = False;
 $PrintMemoryUsageBaseLine = 0;
+
+$VerboseIndentLevel = -1;
+$VerboseIndentString = "> ";
+ClearAll[GetVerboseIndentString];
+GetVerboseIndentString::usage="Get the $VerboseIndentString multiplied $VerboseIndentLevel times"; 
+
 LogLevel::usage="LogLevel Option";
 ClearAll[Puts];
-Puts::usage = "Puts[msg, data, opt] Prints msg with a string representation of data.
-Puts[msg] prints a string ";
+Puts::usage = "Puts[msg..., opt] Prints msg with a string representation of data.
+Mesage is only printed if $VerbosePrint is true and LogLevel >= $VerboseLevel.";
 
-ClearAll[Putsf];
-Putsf::usage="USE";
+ClearAll[PutsF];
+PutsF::usage="PutsF[str_, args, opt] Puts a string with StringForm str and args are passed to StringForm";
 
-ClearAll[PutsExp];
-PutsExp::usage="USE";
+ClearAll[PutsE];
+PutsE::usage="PutsE[data, sparator, opts]. 
+Puts the symbol data in the form
+NameOf[data]+separator+ValueOf[data]. Also converts the data to string and makes sure it is not too long.";
 
 ClearAll[StrideData];
 StrideData::usage="StrideData[data, maxPoints] Takes every n-th point from data so that the length of the result is less then maxPoints";
+
+ClearAll[PutsOptions];
+PutsOptions::usage="PutsOptions[opts] Prints a readable list of options";
+
 
 Begin["`Private`"]
 (* Implementation of the package *)
 
 (*Util functions*)
- 
+ ClearAll[GetVerboseIndentString];
+ (* The stuff with If[] just retruns 0 if $VerboseIndentLevel happens to be negative*)
+ GetVerboseIndentString[]:=StringJoin@ConstantArray[$VerboseIndentString, (If[# < 0, 0, #])&@$VerboseIndentLevel]
 
 (*Verbose not quite working*)
 
@@ -38,7 +53,7 @@ Options[Puts] = {LogLevel->1};
 Puts[Shortest[msgs__], opt:OptionsPattern[]] :=
     (If[ $VerbosePrint &&($VerboseLevel>=OptionValue["LogLevel"]),
          (*Print["msg puts"];*)
-         $VerbosePrintFunction[msgs]
+         $VerbosePrintFunction[GetVerboseIndentString[],msgs]
      ];
      If[ $VerbosePrintMemoryUsage,
          PrintMem[]
@@ -46,17 +61,40 @@ Puts[Shortest[msgs__], opt:OptionsPattern[]] :=
 
 
 
-SetAttributes[PutsExp,HoldAll];
-Options[PutsExp] = {LogLevel->1,DisplayFunction->Short};
-PutsExp[data_, sparator_String:": ", opt:OptionsPattern[]] :=
+SetAttributes[PutsE,HoldAllComplete];
+Options[PutsE] = {LogLevel->1,DisplayFunction->Short};
+PutsE[data_, sparator_String:": ", opt:OptionsPattern[]] :=
     ((*Print[opt];*)
-    Puts[ToString[Unevaluated[data]],sparator,ToString[data,StandardForm],Evaluate@FilterRules[{opt},Options[Puts]]]);
+    Puts[ToString[Unevaluated[data]],sparator,ToString[data,FormatType->InputForm,TotalWidth->300]
+    	,Evaluate@FilterRules[{opt},Options[Puts]]]);
 
 
+PutsE[name_String, data_, sparator_String:"", opt:OptionsPattern[]] :=
+    ((*Print[opt];*)
+    Puts[name,sparator,ToString[data,FormatType->InputForm,TotalWidth->300],
+    	Evaluate@FilterRules[{opt},Options[Puts]]]);
 
-SetAttributes[Putsf,HoldAll];
-Options[Putsf] = {LogLevel->1};
-Putsf[str_String,Shortest[args__], opt:OptionsPattern[]] :=
+
+SetAttributes[PutsOptions,HoldAll];
+Options[PutsOptions]={LogLevel->2, DisplayFunction->Shallow,"OptionIndentString"->"   "}~Join~Options@Puts;
+PutsOptions[symbol_Symbol, actualOpts_List, opts : OptionsPattern[]] := 
+  (*Iterates all the options that are defined for symbol. Then gets the actual opton using option value. 
+  This must be done, because default options are not put into actualOpts of OptionsPattern[]. 
+  First is needed, because are interested in only option names and not the default values.*)
+  With[{df=OptionValue@DisplayFunction,is=OptionValue@"OptionIndentString"},
+  Puts["***"<>ToString@Unevaluated@symbol<>"*** Options: \n",
+  	   StringJoin[(is<>
+  	   	           ToString[First@#]<>" -> "<> 
+  	   	           ToString[df@OptionValue[symbol,actualOpts,First@#],OutputForm]<>
+  	   	           "\n")&
+  	   	            /@Options[symbol]
+  	   	          ]	(*end string join*)   
+  	   ,Evaluate@FilterRules[{opts}, Options[Puts]]]
+];
+  
+SetAttributes[PutsF,HoldAll];
+Options[PutsF] = {LogLevel->1};
+PutsF[str_String,Shortest[args__], opt:OptionsPattern[]] :=
     Puts[ToString@StringForm[str,args], Evaluate@opt];
 
 
@@ -119,8 +157,7 @@ ClearAll[DistributeCompiledFunction]
 DistributeCompiledFunction[name_] :=
     With[ {copy = Symbol[name]},
         ParallelEvaluate[
-         If[ MatchQ[Evaluate[Symbol@name], _Symbol],(*Print["Setting ",
-          name];*)
+         If[ MatchQ[Evaluate[Symbol@name], _Symbol],(*Print["Setting ", name];*)
              Evaluate[Symbol[name]] = copy
          ]]
     ];

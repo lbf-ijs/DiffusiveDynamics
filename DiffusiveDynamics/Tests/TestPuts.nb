@@ -37,7 +37,7 @@ Cell[BoxData[
    RowBox[{"Puts", "[", 
     RowBox[{"\"\<a: \>\"", ",", "3"}], "]"}], "\[IndentingNewLine]", 
    RowBox[{"Puts", "[", "\"\<a: \>\"", "]"}], "\[IndentingNewLine]", 
-   RowBox[{"Putsf", "[", 
+   RowBox[{"PutsF", "[", 
     RowBox[{"\"\<a: `1`\>\"", ",", "5"}], "]"}]}]}]], "Input",
  CellChangeTimes->{{3.567322434446577*^9, 3.5673224761869645`*^9}, 
    3.567322536787431*^9, {3.567322567484186*^9, 3.567322627541621*^9}, {
@@ -47,7 +47,8 @@ Cell[BoxData[
    3.567323469380772*^9}, {3.5673235465801873`*^9, 3.5673235718936353`*^9}, {
    3.567323736160031*^9, 3.5673237462586083`*^9}, {3.5673238133374453`*^9, 
    3.567323839016914*^9}, {3.567332654081107*^9, 3.567332673497217*^9}, 
-   3.567333461303277*^9, {3.567333651007128*^9, 3.5673336510551305`*^9}}],
+   3.567333461303277*^9, {3.567333651007128*^9, 3.5673336510551305`*^9}, {
+   3.5673355448864512`*^9, 3.567335545120465*^9}}],
 
 Cell[BoxData[
  RowBox[{
@@ -66,7 +67,7 @@ Cell[BoxData[
    RowBox[{"Puts", "[", 
     RowBox[{"\"\<a: \>\"", ",", 
      RowBox[{"LogLevel", "\[Rule]", "2"}]}], "]"}], "\[IndentingNewLine]", 
-   RowBox[{"Putsf", "[", 
+   RowBox[{"PutsF", "[", 
     RowBox[{"\"\<a: `1`\>\"", ",", "5", ",", 
      RowBox[{"LogLevel", "\[Rule]", "3"}]}], "]"}], 
    "\[IndentingNewLine]"}]}]], "Input",
@@ -81,7 +82,8 @@ Cell[BoxData[
    3.5673243064346485`*^9, {3.5673263132634325`*^9, 3.5673263332825775`*^9}, 
    3.5673264081638603`*^9, {3.5673313173546505`*^9, 3.567331328044262*^9}, {
    3.567332258287469*^9, 3.5673322724292774`*^9}, {3.567333648933009*^9, 
-   3.5673336491880236`*^9}}],
+   3.5673336491880236`*^9}, {3.567335542686325*^9, 3.5673355428773365`*^9}, {
+   3.567338179008679*^9, 3.5673381805517673`*^9}}],
 
 Cell[BoxData[""], "Input",
  CellChangeTimes->{{3.5673229994918957`*^9, 3.567323014026727*^9}, {
@@ -105,33 +107,34 @@ Cell[BoxData[
    RowBox[{"Puts", "[", 
     RowBox[{"\"\<a: \>\"", ",", 
      RowBox[{"LogLevel", "\[Rule]", "6"}]}], "]"}], "\[IndentingNewLine]", 
-   RowBox[{"Putsf", "[", 
+   RowBox[{"PutsF", "[", 
     RowBox[{"\"\<a: `1`\>\"", ",", "5", ",", 
      RowBox[{"LogLevel", "\[Rule]", "4"}]}], "]"}]}]}]], "Input",
  CellChangeTimes->{{3.5673229994918957`*^9, 3.567323014026727*^9}, {
   3.5673237162128897`*^9, 3.567323727448532*^9}, {3.567331260336389*^9, 
   3.567331271997056*^9}, {3.567333129410294*^9, 3.567333139194854*^9}, {
-  3.5673336462608557`*^9, 3.567333646515871*^9}}],
+  3.5673336462608557`*^9, 3.567333646515871*^9}, {3.5673355400301733`*^9, 
+  3.567335540236185*^9}}],
 
 Cell[BoxData[{
  RowBox[{
   RowBox[{"$VerbosePrint", "=", "True"}], ";"}], "\[IndentingNewLine]", 
- RowBox[{"PutsExp", "[", "a", "]"}], "\[IndentingNewLine]", 
- RowBox[{"PutsExp", "[", 
+ RowBox[{"PutsE", "[", "a", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"PutsE", "[", 
   RowBox[{"a", ",", 
    RowBox[{"LogLevel", "->", "2"}]}], "]"}], "\[IndentingNewLine]", 
  RowBox[{"Print", "[", "\"\<No output next\>\"", "]"}], "\[IndentingNewLine]", 
- RowBox[{"PutsExp", "[", 
+ RowBox[{"PutsE", "[", 
   RowBox[{"a", ",", 
    RowBox[{"LogLevel", "\[Rule]", "6"}]}], "]"}], "\[IndentingNewLine]", 
  RowBox[{"Print", "[", "\"\<****\>\"", "]"}], "\[IndentingNewLine]", 
- RowBox[{"PutsExp", "[", 
+ RowBox[{"PutsE", "[", 
   RowBox[{"a", ",", " ", "\"\<:\\n\>\""}], "]"}], "\[IndentingNewLine]", 
- RowBox[{"PutsExp", "[", 
+ RowBox[{"PutsE", "[", 
   RowBox[{
    RowBox[{"Short", "@", "a1"}], ",", " ", "\"\<:\\n\>\""}], 
   "]"}], "\[IndentingNewLine]", 
- RowBox[{"PutsExp", "[", 
+ RowBox[{"PutsE", "[", 
   RowBox[{
    RowBox[{"Shallow", "@", "a1"}], ",", " ", "\"\<:\\n\>\""}], 
   "]"}]}], "Input",
@@ -139,55 +142,178 @@ Cell[BoxData[{
   3.567333275464648*^9, 3.567333326264553*^9}, {3.567333616575158*^9, 
   3.5673336439407234`*^9}, {3.5673341233571444`*^9, 3.567334132807685*^9}, {
   3.5673344078494167`*^9, 3.567334418209009*^9}, {3.567334467864849*^9, 
-  3.567334472285102*^9}, {3.567335096030778*^9, 3.567335100219018*^9}}],
+  3.567334472285102*^9}, {3.567335096030778*^9, 3.567335100219018*^9}, {
+  3.567335511033515*^9, 3.5673355151937532`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$VerbosePrint", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"PutsE", "@", 
+  RowBox[{"OptionValue", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"\"\<InitialPosition\>\"", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"0.", ",", "0."}], "}"}]}], "}"}], ",", 
+    "\"\<InitialPosition\>\""}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"PutsE", "[", 
+  RowBox[{"\"\<InitialPosition: \>\"", ",", 
+   RowBox[{"OptionValue", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\"\<InitialPosition\>\"", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{"0.", ",", "0."}], "}"}]}], "}"}], ",", 
+     "\"\<InitialPosition\>\""}], "]"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.5673353192475457`*^9, 3.5673353435479355`*^9}, {
+  3.567335375852783*^9, 3.5673353989761057`*^9}, {3.5673355582592163`*^9, 
+  3.567335558427226*^9}, {3.567335860182485*^9, 3.5673358764884176`*^9}, {
+  3.567335924573168*^9, 3.56733592477818*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"Test", " ", "indentation"}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"$VerbosePrint", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"$VerboseIndentLevel", " ", "=", "0"}], " ", ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"Puts", "[", "\"\<Test\>\"", "]"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"$VerboseIndentLevel", "+=", "1"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Puts", "[", "\"\<Test1\>\"", "]"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"$VerboseIndentLevel", "+=", "1"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Puts", "[", "\"\<Test2\>\"", "]"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"$VerboseIndentLevel", "-=", "1"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Puts", "[", "\"\<Test1\>\"", "]"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"$VerboseIndentLevel", "-=", "1"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Puts", "[", "\"\<Test\>\"", "]"}], ";"}]}]}]], "Input",
+ CellChangeTimes->{{3.5677506945752196`*^9, 3.5677507305692787`*^9}, {
+  3.567750837104372*^9, 3.567750921041173*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"For", " ", "easier", " ", "storage", " ", "in", " ", "Git"}], 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"SetOptions", "[", 
+     RowBox[{
+      RowBox[{"InputNotebook", "[", "]"}], ",", 
+      RowBox[{"PrivateNotebookOptions", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{"\"\<FileOutlineCache\>\"", "\[Rule]", "False"}], "}"}]}], 
+      ",", 
+      RowBox[{"TrackCellChangeTimes", "\[Rule]", "False"}]}], "]"}], ";", 
+    RowBox[{
+    "FrontEndTokenExecute", "[", "\"\<DeleteGeneratedCells\>\"", "]"}], ";"}],
+    "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Auto", " ", "delete", " ", "output", " ", "on", " ", "close"}], 
+    "*)"}], "\n", 
+   RowBox[{
+    RowBox[{"SetOptions", "[", 
+     RowBox[{
+      RowBox[{"EvaluationNotebook", "[", "]"}], ",", 
+      RowBox[{"NotebookEventActions", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{"\"\<WindowClose\>\"", "\[RuleDelayed]", 
+         RowBox[{
+         "FrontEndTokenExecute", "[", "\"\<DeleteGeneratedCells\>\"", "]"}]}],
+         "}"}]}]}], "]"}], ";"}], "\[IndentingNewLine]"}]}]], "Input",
+ CellChangeTimes->{{3.567750851509196*^9, 3.567750858245581*^9}, 
+   3.567751520135439*^9}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"$VerbosePrint", "=", "True"}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ClearAll", "[", "TestOptionsFunction", "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "TestOptionsFunction", "]"}], "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"LogLevel", "\[Rule]", "1"}], ",", 
+     RowBox[{"\"\<Indent\>\"", "\[Rule]", "\"\<``\>\""}], ",", 
+     RowBox[{"List", "\[Rule]", 
+      RowBox[{"Range", "@", "100"}]}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"TestOptionsFunction", "[", 
+     RowBox[{"a_", ",", "b_", ",", 
+      RowBox[{"opts", ":", 
+       RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", 
+    RowBox[{"Module", "[", 
+     RowBox[{
+      RowBox[{"{", "}"}], ",", "\[IndentingNewLine]", 
+      RowBox[{"PutsOptions", "[", 
+       RowBox[{"TestOptionsFunction", ",", 
+        RowBox[{"{", "opts", "}"}]}], "]"}]}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\n", 
+ RowBox[{
+  RowBox[{"TestOptionsFunction", "[", 
+   RowBox[{"1", ",", "2", ",", 
+    RowBox[{"LogLevel", "\[Rule]", "6"}]}], "]"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "TestOptionsFunctionIdentity", "]"}], "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"LogLevel", "\[Rule]", "1"}], ",", 
+     RowBox[{"\"\<Indent\>\"", "\[Rule]", "\"\<``\>\""}], ",", 
+     RowBox[{"List", "\[Rule]", 
+      RowBox[{"Range", "@", "100"}]}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TestOptionsFunctionIdentity", "[", 
+    RowBox[{"a_", ",", "b_", ",", 
+     RowBox[{"opts", ":", 
+      RowBox[{"OptionsPattern", "[", "]"}]}]}], "]"}], ":=", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"PutsOptions", "[", 
+      RowBox[{"TestOptionsFunctionIdentity", ",", 
+       RowBox[{"{", "opts", "}"}], ",", 
+       RowBox[{"DisplayFunction", "\[Rule]", "Identity"}]}], "]"}]}], "]"}]}],
+   ";"}], "\[IndentingNewLine]", 
+ RowBox[{"TestOptionsFunctionIdentity", "[", 
+  RowBox[{"1", ",", "2", ",", 
+   RowBox[{"LogLevel", "\[Rule]", "12"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.5677553156415296`*^9, 3.567755485172226*^9}, {
+   3.5677560352056866`*^9, 3.567756039852952*^9}, {3.567758910158124*^9, 
+   3.5677590000302644`*^9}, {3.56775960191269*^9, 3.5677596222658544`*^9}, {
+   3.5677597338232355`*^9, 3.5677597855851955`*^9}, {3.5677598839248204`*^9, 
+   3.5677598872530107`*^9}, 3.5677599427151833`*^9}],
+
+Cell[BoxData["Short"], "Input",
+ CellChangeTimes->{{3.5677594556873264`*^9, 3.5677594565943785`*^9}}],
 
 Cell[BoxData["FilterRules"], "Input",
- CellChangeTimes->{{3.567333338863274*^9, 3.567333340512368*^9}}],
-
-Cell[BoxData[
- RowBox[{"Evaluate", "@", 
-  RowBox[{"FilterRules", "[", 
-   RowBox[{
-    RowBox[{"{", "opt", "}"}], ",", 
-    RowBox[{"Options", "[", "Puts", "]"}]}], "]"}]}]], "Input",
- CellChangeTimes->{{3.567333585734394*^9, 3.5673335883115416`*^9}}],
-
-Cell[BoxData[
- RowBox[{"FilterRules", "[", 
-  RowBox[{
-   RowBox[{"{", 
-    RowBox[{"Sequence", "[", 
-     RowBox[{
-      RowBox[{"\"\<a\>\"", "\[Rule]", "1"}], ",", 
-      RowBox[{"\"\<b\>\"", "\[Rule]", "2"}]}], "]"}], "}"}], ",", 
-   RowBox[{"{", "\"\<a\>\"", "}"}]}], "]"}]], "Input",
- CellChangeTimes->{{3.567333700506959*^9, 3.5673337148437786`*^9}, {
-  3.567333759705345*^9, 3.56733377867943*^9}}],
-
-Cell[BoxData[
- RowBox[{"PutsVar", "[", 
-  RowBox[{"1", "+", "1"}], "]"}]], "Input",
- CellChangeTimes->{{3.56733403883031*^9, 3.567334043134556*^9}}],
-
-Cell[BoxData[
- RowBox[{"ToString", "[", 
-  RowBox[{
-   RowBox[{"Short", "@", "a1"}], ",", "StandardForm"}], "]"}]], "Input",
- CellChangeTimes->{{3.5673348542429485`*^9, 3.5673348697728367`*^9}, {
-  3.5673349310103397`*^9, 3.567334959733982*^9}}],
-
-Cell[BoxData[
- RowBox[{"\[IndentingNewLine]", 
-  RowBox[{"SetOptions", "[", 
-   RowBox[{
-    RowBox[{"InputNotebook", "[", "]"}], ",", 
-    RowBox[{"PrivateNotebookOptions", "\[Rule]", 
-     RowBox[{"{", 
-      RowBox[{"\"\<FileOutlineCache\>\"", "\[Rule]", "False"}], "}"}]}], ",", 
-    RowBox[{"TrackCellChangeTimes", "\[Rule]", "False"}]}], "]"}]}]], "Input"]
+ CellChangeTimes->{{3.5677598071724305`*^9, 3.5677598088395257`*^9}}]
 },
-WindowSize->{703, 867},
-WindowMargins->{{Automatic, 41}, {Automatic, 61}},
+NotebookEventActions->{
+ "WindowClose" :> FrontEndTokenExecute["DeleteGeneratedCells"]},
+WindowSize->{1006, 483},
+WindowMargins->{{-1, Automatic}, {Automatic, 50}},
 PrivateNotebookOptions->{"FileOutlineCache"->False},
 ShowSelection->True,
 FrontEndVersion->"9.0 for Microsoft Windows (64-bit) (November 20, 2012)",

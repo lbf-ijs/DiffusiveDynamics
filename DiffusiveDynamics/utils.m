@@ -37,6 +37,16 @@ ClearAll[PutsOptions];
 PutsOptions::usage="PutsOptions[opts] Prints a readable list of options";
 
 
+ClearAll[DistributeCompiledFunction, DistributeCompiledFunctions, CompiledFunctionNames]
+
+DistributeCompiledFunction::usage="TODO";
+DistributeCompiledFunctions::usage="TODO";
+CompiledFunctionNames::usage="TODO";
+SetKernelsDirectory::usage="TODO";
+
+ClearAll[GetValues,GetValue];
+GetValues::usage="TODO";
+GetValue::usage="TODO";
 Begin["`Private`"]
 (* Implementation of the package *)
 
@@ -77,6 +87,7 @@ PutsE[name_String, data_, sparator_String:"", opt:OptionsPattern[]] :=
 
 SetAttributes[PutsOptions,HoldAll];
 Options[PutsOptions]={LogLevel->2, DisplayFunction->Shallow,"OptionIndentString"->"   "}~Join~Options@Puts;
+(*TODO set a limit options to print*)
 PutsOptions[symbol_Symbol, actualOpts_List, opts : OptionsPattern[]] := 
   (*Iterates all the options that are defined for symbol. Then gets the actual opton using option value. 
   This must be done, because default options are not put into actualOpts of OptionsPattern[]. 
@@ -127,7 +138,7 @@ SetAttributes[SymbolNamesToString,{HoldFirst,Listable}];
 SymbolNamesToString[x_] :=
     ToString[Unevaluated[x]];
 
-ClearAll[GetValues,GetValue];
+
 SetAttributes[GetValues,HoldAll];
 GetValues[values_,list_] :=
     With[ {strval = SymbolNamesToString[values]},
@@ -148,12 +159,12 @@ Unshallow[sh_] :=
         sh
     ];
 
-ClearAll[CompiledFunctionNames];
+
 CompiledFunctionNames[pattern_] :=
-    Select[Names["Global`*"], 
+    Select[Names[pattern], 
      MatchQ[Evaluate[Symbol@#], _CompiledFunction] &];
 
-ClearAll[DistributeCompiledFunction]
+
 DistributeCompiledFunction[name_] :=
     With[ {copy = Symbol[name]},
         ParallelEvaluate[
@@ -162,7 +173,7 @@ DistributeCompiledFunction[name_] :=
          ]]
     ];
 
-ClearAll[DistributeCompiledFunctions];
+
 DistributeCompiledFunctions[pattern_] :=
     DistributeCompiledFunction /@ CompiledFunctionNames[pattern];
 

@@ -1,11 +1,64 @@
 Notebook[{
 Cell[BoxData[{
  RowBox[{
-  RowBox[{"$HistoryLength", "=", "1"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"$HistoryLength", "=", "1"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+    "In", " ", "development", " ", "the", " ", "package", " ", "may", " ", 
+     "not", " ", "be", " ", "installed", " ", "correctly"}], ",", " ", 
+    RowBox[{
+    "so", " ", "add", " ", "the", " ", "right", " ", "path", " ", "just", " ",
+      "in", " ", "case"}]}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"pfn", "=", 
+       RowBox[{"ExpandFileName", "@", 
+        RowBox[{"FileNameJoin", "[", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"NotebookDirectory", "[", "]"}], ",", "\"\<..\>\"", ",", 
+           "\"\<..\>\""}], "}"}], "]"}]}]}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"!", 
+         RowBox[{"MemberQ", "[", 
+          RowBox[{"$Path", ",", "pfn"}], "]"}]}], ",", " ", 
+        RowBox[{"PrependTo", "[", 
+         RowBox[{"$Path", ",", "pfn"}], "]"}]}], "]"}], ";"}]}], 
+    "\[IndentingNewLine]", "]"}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{"Needs", "[", "\"\<Developer`\>\"", "]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"Needs", "[", "\"\<DiffusiveDynamics`\>\"", "]"}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Load", " ", "the", " ", "data", " ", "on", " ", "paralle", " ", 
+    "Kernels"}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"path", "=", "$Path"}], "}"}], ",", "\[IndentingNewLine]", 
+    RowBox[{"ParallelEvaluate", "[", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"$Path", "=", "path"}], ";", 
+      RowBox[{"(*", 
+       RowBox[{
+       "add", " ", "to", " ", "the", " ", "path", " ", "of", " ", "parallel", 
+        " ", "Kernels"}], "*)"}], "\[IndentingNewLine]", 
+      RowBox[{"$HistoryLength", "=", "1"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"Needs", "[", "\"\<Developer`\>\"", "]"}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Needs", "[", "\"\<DiffusiveDynamics`\>\"", "]"}], ";"}], 
+     "\[IndentingNewLine]", "]"}]}], "]"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{"$VerbosePrint", "=", "True"}], ";"}], 
@@ -55,10 +108,8 @@ Cell[BoxData[{
        RowBox[{"Transpose", "[", 
         RowBox[{"R", "[", 
          RowBox[{"\[Alpha]", " ", "\[Degree]"}], "]"}], "]"}]}], "]"}], 
-     "]"}]}], ";"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]"}], "Input",
- CellChangeTimes->{{3.5671673147720623`*^9, 3.567167331877041*^9}, {
-  3.567167371279295*^9, 3.567167377979678*^9}, {3.567167428385561*^9, 
-  3.567167428800585*^9}}],
+     "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]"}], "Input"],
 
 Cell[BoxData[{
  RowBox[{
@@ -70,7 +121,7 @@ Cell[BoxData[{
    RowBox[{"CELLRANGE", "=", 
     RowBox[{"{", 
      RowBox[{"1000.", ",", "500."}], "}"}]}], ";"}], 
-  "\[IndentingNewLine]"}], "\n", 
+  "\n"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"ClearAll", "[", 
    RowBox[{"DIFFX", ",", "DIFFY", ",", "ALPHA"}], "]"}], 
@@ -245,7 +296,7 @@ Cell[BoxData[{
 
 Cell[BoxData[""], "Input"],
 
-Cell[BoxData[{
+Cell[BoxData[
  RowBox[{"AbsoluteTiming", "[", "\[IndentingNewLine]", 
   RowBox[{
    RowBox[{"rw", "=", 
@@ -260,8 +311,10 @@ Cell[BoxData[{
       RowBox[{"\"\<InitialPosition\>\"", "\[Rule]", 
        RowBox[{"{", 
         RowBox[{"0.", ",", "0."}], "}"}]}], ",", 
-      RowBox[{"\"\<ProcessCount\>\"", "\[Rule]", "1"}]}], "]"}]}], ";"}], 
-  "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]", 
+      RowBox[{"\"\<ProcessCount\>\"", "\[Rule]", "6"}]}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]", "]"}]], "Input"],
+
+Cell[BoxData[
  RowBox[{"AbsoluteTiming", "[", " ", 
   RowBox[{"Export", "[", 
    RowBox[{
@@ -269,7 +322,7 @@ Cell[BoxData[{
      RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
      "\"\<Data/2D_2.10E6.mx.gz\>\""}], ",", "rw", ",", 
     RowBox[{"\"\<CompressionLevel\>\"", "\[Rule]", ".1"}]}], "]"}], 
-  "]"}]}], "Input"],
+  "]"}]], "Input"],
 
 Cell[BoxData[
  RowBox[{
@@ -307,7 +360,7 @@ Cell[BoxData[
 NotebookEventActions->{
  "WindowClose" :> FrontEndTokenExecute["DeleteGeneratedCells"]},
 WindowSize->{1006, 411},
-WindowMargins->{{8, Automatic}, {Automatic, 5}},
+WindowMargins->{{1226, Automatic}, {Automatic, 97}},
 PrivateNotebookOptions->{"FileOutlineCache"->False,
 "VersionedStylesheet"->{"Default.nb"[8.] -> False}},
 ShowSelection->True,

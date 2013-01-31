@@ -217,10 +217,10 @@ Cell[BoxData[
       RowBox[{"TrackCellChangeTimes", "\[Rule]", "False"}]}], "]"}], ";", 
     RowBox[{
     "FrontEndTokenExecute", "[", "\"\<DeleteGeneratedCells\>\"", "]"}], ";"}],
-    "\[IndentingNewLine]", 
+    "\n", 
    RowBox[{"(*", 
     RowBox[{"Auto", " ", "delete", " ", "output", " ", "on", " ", "close"}], 
-    "*)"}], "\n", 
+    "*)"}], "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{"SetOptions", "[", 
      RowBox[{
@@ -265,7 +265,7 @@ Cell[BoxData[{
       RowBox[{"PutsOptions", "[", 
        RowBox[{"TestOptionsFunction", ",", 
         RowBox[{"{", "opts", "}"}]}], "]"}]}], "]"}]}], ";"}], 
-  "\[IndentingNewLine]"}], "\n", 
+  "\n"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"TestOptionsFunction", "[", 
    RowBox[{"1", ",", "2", ",", 
@@ -308,7 +308,53 @@ Cell[BoxData["Short"], "Input",
  CellChangeTimes->{{3.5677594556873264`*^9, 3.5677594565943785`*^9}}],
 
 Cell[BoxData["FilterRules"], "Input",
- CellChangeTimes->{{3.5677598071724305`*^9, 3.5677598088395257`*^9}}]
+ CellChangeTimes->{{3.5677598071724305`*^9, 3.5677598088395257`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", 
+   RowBox[{"testPPrint", ",", "testPPrintHold"}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"testPPrint", "[", "data_", "]"}], ":=", 
+   RowBox[{"ParallelEvaluate", "[", 
+    RowBox[{
+     RowBox[{"Print", "@", 
+      RowBox[{"Shallow", "@", "data"}]}], ";", 
+     RowBox[{"Developer`PackedArrayQ", "@", "data"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"SetAttributes", "[", 
+   RowBox[{"testPPrintHold", ",", "HoldFirst"}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"testPPrintHold", "[", "data_", "]"}], ":=", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{"ParallelEvaluate", "[", 
+     RowBox[{
+      RowBox[{"Print", "@", 
+       RowBox[{"Shallow", "@", "data"}]}], ";", 
+      RowBox[{"Print", "@", 
+       RowBox[{"Developer`PackedArrayQ", "@", "data"}]}]}], "]"}], ";", 
+    RowBox[{"ToString", "@", 
+     RowBox[{"Unevaluated", "@", "data"}]}]}], ")"}]}]}], "Input",
+ CellChangeTimes->{{3.5681240274256372`*^9, 3.5681241468304667`*^9}, {
+  3.5681242178715305`*^9, 3.568124279792072*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"data", "=", 
+   RowBox[{"Range", "@", "5"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"testPPrint", "@", "data"}]}], "Input",
+ CellChangeTimes->{{3.5681241558999853`*^9, 3.5681241760101357`*^9}, {
+  3.568124290933709*^9, 3.5681242972890725`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"testPPrintHold", "@", "data"}]], "Input",
+ CellChangeTimes->{{3.568124183898587*^9, 3.5681241846806316`*^9}, {
+  3.568124301346305*^9, 3.568124322082491*^9}}]
 },
 NotebookEventActions->{
  "WindowClose" :> FrontEndTokenExecute["DeleteGeneratedCells"]},

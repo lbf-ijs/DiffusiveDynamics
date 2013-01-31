@@ -37,7 +37,7 @@ See GenerateDiffusionTrajectory2D for further info.
 
 OPTIONS:
 \"ProcessCount\"-> 2$ProcessorCount -- Number of independent difussion processe that get started in seperate threads
-\"InitialPositions\"->Random        -- takes a list of points or the default, Random, which generates uniformly randommly distributed points in the cell
+\"InitialPositions\"->Automatic        -- takes a list of points or the default, Automatic, which generates uniformly randommly distributed points in the cell
 "; 
 
 
@@ -47,13 +47,13 @@ Begin["`Private`"]
 
 
 Options[GenerateDiffusionTrajectory2D] = {"InitialPosition"->{0.,0.} (*The starting point for the trajectory*),
-	                                      "Verbose"->False, (*Log output*)
+	                                      "Verbose":>$VerbosePrint, (*Log output*)
 	                                      "VerboseLevel":>$VerboseLevel  (*Verbosity of the output. Automatic is $VerboseLevel*)
 	                                      };
 
 GenerateDiffusionTrajectory2D[steps_Integer, DiffX_, DiffY_, DiffA_, F_, kT_?NumberQ, dt_?NumberQ, 
 	                         {min_,max_},opt:OptionsPattern[]] :=
-Block[{$VerbosePrint=$VerbosePrint||OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseLevel"],$VerboseIndentLevel=$VerboseIndentLevel+1},   
+Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseLevel"],$VerboseIndentLevel=$VerboseIndentLevel+1},   
 	Module[ {data(*data for the diffusive process trajectory *),
     	     g (*steps*2 array of gausian random values*), width,halfwidth (*cell info*),
     	     DD (*2D diagonal difusion tensor (DiffX, DiffY)*),
@@ -64,7 +64,7 @@ Block[{$VerbosePrint=$VerbosePrint||OptionValue["Verbose"], $VerboseLevel=Option
     	     stepfunctionexp(*the step function expression*),
     	     stepfunction (*the compiled step function*),
     	     x,y,g1,g2 (*temporary variables used in compilation of the step function*)},
-                
+     
         Puts["***GenerateDiffusionTrajectory2D***"];
         PutsOptions[GenerateDiffusionTrajectory2D,{opt}];
         
@@ -139,11 +139,11 @@ Block[{$VerbosePrint=$VerbosePrint||OptionValue["Verbose"], $VerboseLevel=Option
 
 ClearAll[ParallelGenerateDiffusionTrajectory2D];
 Options[ParallelGenerateDiffusionTrajectory2D] = {"ProcessCount":> 2$ProcessorCount, (*Number of independent difussion processe that get started*)
-                                                  "InitialPositions"->Random  (*takes a list of points or the default, Random, which generates uniformly randommly distributed points*)
+                                                  "InitialPositions"->Automatic  (*takes a list of points or the default, Random, which generates uniformly randommly distributed points*)
                                                   }~Join~Options[GenerateDiffusionTrajectory2D] ;
 
 ParallelGenerateDiffusionTrajectory2D[steps_Integer,DiffX_,DiffY_,DiffA_,F_,kT_?NumberQ,dt_?NumberQ,{min_,max_},opt:OptionsPattern[]] :=
-Block[{$VerbosePrint=$VerbosePrint||OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseLevel"],$VerboseIndentLevel=$VerboseIndentLevel+1},   
+Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseLevel"],$VerboseIndentLevel=$VerboseIndentLevel+1},   
     Module[ {initialPoints,numPoints,stepsPerPoint},
         Puts["***ParallelGenerateDiffusionTrajectory2D***"];
         PutsOptions[ParallelGenerateDiffusionTrajectory2D,{opt}];
@@ -152,7 +152,7 @@ Block[{$VerbosePrint=$VerbosePrint||OptionValue["Verbose"], $VerboseLevel=Option
         stepsPerPoint = Round[steps/numPoints];
         initialPoints=OptionValue["InitialPositions"];
         (*Generate initial points*)
-        If[ initialPoints===Random, (*then*)
+        If[ initialPoints===Automatic, (*then*)
            initialPoints = Transpose[{RandomReal[{min[[1]],max[[1]]},numPoints],
            	                          RandomReal[{min[[2]],max[[2]]},numPoints]}];,
            (*else*)
@@ -168,17 +168,20 @@ Block[{$VerbosePrint=$VerbosePrint||OptionValue["Verbose"], $VerboseLevel=Option
            ];
        ];
         PutsE["InitialPoints (recalc):\n",initialPoints,LogLevel->2];
-        (*I don't really know what needs to be distributed...*)
-        DistributeDefinitions[GenerateDiffusionTrajectory2D,RotMatrix2D,GradMatrix2D];
-        ParallelMap[
-          GenerateDiffusionTrajectory2D[stepsPerPoint,DiffX,DiffY,DiffA,F,kT,dt,{min,max}, 
-          	                       "InitialPosition"->#]&,
-        initialPoints]
-    ]
+
+
+		(*Inject the values into ParallelMap using With, so they don't have to be distribuated*)
+		With[ {istepsPerPoint = stepsPerPoint, iDiffX = DiffX, iDiffY = DiffY ,iDiffA = DiffA, iF = F,
+		       ikT = kT,idt = dt,imin = min, imax = max, iOptions=FilterRules[{opt},Options@GenerateDiffusionTrajectory2D]},
+            ParallelMap[
+              GenerateDiffusionTrajectory2D[istepsPerPoint,iDiffX,iDiffY,iDiffA,iF,ikT,idt,{imin,imax}, 
+                                         "InitialPosition"->#,iOptions]&,
+            initialPoints]]
+    ] 
 ];
 Clear[RotMatrix2D];
 (*Returns a 2D rotation matrix. Angle given in degrees*) 
-RotMatrix2D = Compile[{\[Alpha]},{{Cos[\[Alpha]*\[Degree]],-Sin[\[Alpha]*\[Degree]]},{Sin[\[Alpha]*\[Degree]],Cos[\[Alpha]*\[Degree]]}}];
+RotMatrix2D = Compile[{a},{{Cos[a*Degree],-Sin[a*Degree]},{Sin[a*Degree],Cos[a*Degree]}}];
 Clear[GradMatrix2D];
 GradMatrix2D::usage="GradMatrix2D[mat_,x_,y_] returns the gradient derivative of the matrix 
 

@@ -1,0 +1,180 @@
+Notebook[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"On", "@", "Assert"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Short", "@", 
+  RowBox[{"GetBinCenters", "[", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "5"}], ",", "5", ",", "1"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "10"}], ",", "10", ",", "2"}], "}"}]}], "}"}], 
+   "]"}]}]}], "Input",
+ CellChangeTimes->{{3.5681146764697933`*^9, 3.5681146918386726`*^9}, {
+  3.568114835947915*^9, 3.5681148384210567`*^9}, {3.5681154166171274`*^9, 
+  3.568115421096383*^9}, {3.568117052063669*^9, 3.5681170618722305`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{"Short", "@", 
+  RowBox[{"GetBinCentersAndWidths", "[", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "5"}], ",", "5", ",", "1"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "10"}], ",", "10", ",", "2"}], "}"}]}], "}"}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Dimensions", "@", 
+  RowBox[{"GetBinCentersAndWidths", "[", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "5"}], ",", "5", ",", "1"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "10"}], ",", "10", ",", "2"}], "}"}]}], "}"}], 
+   "]"}]}]}], "Input",
+ CellChangeTimes->{{3.5681148989885206`*^9, 3.5681149076450157`*^9}, 
+   3.568114979473124*^9, 3.568115114007819*^9, {3.5681152335296555`*^9, 
+   3.5681152456043463`*^9}, {3.5681163144144783`*^9, 3.5681163200958033`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Short", "@", 
+  RowBox[{"GetBinsAsRectangles", "@", 
+   RowBox[{"GetBinCentersAndWidths", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", "5"}], ",", "5", ",", "1"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", "10"}], ",", "10", ",", "2"}], "}"}]}], "}"}], 
+    "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.568115220361902*^9, 3.5681152218889894`*^9}, 
+   3.5681152669465666`*^9, {3.5681154993478594`*^9, 3.5681155086733923`*^9}, {
+   3.568115541060245*^9, 3.568115543350376*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Graphics", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"FaceForm", "@", 
+      RowBox[{"{", 
+       RowBox[{"Opacity", "[", "0", "]"}], "}"}]}], ",", 
+     RowBox[{"EdgeForm", "[", 
+      RowBox[{"{", 
+       RowBox[{"Thick", ",", "Red"}], "}"}], "]"}]}], "}"}], "~", "Join", "~", 
+   RowBox[{"GetBinsAsRectangles", "@", 
+    RowBox[{"GetBinCentersAndWidths", "[", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"-", "10"}], ",", "10", ",", "2"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"-", "5"}], ",", "5", ",", "1"}], "}"}]}], "}"}], "]"}]}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.568115220361902*^9, 3.5681152218889894`*^9}, 
+   3.5681152669465666`*^9, {3.5681154993478594`*^9, 3.5681155086733923`*^9}, {
+   3.5681156442321463`*^9, 3.5681156968761573`*^9}, 3.5681174800401487`*^9}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$VerbosePrint", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"DrawBinsAsRectangles", "[", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"-", "10"}], ",", "10", ",", "2"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"-", "5"}], ",", "5", ",", "1"}], "}"}]}], "}"}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.5681172484169*^9, 3.568117261967675*^9}, {
+  3.568117369258812*^9, 3.568117382091546*^9}, {3.5681174695045457`*^9, 
+  3.5681174722307014`*^9}}],
+
+Cell[BoxData["Rest"], "Input",
+ CellChangeTimes->{{3.5681176143148284`*^9, 3.5681176146858497`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$VerbosePrint", "=", "True"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"DrawBinsAsRectangles", "[", 
+  RowBox[{"GetBinCentersAndWidths", "[", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "10"}], ",", "10", ",", "2"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "5"}], ",", "5", ",", "1"}], "}"}]}], "}"}], "]"}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.5681175014633737`*^9, 3.568117503345481*^9}, {
+  3.568117589778425*^9, 3.568117590148446*^9}}],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.568117555824483*^9, 3.568117558645644*^9}, 
+   3.568117592105558*^9}],
+
+Cell[CellGroupData[{
+
+Cell["misc", "Subtitle"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"For", " ", "easier", " ", "storage", " ", "in", " ", "Git"}], 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"SetOptions", "[", 
+     RowBox[{
+      RowBox[{"InputNotebook", "[", "]"}], ",", 
+      RowBox[{"PrivateNotebookOptions", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{"\"\<FileOutlineCache\>\"", "\[Rule]", "False"}], "}"}]}], 
+      ",", 
+      RowBox[{"TrackCellChangeTimes", "\[Rule]", "False"}]}], "]"}], ";", 
+    RowBox[{
+    "FrontEndTokenExecute", "[", "\"\<DeleteGeneratedCells\>\"", "]"}], ";"}],
+    "\n", 
+   RowBox[{"(*", 
+    RowBox[{"Auto", " ", "delete", " ", "output", " ", "on", " ", "close"}], 
+    "*)"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"SetOptions", "[", 
+    RowBox[{
+     RowBox[{"EvaluationNotebook", "[", "]"}], ",", 
+     RowBox[{"NotebookEventActions", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"\"\<WindowClose\>\"", "\[RuleDelayed]", 
+        RowBox[{
+        "FrontEndTokenExecute", "[", "\"\<DeleteGeneratedCells\>\"", "]"}]}], 
+       "}"}]}]}], "]"}], ";"}], "\[IndentingNewLine]"}]], "Input"]
+}, Open  ]]
+},
+NotebookEventActions->{
+ "WindowClose" :> FrontEndTokenExecute["DeleteGeneratedCells"]},
+WindowSize->{703, 867},
+WindowMargins->{{Automatic, 59}, {Automatic, 68}},
+PrivateNotebookOptions->{"FileOutlineCache"->False},
+FrontEndVersion->"9.0 for Microsoft Windows (64-bit) (November 20, 2012)",
+StyleDefinitions->"Default.nb",
+$CellContext`TrackCellChangeTimes -> False
+]
+

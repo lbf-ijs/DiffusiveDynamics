@@ -267,7 +267,7 @@ GetDiffsFromSteps[data_,dt_,ds_] :=  Block[{$VerboseIndentLevel = $VerboseIndent
             (*We fitted the principal sigmas... transform into diffusion and devide by StepsDelta*)
             {rDx,rDy} = ({rDx,rDy}^2)/(2 dt)/ds;
         ];
-        {"Dx"->rDx,"Dy"->rDy,"D\[Alpha]"->rDa,"\[Mu]x"->ux,"\[Mu]y"->uy,"PValue"->pVal,"IsNormal"->isNormal}
+        {"Dx"->rDx,"Dy"->rDy,"Da"->rDa,"ux"->ux,"uy"->uy,"PValue"->pVal,"IsNormal"->isNormal}
     ]
 ];
 
@@ -555,8 +555,8 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
 
 ClearAll@GetDiffusionInfoForBinFromParameters;
 GetDiffusionInfoForBinFromParameters[{{x_,y_},{dx_,dy_}},DiffX_,DiffY_,DiffA_]:=
- {"Dx"->DiffX[x,y],"Dy"->DiffY[x,y],"D\[Alpha]"->DiffA[x,y],
-  "x"->x,"y"->y,"xWidth"->dx,"yWidth"->dy, "\[Mu]x"->0,"\[Mu]y"->0,
+ {"Dx"->DiffX[x,y],"Dy"->DiffY[x,y],"Da"->DiffA[x,y],
+  "x"->x,"y"->y,"xWidth"->dx,"yWidth"->dy, "ux"->0,"uy"->0,
   "StepsHistogram"->Null,"StepsInBin"->0,"StepDelta"->0};
 (*TODO: Perhaps I could fill a Gaussian StepsHistogram. StepDelta could be passed in as an option.  *)
 Options@GetDiffusionInfoFromParameters = {

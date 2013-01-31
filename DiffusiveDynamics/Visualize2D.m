@@ -225,7 +225,7 @@ Block[ {$VerbosePrint = $VerbosePrint||OptionValue["Verbose"], $VerboseLevel = O
     Module[{values,reps,cellRange,bins,plotRange,aspectRatio},
         Puts["********DrawDiffusionTensorRepresentations********"];
         PutsOptions[DrawDiffusionTensorRepresentations,{opts},LogLevel->2];
-        values=GetValues[{"x","y","Dx","Dy","D\[Alpha]"},diffInfos];
+        values=GetValues[{"x","y","Dx","Dy","Da"},diffInfos];
 		PutsE["DiffValues:\n",values,LogLevel->3];     
 		
 		reps=Get2DTensorRepresentation[#[[3]],#[[4]],#[[5]],Center->#[[1;;2]],"ShapeType"->OptionValue["ShapeType"],Scale->OptionValue["Scale"]]&/@values;

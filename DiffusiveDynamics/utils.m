@@ -47,6 +47,12 @@ SetKernelsDirectory::usage="TODO";
 ClearAll[GetValues,GetValue];
 GetValues::usage="TODO";
 GetValue::usage="TODO";
+
+
+ClearAll[LetL];
+LetL::usage="LetL[const, body] implements nested With blocks for each constant. 
+So it is possible to use previous constants in the definition of next constants."
+
 Begin["`Private`"]
 (* Implementation of the package *)
 
@@ -182,6 +188,21 @@ ClearAll[SetKernelsDirectory];
 SetKernelsDirectory[dir_] :=
     ParallelEvaluate[SetDirectory[dir]];
 
+
+
+SetAttributes[LetL, HoldAll];
+SyntaxInformation[LetL] = {
+   "ArgumentsPattern" -> {_, _}, 
+   "LocalVariables" -> {"Solve", {1, Infinity}}
+};
+LetL /: Verbatim[SetDelayed][lhs_, rhs : HoldPattern[LetL[{__}, _]]] :=
+   Block[{With}, Attributes[With] = {HoldAll};
+     lhs := Evaluate[rhs]];
+LetL[{}, expr_] := expr;
+LetL[{head_}, expr_] := With[{head}, expr];
+LetL[{head_, tail__}, expr_] := 
+  Block[{With}, Attributes[With] = {HoldAll};
+    With[{head}, Evaluate[LetL[{tail}, expr]]]];
 
 End[]
 

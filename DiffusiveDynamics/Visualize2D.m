@@ -4,13 +4,15 @@ BeginPackage["DiffusiveDynamics`Visualize2D`",{"DiffusiveDynamics`Utils`"}]
 (* Exported symbols added here with SymbolName::usage *)  
 
    
-ClearAll[DiffusionParameters2DPlots, QucikDensityHistogram];
+ClearAll[DiffusionParameters2DPlots, QucikDensityHistogram, Draw2DHistogram, Draw3DHistogram];
 DiffusionParameters2DPlots::usage="DiffusionParameters2DPlots[Dx,Dy,Da,Energy,CellRange] plots the diffuzion parameter functions. Dx, Dy, Dy, Energy are functions of two coordinates";
    
 QucikDensityHistogram::usage="QucikDensityHistogram[data, binspec, hspec] Draws a 2D histogram that renders quicjer than the built in.";
-  
+Draw2DHistogram::usage="Draw2DHistogram[bindata] Draws a discrete density 2D plot";
+Draw3DHistogram::usage="Draw3DHistogram[bindata] Draws a 3D barchart kind histogram";    
+DrawSmooth3DHistogram::usage="TODO";
 (*Gets the bin centers and widths from binspec*)
-ClearAll[GetBinCenters, GetBinCentersAndWidths, GetBinsAsRectangles, DrawBinsAsRectangles,GetBinsFromBinsOrSpec];
+ClearAll[GetBinCenters, GetBinCentersAndWidths, GetBinsAsRectangles, DrawBinsAsRectangles,GetBinsFromBinsOrSpec,GetBinCentersAndWidthsFromDiffusionInfo];
 GetBinCenters         ::usage="GetBinCenters[binSpec] \nGets bin centers from binSpec {{minX,maxY,dx},{minY,maxY,dy}}";
 GetBinCentersAndWidths::usage="GetBinCentersAndWidths[binSpec] \nGets bin centers and widths from binSpec {{minX,maxY,dx},{minY,maxY,dy}}";
 GetBinsAsRectangles   ::usage="GetBinsAsRectangles[bins] gets rectangles from bins {{{x,y},{dx,dy}},..}";
@@ -19,9 +21,13 @@ draws the bins from a binSpec {{minX,maxY,dx},{minY,maxY,dy}} or from raw bins  
 GetCellRangeFromBins::usage="GetCellRangeFromBins[bins] get the cellrange in the form {{minX,MinY},{MaxX,MaxY}}"
 GetBinsFromBinsOrSpec::usage="GetBinsFromBinsOrSpec[binsOrSpec] Gets the bins {{{x,y},{dx,dy}},..} from binspec  {{minX,maxY,dx},{minY,maxY,dy}}. If a list of bins is passed, just return the bins."
 
-ClearAll[GetDiffFrom2DTensor, Get2DTensorRepresentation, DrawDiffusionTensorRepresentations];
+GetBinCentersAndWidthsFromDiffusionInfo::usage="GetBinCentersAndWidthsFromDiffusionInfo[diffinfo] Gets the bins from a list of diffusion info";
+
+ClearAll[GetDiffFrom2DTensor,Get2DTensorFromDiff, Get2DTensorRepresentation, DrawDiffusionTensorRepresentations];
 GetDiffFrom2DTensor::usage="GetDiffFrom2DTensor[D2tensor] returns {Dx,Dy,Dalpha} from the 2D tensor."
+Get2DTensorFromDiff::uasge="Get2DTensorFromDiff[Dx, Dy, Da] returns a 2D tensor that represents the covariance matrix of the bivariate normal Gaussian distribution."
 Get2DTensorRepresentation::usage="Draws a represnetation of the diffusion tensor from the tensor or the diffusion points Dx, Dy, Da."; 
+
 DrawDiffusionTensorRepresentations::usage="DrawDiffusionTensorRepresentations[diffInfos, cellRange] 
 takes a list of diffusion info rules and plots the tensor represntation in each bin."
 
@@ -45,6 +51,105 @@ QucikDensityHistogram[data_,binspec_,hspec_:Automatic] :=
                               ]&),
               PlotRange->Full, ImageSize->Medium]
     ];
+    
+    
+    
+
+SetAttributes[Draw2DHistogram,HoldFirst];
+Draw2DHistogram[bindata_] :=
+    Block[ {bins,counts,datarange,wh},
+        If[ Length[bindata]===0,
+            Return[Missing[]]
+        ];
+        {bins,counts} = bindata;
+        datarange = bins[[All,{1,-1}]];
+        wh = Flatten[Differences[#]&/@datarange];
+        ListContourPlot[Transpose@counts,InterpolationOrder->0,DataRange->datarange,AspectRatio->wh[[2]]/wh[[1]],
+              ColorFunction->(If[ #<.1,
+                                  White,
+                                  ColorData[{"SolarColors","Reverse"}][#]
+                              ]&),
+              PlotRange->Full, ImageSize->Medium]
+    ];
+        
+
+SetAttributes[Draw3DHistogram,HoldFirst];
+Options[Draw3DHistogram]={"PlotColor" -> Directive[Blue],(*The color used for the histogram*)
+    					  "FillStyle" -> Automatic,  
+    					  "OutlineStyle" -> Automatic,
+    					  Axes -> True,
+    					  BoxRatios -> Automatic, (*Wil make the x and y units 1 to 1*)
+						  "Verbose":>$VerbosePrint,  (*Log output*)
+ 					      "VerboseLevel":>$VerboseLevel
+            }~Join~Options@Graphics3D;
+Draw3DHistogram[bindata_, opts:OptionsPattern[]] :=
+    Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1,
+            bins,counts,datarange,wh, maxC, cuboids,i,j,color, fillStyle, outlineStyle, boxRatios, injectedOptions},
+        If[ Length[bindata]===0,
+            Return[Missing[]]
+        ];
+        Puts["***Draw3DHistogram***"];
+        PutsOptions[Draw3DHistogram,{opts},LogLevel->2];
+        {bins,counts} = bindata;
+        PutsE[bins,LogLevel->3];
+		PutsE[counts,LogLevel->3];
+        datarange = bins[[All,{1,-1}]];
+        wh = Flatten[Differences[#] & /@ datarange];
+        maxC = Max@counts;
+        (*get the cuboids. Iterate over the bins and take the appropriate counts*)
+
+        cuboids = N@Flatten[
+        	Table[Cuboid[{bins[[1, i]], bins[[2, j]], 0}, {bins[[1, i + 1]], bins[[2, j + 1]], counts[[i, j]]}],
+        	  {i, Length@bins[[1]]-1}, {j, Length@bins[[2]]-1}]
+        	, 1];
+        (*take only non-flat cuboids (more than 1% of highest cuboid)*)
+		cuboids = Select[cuboids, #[[2, 3]]/maxC > .01 &];	
+        color = OptionValue@"PlotColor";
+        boxRatios = If[#===Automatic, {wh[[1]]/wh[[2]], 1, 1}, #]&@OptionValue@BoxRatios;
+        fillStyle = If[#===Automatic, Directive[color,Opacity@.5], #]&@OptionValue@"FillStyle";
+        outlineStyle= If[#===Automatic, Directive[color,Opacity@.8], #]&@OptionValue@"OutlineStyle";
+        injectedOptions=FilterRules[{opts}~Join~Options@Draw3DHistogram,Options@Graphics3D];
+        
+        Graphics3D[{EdgeForm@outlineStyle, FaceForm@fillStyle}~Join~cuboids, BoxRatios -> boxRatios, injectedOptions]	
+    ];    
+
+ClearAll[DrawSmooth3DHistogram];
+SetAttributes[DrawSmooth3DHistogram,HoldFirst];
+Options[DrawSmooth3DHistogram]={"PlotColor" -> Directive[Blue],(*The color used for the histogram*)
+    					  "FillStyle" -> Automatic,  
+    					  "OutlineStyle" -> Automatic,
+    					  Axes -> True,
+    					  BoxRatios -> Automatic, (*Wil make the x and y units 1 to 1*)
+						  "Verbose":>$VerbosePrint,  (*Log output*)
+ 					      "VerboseLevel":>$VerboseLevel
+            }~Join~Options@ListPlot3D;
+DrawSmooth3DHistogram[bindata_, opts:OptionsPattern[]] :=
+    Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1,
+            bins,counts,datarange,wh, maxC, points,i,j,color, fillStyle, outlineStyle, boxRatios, injectedOptions},
+        If[ Length[bindata]===0,
+            Return[Missing[]]
+        ];
+        Puts["***Draw3DDrawSmooth3DHistogram***"];
+        PutsOptions[DrawSmooth3DHistogram,{opts},LogLevel->2];
+        {bins,counts} = bindata;
+        PutsE[bins,LogLevel->3];
+		PutsE[counts,LogLevel->3];
+        datarange = bins[[All,{1,-1}]];
+        wh = Flatten[Differences[#] & /@ datarange];
+       (*get the bin centers and counts*)
+		points=Flatten[
+		     Table[{(bins[[1, i]] + bins[[1, i + 1]])/2, (bins[[2, j]] + bins[[2, j + 1]])/2, counts[[i, j]]}, 
+		       {i, Length@bins[[1]]-1}, {j, Length@bins[[2]]-1}],
+		     1];
+        color = OptionValue@"PlotColor";
+        boxRatios = If[#===Automatic, {wh[[1]]/wh[[2]], 1, 1}, #]&@OptionValue@BoxRatios;
+        fillStyle = If[#===Automatic, Directive[color,Opacity@.5], #]&@OptionValue@"FillStyle";
+        outlineStyle= If[#===Automatic, Directive[color,Opacity@.8], #]&@OptionValue@"OutlineStyle";
+        injectedOptions=FilterRules[{opts}~Join~Options@Draw3DHistogram,Options@ListPlot3D];
+        
+        ListPlot3D[points, PlotStyle->fillStyle,MeshStyle->outlineStyle,BoxRatios->boxRatios,injectedOptions]
+        	
+    ];   
 
 ClearAll[ShowStepsDensityHistogram];
 ShowStepsDensityHistogram[steps_] :=
@@ -136,6 +241,9 @@ DrawBinsAsRectangles[binsOrBinSpec_,opts:OptionsPattern[]]:=
     ]; 
 
 
+SetAttributes[GetBinCentersAndWidthsFromDiffusionInfo,HoldFirst];
+GetBinCentersAndWidthsFromDiffusionInfo[diffInfos_]:=
+    GetValues[{{"x", "y"}, {"xWidth", "yWidth"}}, diffInfos[[All, 1]]]
 (*takes a list of bins {{{x,y},{dx,dy}},..} and returns cellRange {{minX,minY},{MaxX,MaxY}}*)
 (*Todo can be compiled if necessary*)
 GetCellRangeFromBins[bins_]:= 
@@ -160,6 +268,8 @@ GetDiffFrom2DTensor[tensor_] :=
         Return[{Dx,Dy,alpha}]
     ];
 
+Get2DTensorFromDiff[Dx_,Dy_,Da_]:=
+	RotationMatrix[Da*Degree].{{1/Dx^2, 0}, {0, 1/Dy^2}}.RotationMatrix[-Da*Degree];
 
 Options[Get2DTensorRepresentation] = {"Center"->{0,0},"ShapeType"->"Disk","Scale"->1,"Verbose"->False};
 Get2DTensorRepresentation[Dx_,Dy_,alpha_,opt:OptionsPattern[]] :=
@@ -213,6 +323,9 @@ Options[DrawDiffusionTensorRepresentations] = {
                                     "Scale"->6,
                                     "ShapeType"->"Disk",
                                     "CellRange"->Automatic,
+                                    "MarkNonNormal" -> False, (*Should non normal distributions be marked?*)
+                                    "NonNormalFillStyle"->Directive[Red,Opacity@.5],
+                                    "NonNormalOutlineStyle"->None,
                                     "Verbose":>$VerbosePrint,  (*Log output*)
 						            "VerboseLevel":>$VerboseLevel,
 						            Axes->True,
@@ -221,19 +334,27 @@ Options[DrawDiffusionTensorRepresentations] = {
 						            AspectRatio->Automatic
 						            }~Join~Options@Graphics;
 DrawDiffusionTensorRepresentations[diffInfos_,opts:OptionsPattern[]] :=
-Block[ {$VerbosePrint = $VerbosePrint||OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1},
-    Module[{values,reps,cellRange,bins,plotRange,aspectRatio},
+Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1},
+    Module[{values,reps,nonNormalReps,nonNormals,cellRange,bins,plotRange,aspectRatio},
         Puts["********DrawDiffusionTensorRepresentations********"];
         PutsOptions[DrawDiffusionTensorRepresentations,{opts},LogLevel->2];
+        
         values=GetValues[{"x","y","Dx","Dy","Da"},diffInfos];
-		PutsE["DiffValues:\n",values,LogLevel->3];     
-		
+		PutsE["DiffValues:\n",values,LogLevel->3];
+		     
+		nonNormals=GetValues["IsNormal",diffInfos];
+		PutsE["nonNormals:\n",nonNormals,LogLevel->3];
 		reps=Get2DTensorRepresentation[#[[3]],#[[4]],#[[5]],Center->#[[1;;2]],"ShapeType"->OptionValue["ShapeType"],Scale->OptionValue["Scale"]]&/@values;
 		PutsE["reps:\n",reps,LogLevel->3]; 
         
+        nonNormalReps=If[OptionValue@"MarkNonNormal"
+            ,(*then*)
+            Get2DTensorRepresentation[#[[3]],#[[4]],#[[5]],Center->#[[1;;2]],"ShapeType"->OptionValue["ShapeType"],Scale->OptionValue["Scale"]]&/@Pick[values,nonNormals,False]
+            ,(*else return empty list*){}];
+            (*Todo: should perhaps delete the normal reps?*)
         bins=GetValues[{{"x", "y"}, {"xWidth", "yWidth"}},diffInfos];
         cellRange=If[#===Automatic, GetCellRangeFromBins@bins,#]&@OptionValue@"CellRange";
-        plotRange=If[#===Automatic, Transpose@cellRange,#]&@OptionValue@"CellRange";
+        plotRange=If[#===Automatic, Transpose@cellRange,#]&@OptionValue@PlotRange;
         aspectRatio=If[#===Automatic,((plotRange[[2,2]]-plotRange[[2,1]])/(plotRange[[1,2]]-plotRange[[1,1]])),#]&@OptionValue@"AspectRatio";
         PutsE["cellRange: ",cellRange,LogLevel->2];
         PutsE["plotRange: ",plotRange,LogLevel->2];
@@ -241,7 +362,8 @@ Block[ {$VerbosePrint = $VerbosePrint||OptionValue["Verbose"], $VerboseLevel = O
         Puts["Passed Options:", {FilterRules[{opts}~Join~Options@DrawDiffusionTensorRepresentations,Options@Graphics]},LogLevel->5];
         
         Graphics[
-        	{FaceForm@OptionValue["FillStyle"],EdgeForm@OptionValue["OutlineStyle"]}~Join~reps,
+        	{FaceForm@OptionValue["FillStyle"],EdgeForm@OptionValue["OutlineStyle"]}~Join~reps~Join~
+        	{FaceForm@OptionValue["NonNormalFillStyle"],EdgeForm@OptionValue["NonNormalOutlineStyle"]}~Join~nonNormalReps,
         	PlotRange->plotRange,AspectRatio->aspectRatio,FilterRules[{opts}~Join~Options@DrawDiffusionTensorRepresentations,Options@Graphics]]
     ]
 ]

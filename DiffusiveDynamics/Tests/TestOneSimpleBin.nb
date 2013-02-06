@@ -74,13 +74,13 @@ Cell[BoxData[{
     RowBox[{
      RowBox[{"{", 
       RowBox[{
-       RowBox[{"Cos", "[", "\[Alpha]", "]"}], ",", 
+       RowBox[{"Cos", "[", "\[Alpha]", " ", "]"}], ",", 
        RowBox[{"-", 
-        RowBox[{"Sin", "[", "\[Alpha]", "]"}]}]}], "}"}], ",", 
+        RowBox[{"Sin", "[", "\[Alpha]", " ", "]"}]}]}], "}"}], ",", 
      RowBox[{"{", 
       RowBox[{
-       RowBox[{"Sin", "[", "\[Alpha]", "]"}], ",", 
-       RowBox[{"Cos", "[", "\[Alpha]", "]"}]}], "}"}]}], "}"}]}], 
+       RowBox[{"Sin", "[", "\[Alpha]", " ", "]"}], ",", 
+       RowBox[{"Cos", "[", "\[Alpha]", " ", "]"}]}], "}"}]}], "}"}]}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
@@ -111,10 +111,12 @@ Cell[BoxData[{
       RowBox[{"Transpose", "[", 
        RowBox[{"R", "[", 
         RowBox[{"\[Alpha]", " ", "\[Degree]"}], "]"}], "]"}]}], "]"}]}], 
-   ";"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]"}], "Input",
+   ";"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", "RotationMatrix"}], \
+"Input",
  CellGroupingRules->{GroupTogetherGrouping, 10000.},
  InitializationCell->True,
- CellChangeTimes->{{3.5686137054631243`*^9, 3.568613706492183*^9}}]
+ CellChangeTimes->{{3.5686137054631243`*^9, 3.568613706492183*^9}, {
+   3.5686411917892523`*^9, 3.56864121238343*^9}, 3.56864147358737*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{

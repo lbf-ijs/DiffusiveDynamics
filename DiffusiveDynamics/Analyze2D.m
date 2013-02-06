@@ -8,7 +8,20 @@ BeginPackage["DiffusiveDynamics`Analyze2D`",{"DiffusiveDynamics`Utils`","Diffusi
 $Analyze2DCompilationTarget="C";
 
 ClearAll[GetDiffusionInBin];
-GetDiffusionInBin::usage="TODO"
+GetDiffusionInBin::usage="GetDiffusionInBin
+Diffusion info contains:
+x,y,   -- the positiopn of the bin 
+ux,uy  -- the mean of the distribution
+Dx,Dy  -- the diffusion in the principal x and y directions.
+Da     -- the rotation of Dx to the x axis  
+Stride -- how many steps are steps are joined into one step.
+xWidth, 
+yWidth -- the widths of the bin
+StepsInBin     -- how many steps in are in this bin
+StepsHistogram -- draw the histogram of steps
+PValue,IsNormal-- The PValue and the outcome of the normality test.
+" 
+
 
 ClearAll[GetDiffusionInBins]
 GetDiffusionInBins::usage="TODO"
@@ -33,6 +46,8 @@ Begin["`Private`"]
 
  
 (*SetAttributes[GetDiffusionInBin,HoldFirst];*)
+
+
 
 Options[GetDiffusionInBin] = {"Verbose":>$VerbosePrint,  (*Log output*)
 						   "VerboseLevel":>$VerboseLevel,(*The amount of details to log. Higher number means more details*)
@@ -122,10 +137,10 @@ GetDiffsFromBinnedPoints[binnedInd_,rwData_,dt_,{min_,max_},{cellMin_,cellMax_},
 
             PutsE["Steps:\n",steps,LogLevel->5];
 
-            GetDiffsFromSteps[steps,dt, OptionValue["Stride"]]~Join~{"StepDelta"->OptionValue["Stride"], "x"->bincenter[[1]], "y"->bincenter[[2]],
+            GetDiffsFromSteps[steps,dt, OptionValue["Stride"]]~Join~{"Stride"->OptionValue["Stride"], "x"->bincenter[[1]], "y"->bincenter[[2]],
                       "xWidth"->binwidth[[1]], "yWidth"->binwidth[[2]], "StepsInBin"->Length[steps],
                       "StepsHistogram"->If[ OptionValue["ReturnStepsHistogram"],
-                                            QucikDensityHistogram[steps,30]
+                                            HistogramList[steps,30,"PDF"]
                                         ]}
         ]
     ];
@@ -315,7 +330,7 @@ Options[GetTensorFromMomentsWithNormalityTest]={HoldFirst};
 GetTensorFromMomentsWithNormalityTest[data_] :=
     Module[ {ux,uy,a,b,c,eval,evec,sx,sy,alpha,dist,hypothesis,params,pVal, isNormal},
 		dist = MultinormalDistribution[{ux, uy}, {{a, c}, {c, b}}];
-		hypothesis=AndersonDarlingTest[data, dist, "HypothesisTestData"];
+		hypothesis=AndersonDarlingTest[data, dist, "HypothesisTestData"]; 
 		
 		(*Is normal distribution?*)
 		pVal=hypothesis["PValue"];
@@ -557,7 +572,7 @@ ClearAll@GetDiffusionInfoForBinFromParameters;
 GetDiffusionInfoForBinFromParameters[{{x_,y_},{dx_,dy_}},DiffX_,DiffY_,DiffA_]:=
  {"Dx"->DiffX[x,y],"Dy"->DiffY[x,y],"Da"->DiffA[x,y],
   "x"->x,"y"->y,"xWidth"->dx,"yWidth"->dy, "ux"->0,"uy"->0,
-  "StepsHistogram"->Null,"StepsInBin"->0,"StepDelta"->0};
+  "StepsHistogram"->Null,"StepsInBin"->Null,"Stride"->Null,"PValue"->1, "IsNormal"->True};
 (*TODO: Perhaps I could fill a Gaussian StepsHistogram. StepDelta could be passed in as an option.  *)
 Options@GetDiffusionInfoFromParameters = {
                "Verbose":>$VerbosePrint,  (*Log output*)

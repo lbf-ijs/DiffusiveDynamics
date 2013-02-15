@@ -38,12 +38,19 @@ CompileFunctionsIfNecessary::usage="CompileFunctionsIfNecessary[] only compiles 
 ClearAll[GetDiffusionInBinsBySelect];
 GetDiffusionInBinsBySelect::usage="TODO";
 
-ClearAll[GetDiffusionInfoFromParameters];
-GetDiffusionInfoFromParameters::usage="Returns a list of rules from the DiffX, DiffY, DAlpha functions."
+ClearAll[GetDiffusionInfoFromParameters, GetDiffusionInfoFromParametersWithStride];
+GetDiffusionInfoFromParameters::usage="GetDiffusionInfoFromParameters[binsOrBinspec, DiffX,DiffY,DiffA] 
+Returns a list of rules from the DiffX, DiffY, DAlpha functions."
+
+GetDiffusionInfoFromParametersWithStride::usage="GetDiffusionInfoFromParametersWithStride[binsOrBinspec, strides, DiffX,DiffY,DiffA] 
+Returns a list of rules from the DiffX, DiffY, DAlpha functions for each stride."
+
+ClearAll[DiffusionNormalForm];
+DiffusionNormalForm::usage="DiffusionNormalForm[diffInfo] Makes the difusion tensor in a normal form: Dx>Dy and rotate Da 90 Deg. Da is always between 0 and 180"
 
 Begin["`Private`"]
 (* Implementation of the package *)
-
+$SignificanceLevel = 0.05;
  
 (*SetAttributes[GetDiffusionInBin,HoldFirst];*)
 
@@ -55,11 +62,13 @@ Options[GetDiffusionInBin] = {"Verbose":>$VerbosePrint,  (*Log output*)
                            "PadSteps"->True,     (*Take points that are outside of the bin on order to improve the statistics *)
                            "ReturnRules"->True,  (*Return the results as a list of rules*)
                            "ReturnStepsHistogram"->False, (*Returns the density histogram of steps. Slows down the calcualtion considerably. Useful for debuging and visualization.*)
-                           "WarnIfEmpty"->False (*Prints a warning if too litle points in bin*)
+                           "WarnIfEmpty"->False, (*Prints a warning if too litle points in bin*)
+                           "NormalitySignificanceLevel"-> .05 (*Significance level for the normality test*)
            };
 
 GetDiffusionInBin[rwData_,dt_,{min_,max_},{cellMin_,cellMax_},opts:OptionsPattern[]] :=
-Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseLevel"],$VerboseIndentLevel=$VerboseIndentLevel+1}, 
+Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseLevel"],$VerboseIndentLevel=$VerboseIndentLevel+1,
+       $SignificanceLevel=OptionValue@"NormalitySignificanceLevel"}, 
     Module[ {data,t,diffs,bincenter,binwidth,sd},
             Puts["***GetDiffusionInBin****"];
 			Assert[Last@Dimensions@rwData==3,"Must be a list of triplets in the form {t,x,y}"];
@@ -140,7 +149,7 @@ GetDiffsFromBinnedPoints[binnedInd_,rwData_,dt_,{min_,max_},{cellMin_,cellMax_},
             GetDiffsFromSteps[steps,dt, OptionValue["Stride"]]~Join~{"Stride"->OptionValue["Stride"], "x"->bincenter[[1]], "y"->bincenter[[2]],
                       "xWidth"->binwidth[[1]], "yWidth"->binwidth[[2]], "StepsInBin"->Length[steps],
                       "StepsHistogram"->If[ OptionValue["ReturnStepsHistogram"],
-                                            HistogramList[steps,30,"PDF"]
+                                            N@HistogramList[steps,"Sturges","PDF"]
                                         ]}
         ]
     ];
@@ -280,7 +289,7 @@ GetDiffsFromSteps[data_,dt_,ds_] :=  Block[{$VerboseIndentLevel = $VerboseIndent
             (*{ux,uy,rDx,rDy,rDa} = GetTensorFromMoments[data];*)
             {ux,uy,rDx,rDy,rDa,pVal,isNormal}=GetTensorFromMomentsWithNormalityTest[data];
             (*We fitted the principal sigmas... transform into diffusion and devide by StepsDelta*)
-            {rDx,rDy} = ({rDx,rDy}^2)/(2 dt)/ds;
+            {rDx,rDy} = ({rDx,rDy}^2)/(2 dt)/ds; (*TODO: 4!*)
         ];
         {"Dx"->rDx,"Dy"->rDy,"Da"->rDa,"ux"->ux,"uy"->uy,"PValue"->pVal,"IsNormal"->isNormal}
     ]
@@ -330,8 +339,8 @@ Options[GetTensorFromMomentsWithNormalityTest]={HoldFirst};
 GetTensorFromMomentsWithNormalityTest[data_] :=
     Module[ {ux,uy,a,b,c,eval,evec,sx,sy,alpha,dist,hypothesis,params,pVal, isNormal},
 		dist = MultinormalDistribution[{ux, uy}, {{a, c}, {c, b}}];
-		hypothesis=AndersonDarlingTest[data, dist, "HypothesisTestData"]; 
-		
+
+		hypothesis=AndersonDarlingTest[data, dist, "HypothesisTestData",SignificanceLevel->$SignificanceLevel]; 
 		(*Is normal distribution?*)
 		pVal=hypothesis["PValue"];
 		isNormal=hypothesis["ShortTestConclusion"] == "Do not reject";
@@ -569,25 +578,82 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
     ];
 
 ClearAll@GetDiffusionInfoForBinFromParameters;
-GetDiffusionInfoForBinFromParameters[{{x_,y_},{dx_,dy_}},DiffX_,DiffY_,DiffA_]:=
+GetDiffusionInfoForBinFromParameters[{{x_,y_},{dx_,dy_}}, stride_,DiffX_,DiffY_,DiffA_,ReturnHistograms_:False]:=
  {"Dx"->DiffX[x,y],"Dy"->DiffY[x,y],"Da"->DiffA[x,y],
   "x"->x,"y"->y,"xWidth"->dx,"yWidth"->dy, "ux"->0,"uy"->0,
-  "StepsHistogram"->Null,"StepsInBin"->Null,"Stride"->Null,"PValue"->1, "IsNormal"->True};
+  "StepsHistogram"->If[ReturnHistograms, GetStepsHistogramDiffusion[{DiffX[x,y], DiffY[x,y], DiffA[x,y]}, stride]],  
+  "StepsInBin"->Null,"Stride"->stride,"PValue"->1, "IsNormal"->True};
 (*TODO: Perhaps I could fill a Gaussian StepsHistogram. StepDelta could be passed in as an option.  *)
+
 Options@GetDiffusionInfoFromParameters = {
                "Verbose":>$VerbosePrint,  (*Log output*)
-			   "VerboseLevel":>$VerboseLevel(*The amount of details to log. Higher number means more details*)
+			   "VerboseLevel":>$VerboseLevel,(*The amount of details to log. Higher number means more details*)
+               "ReturnStepsHistogram"->False, (*Returns The PDF plot.*)
+               "Parallel" -> True
 }
 
-GetDiffusionInfoFromParameters[binsOrBinspec_, DiffX_,DiffY_,DiffA_]:=
-Block[{$VerboseIndentLevel=$VerboseIndentLevel+1}, 
+GetDiffusionInfoFromParameters[binsOrBinspec_, stride_?NumericQ, DiffX_,DiffY_,DiffA_,opts:OptionsPattern[]]:=
+Block[{$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"], $VerboseIndentLevel = $VerboseIndentLevel+1}, 
     Module[{bins},
         Puts["********GetDiffusionInfoFromParameters********"];
         (*PutsOptions[GetDiffusionInfoFromParameters,{opts},LogLevel->2];  *)      
         bins=GetBinsFromBinsOrSpec@binsOrBinspec;
-        GetDiffusionInfoForBinFromParameters[#,DiffX,DiffY,DiffA]&/@bins     
+        GetDiffusionInfoForBinFromParameters[#,stride,DiffX,DiffY,DiffA,OptionValue@"ReturnStepsHistogram"]&/@bins     
     ]
 ]     
+
+
+GetDiffusionInfoFromParameters[binsOrBinspec_,strides_List, DiffX_,DiffY_,DiffA_,opts:OptionsPattern[]]:=
+Block[{$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],  $VerboseIndentLevel=$VerboseIndentLevel+1}, 
+    Block[{bins, bin, stride (*just for syntax higlighting in WB*), tabelF = If[OptionValue@"Parallel", ParallelTable, Table]},
+        Puts["********GetDiffusionInfoFromParameters********"];
+        (*PutsOptions[GetDiffusionInfoFromParameters,{opts},LogLevel->2];  *)
+        bins=GetBinsFromBinsOrSpec@binsOrBinspec;
+        With[{iDiffX=DiffX,iDiffY=DiffY,iDiffA=DiffA,returnHistograms=OptionValue@"ReturnStepsHistogram"},
+        tabelF[
+            GetDiffusionInfoForBinFromParameters[bin,stride,iDiffX,iDiffY,iDiffA,returnHistograms],
+        {bin,bins},{stride,strides}]
+        ]      
+    ]
+]  
+
+
+
+DiffusionNormalForm[Dx_?NumericOrSymbolQ, Dy_?NumericOrSymbolQ, Da_?NumericOrSymbolQ]:=
+Block[{dx,dy,da},
+    If[Dy>Dx,(*then*)
+        (*If we switch x and y then we get the same if we turn the tensor 90 deg *)
+        dx=Dy;dy=Dx;da=Da+90;
+    ,(*else*)
+        dx=Dx;dy=Dy;da=Da;
+    ];
+    da=Mod[da,180];
+    {dx,dy,da}
+]
+
+DiffusionNormalForm[{Dx_?NumericOrSymbolQ, Dy_?NumericOrSymbolQ, Da_?NumericOrSymbolQ}]:=DiffusionNormalForm[Dx, Dy, Da];
+
+(*Accept a list of rules*)
+DiffusionNormalForm[diffInfo:{__Rule}]:=
+Block[{dx,dy,da},
+    (*Get sorted values*)
+    {dx,dy,da}=DiffusionNormalForm@GetValue[{"Dx","Dy","Da"},diffInfo];
+    
+
+	(*Modify the original lis*)
+	diffInfo /.   {Rule["Dx", _] -> Rule["Dx", dx],
+			       Rule["Dy", _] -> Rule["Dy", dy],
+			       Rule["Da", _] -> Rule["Da", da]}
+]
+
+DiffusionNormalForm[diffInfos:{{__Rule}..}]:=
+  DiffusionNormalForm/@diffInfos;
+
+DiffusionNormalForm[diffInfosWithStrides:{{{__Rule}..}..}]:=
+  DiffusionNormalForm/@diffInfosWithStrides;
+
+DiffusionNormalForm::wrongargs="Wrong arguments for DiffusionNormalForm `1` ";  
+DiffusionNormalForm[args___]:=(Message[DiffusionNormalForm::wrongargs,Shallow@args];$Failed);  
 
 End[]
 

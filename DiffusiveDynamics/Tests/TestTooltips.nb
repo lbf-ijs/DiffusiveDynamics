@@ -1,0 +1,174 @@
+Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MousePosToString", "[", "l_", "]"}], ":=", 
+  RowBox[{"Style", "[", 
+   RowBox[{
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{"l", "===", "None"}], ",", "\"\<\>\"", ",", 
+      RowBox[{"ToString", "@", 
+       RowBox[{"Quiet", "@", 
+        RowBox[{"PaddedForm", "[", 
+         RowBox[{"l", ",", "3"}], "]"}]}]}]}], "]"}], ",", 
+    RowBox[{"FontFamily", "\[Rule]", "\"\<Courier\>\""}]}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"DynamicMousePosAsStr", ":=", "\[IndentingNewLine]", 
+  RowBox[{"Dynamic", "@", 
+   RowBox[{"MousePosToString", "@", 
+    RowBox[{"MousePosition", "[", "\"\<Graphics\>\"", "]"}]}]}]}]], "Input",
+ CellChangeTimes->{{3.569743175304102*^9, 3.5697431803823924`*^9}, {
+  3.5697433308459983`*^9, 3.5697433380134087`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{"Manipulate", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"StatusArea", "[", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"Graphics", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"Inset", "[", 
+          RowBox[{"DynamicMousePosAsStr", ",", 
+           RowBox[{"{", 
+            RowBox[{"Center", ",", "Center"}], "}"}]}], "]"}], ",", 
+         RowBox[{"Circle", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"100", ",", "100"}], "}"}], ",", "100"}], "]"}]}], "}"}], 
+       "]"}], ",", 
+      RowBox[{"MousePosToString", "@", 
+       RowBox[{"MousePosition", "[", "\"\<Graphics\>\"", "]"}]}]}], "]"}], 
+    ",", 
+    RowBox[{"TrackedSymbols", "\[RuleDelayed]", 
+     RowBox[{"{", "}"}]}], ",", 
+    RowBox[{"SaveDefinitions", "\[Rule]", "True"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.569742527926074*^9, 3.569742530943247*^9}, {
+   3.569742619002283*^9, 3.5697426753705072`*^9}, {3.569742846304284*^9, 
+   3.569742850998553*^9}, 3.569743162964396*^9, {3.5697432001745243`*^9, 
+   3.569743220617694*^9}, {3.5697432948699408`*^9, 3.569743309820796*^9}, {
+   3.569743342255651*^9, 3.5697433675910997`*^9}, {3.5697436724995403`*^9, 
+   3.569743714931967*^9}, {3.569743747191812*^9, 3.5697439232828836`*^9}},
+ CellID->272343053],
+
+Cell["\<\
+When the mouse is over the graphics, the annotation is displayed: \
+\>", "ExampleText",
+ CellID->333011660],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Dynamic", "[", 
+  RowBox[{"MouseAnnotation", "[", "]"}], "]"}]], "Input",
+ CellID->296124962],
+
+Cell[BoxData[
+ DynamicBox[ToBoxes[
+   MouseAnnotation[], StandardForm],
+  ImageSizeCache->{32., {0., 8.}}]], "Output",
+ CellChangeTimes->{3.569742513761264*^9}]
+}, Open  ]],
+
+Cell[BoxData["Inset"], "Input",
+ CellChangeTimes->{{3.5697425623450427`*^9, 3.569742562894074*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"DynamicModule", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"pt", "=", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}]}], "}"}], ",", 
+   RowBox[{"EventHandler", "[", 
+    RowBox[{
+     RowBox[{"Graphics", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"Disk", "[", 
+         RowBox[{
+          RowBox[{"Dynamic", "[", "pt", "]"}], ",", ".1"}], "]"}], "}"}], ",", 
+       RowBox[{"PlotRange", "\[Rule]", "1"}]}], "]"}], ",", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"\"\<MouseDown\>\"", ",", "1"}], "}"}], "\[RuleDelayed]", 
+      RowBox[{"(", 
+       RowBox[{"pt", "=", 
+        RowBox[{"MousePosition", "[", "\"\<Graphics\>\"", "]"}]}], ")"}]}], 
+     ",", 
+     RowBox[{"PassEventsDown", "\[Rule]", "False"}]}], "]"}]}], 
+  "]"}]], "Input"],
+
+Cell[BoxData[
+ DynamicModuleBox[{
+  DiffusiveDynamics`Visualize2D`pt$$ = {-0.26111111111111107`, 
+  0.17777777777777778`}}, 
+  TagBox[
+   GraphicsBox[DiskBox[Dynamic[DiffusiveDynamics`Visualize2D`pt$$], 0.1],
+    PlotRange->1],
+   EventHandlerTag[{{"MouseDown", 1} :> (DiffusiveDynamics`Visualize2D`pt$$ = 
+      MousePosition["Graphics"]), PassEventsDown -> False, PassEventsDown -> 
+     Automatic, PassEventsUp -> True}]],
+  DynamicModuleValues:>{}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"CreatePalette", "[", 
+  RowBox[{"DynamicMousePosAsStr", ",", 
+   RowBox[{"WindowTitle", "\[Rule]", "\"\<Mouse Position\>\""}], ",", 
+   RowBox[{"WindowSize", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"200", ",", "Fit"}], "}"}]}]}], "]"}]], "Input"],
+
+Cell[BoxData[
+ TemplateBox[{FrontEndObject[
+    LinkObject["zt5_shm", 3, 1]],45,
+   "FrontEndObject[LinkObject[\"zt5_shm\", 3, 1]]","45","\"Mouse Position\""},
+  "NotebookObjectUnsaved"]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.5697428000606394`*^9, 3.5697428113632855`*^9}, 
+   3.569743160305244*^9}],
+
+Cell[BoxData[
+ DynamicBox[ToBoxes[
+   $CellContext`MousePosToString[
+    MousePosition["Graphics"]], StandardForm],
+  ImageSizeCache->{0., {0., 6.}}]], "Output",
+ CellChangeTimes->{3.5697428116733036`*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"Sin", "[", "x", "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", "0", ",", 
+     RowBox[{"6", "Pi"}]}], "}"}], ",", 
+   RowBox[{"Frame", "\[Rule]", "True"}], ",", 
+   RowBox[{"FrameLabel", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"Dynamic", "@", 
+       RowBox[{
+        RowBox[{"MousePosition", "[", "\"\<Graphics\>\"", "]"}], "[", 
+        RowBox[{"[", "1", "]"}], "]"}]}], ",", "y"}], "}"}]}]}], 
+  "]"}]], "Input"],
+
+Cell[BoxData["CurrentValue"], "Input"]
+},
+WindowSize->{703, 867},
+WindowMargins->{{Automatic, -1221}, {79, Automatic}},
+FrontEndVersion->"9.0 for Microsoft Windows (64-bit) (November 20, 2012)",
+StyleDefinitions->"Default.nb"
+]
+

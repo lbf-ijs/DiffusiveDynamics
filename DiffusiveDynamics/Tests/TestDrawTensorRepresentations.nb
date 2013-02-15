@@ -1,0 +1,390 @@
+Notebook[{
+Cell[BoxData[
+ RowBox[{"ma", "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.569664581330243*^9, 3.569664581592258*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Initalization", "Subtitle",
+ CellChangeTimes->{{3.5695973216292996`*^9, 3.569597329717762*^9}, {
+  3.5695977491287513`*^9, 3.5695977517589016`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"$HistoryLength", "=", "1"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+   "If", " ", "package", " ", "is", " ", "installed", " ", "to", " ", "a", 
+    " ", "non", " ", "standard", " ", "dir", " ", "add", " ", "it", " ", "to",
+     " ", "path", " ", "just", " ", "in", " ", "case"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"pfn", "=", 
+      RowBox[{"ExpandFileName", "@", 
+       RowBox[{"FileNameJoin", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"NotebookDirectory", "[", "]"}], ",", "\"\<..\>\"", ",", 
+          "\"\<..\>\""}], "}"}], "]"}]}]}], "}"}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"!", 
+        RowBox[{"MemberQ", "[", 
+         RowBox[{"$Path", ",", "pfn"}], "]"}]}], ",", " ", 
+       RowBox[{"PrependTo", "[", 
+        RowBox[{"$Path", ",", "pfn"}], "]"}]}], "]"}], ";"}]}], 
+   "\[IndentingNewLine]", "]"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Needs", "[", "\"\<Developer`\>\"", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Get", "[", "\"\<DiffusiveDynamics`\>\"", "]"}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.5695977616564674`*^9, 3.569597762099493*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"filename", "=", 
+    RowBox[{
+     RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
+     "\"\<\\\\Data\\\\diffs.mx.gz\>\""}]}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"Export", "[", 
+     RowBox[{"filename", ",", "diffs"}], "]"}], ";"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"diffs", "=", 
+   RowBox[{"Import", "[", "filename", "]"}]}], ";"}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.569568530519542*^9, 3.56956853519481*^9}, {
+  3.5695685757391286`*^9, 3.5695686575568085`*^9}, {3.569597318503121*^9, 
+  3.569597320496235*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"filename", "=", 
+    RowBox[{
+     RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
+     "\"\<\\\\Data\\\\actual.diffs.mx.gz\>\""}]}], ";"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{"Export", "[", 
+    RowBox[{"filename", ",", "actualDiffs"}], "]"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"actualDiffs", "=", 
+   RowBox[{"Import", "[", "filename", "]"}]}], ";"}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.5696576570695953`*^9, 3.569657666470133*^9}, {
+  3.5696577384602504`*^9, 3.569657778610547*^9}, {3.569658002783369*^9, 
+  3.5696580084556932`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["One set of diffusions", "Subtitle",
+ CellChangeTimes->{{3.5695685372559276`*^9, 3.5695685550359445`*^9}, {
+  3.5695973368751717`*^9, 3.5695973464187174`*^9}, {3.569652156594986*^9, 
+  3.5696521602591953`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"DrawDiffusionTensorRepresentations", "[", 
+  RowBox[{
+   RowBox[{"diffs", "[", 
+    RowBox[{"[", 
+     RowBox[{"All", ",", "1"}], "]"}], "]"}], ",", "6", ",", 
+   RowBox[{"Scale", "\[Rule]", "3"}], ",", 
+   RowBox[{"\"\<MarkSelectedBin\>\"", "\[Rule]", "False"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.569597434722768*^9, 3.5695974353208027`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Dynamic", "Subsubtitle",
+ CellChangeTimes->{{3.569597353554126*^9, 3.5695973637557087`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"DynamicModule", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"binIndex", "=", "1"}], "}"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"DrawDiffusionTensorRepresentations", "[", 
+    RowBox[{
+     RowBox[{"diffs", "[", 
+      RowBox[{"[", 
+       RowBox[{"All", ",", "1"}], "]"}], "]"}], ",", "binIndex", ",", 
+     RowBox[{"Scale", "\[Rule]", "3"}], ",", 
+     RowBox[{"\"\<MarkSelectedBin\>\"", "\[Rule]", "True"}], ",", 
+     RowBox[{"\"\<Clickable\>\"", "\[Rule]", "True"}]}], "]"}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.5695973693010263`*^9, 3.5695974425972185`*^9}, {
+  3.5696546492655582`*^9, 3.5696546515956917`*^9}, {3.569654710724074*^9, 
+  3.569654711844138*^9}}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Two sets of diffusions", "Subtitle",
+ CellChangeTimes->{{3.5695685372559276`*^9, 3.5695685550359445`*^9}, {
+  3.5695973368751717`*^9, 3.5695973464187174`*^9}, {3.569652156594986*^9, 
+  3.5696521801313324`*^9}}],
+
+Cell[BoxData[" "], "Input",
+ CellChangeTimes->{3.5696541143339624`*^9}],
+
+Cell[CellGroupData[{
+
+Cell["test of dimensions", "Subsubtitle",
+ CellChangeTimes->{{3.569654068876362*^9, 3.569654091776672*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Dimensions", "@", 
+  RowBox[{"diffs", "[", 
+   RowBox[{"[", 
+    RowBox[{"All", ",", "1"}], "]"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5696535588681917`*^9, 3.569653576830219*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Dimensions", "@", 
+  RowBox[{"diffs", "[", 
+   RowBox[{"[", 
+    RowBox[{"All", ",", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", "3"}], "}"}]}], "]"}], "]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Dimensions", "@", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"diffs", "[", 
+     RowBox[{"[", 
+      RowBox[{"All", ",", "1"}], "]"}], "]"}], ",", 
+    RowBox[{"diffs", "[", 
+     RowBox[{"[", 
+      RowBox[{"All", ",", "2"}], "]"}], "]"}]}], "}"}]}]], "Input",
+ CellChangeTimes->{{3.5696536200426903`*^9, 3.5696536340704927`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Dimensions", "@", 
+  RowBox[{"Transpose", " ", "[", 
+   RowBox[{
+    RowBox[{"diffs", "[", 
+     RowBox[{"[", 
+      RowBox[{"All", ",", 
+       RowBox[{"{", 
+        RowBox[{"2", ",", "3"}], "}"}]}], "]"}], "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"2", ",", "1"}], "}"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.5696536553587103`*^9, 3.5696536933568835`*^9}}]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Static example", "Subsubtitle",
+ CellChangeTimes->{{3.569654102839305*^9, 3.5696541302298717`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{"DrawDiffusionTensorRepresentations", "[", 
+   RowBox[{
+    RowBox[{"Transpose", " ", "[", 
+     RowBox[{
+      RowBox[{"diffs", "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", 
+         RowBox[{"{", 
+          RowBox[{"2", ",", "6"}], "}"}]}], "]"}], "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "1"}], "}"}]}], "]"}], ",", "6", ",", 
+    RowBox[{"Scale", "\[Rule]", "3"}], ",", 
+    RowBox[{"\"\<MarkSelectedBin\>\"", "\[Rule]", "False"}], ",", 
+    RowBox[{"Verbose", "\[Rule]", "True"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.569652164579443*^9, 3.569652166348544*^9}, {
+   3.5696532688666043`*^9, 3.5696532899878125`*^9}, {3.5696534956245737`*^9, 
+   3.569653503750039*^9}, 3.569653557508114*^9, 3.569653599139495*^9, {
+   3.569654049637262*^9, 3.5696540552795844`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Dynamic example", "Subsubtitle",
+ CellChangeTimes->{{3.569654121652381*^9, 3.569654134119094*^9}}],
+
+Cell[BoxData[
+ RowBox[{"DynamicModule", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"binIndex", "=", "1"}], "}"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"DrawDiffusionTensorRepresentations", "[", 
+    RowBox[{
+     RowBox[{"Transpose", " ", "[", 
+      RowBox[{
+       RowBox[{"diffs", "[", 
+        RowBox[{"[", 
+         RowBox[{"All", ",", 
+          RowBox[{"{", 
+           RowBox[{"2", ",", "6"}], "}"}]}], "]"}], "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"2", ",", "1"}], "}"}]}], "]"}], ",", "binIndex", ",", 
+     RowBox[{"Scale", "\[Rule]", "3"}], ",", " ", 
+     RowBox[{"\"\<MarkSelectedBin\>\"", "\[Rule]", "True"}], ",", 
+     RowBox[{"\"\<Clickable\>\"", "\[Rule]", "True"}]}], "]"}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.5696541542822475`*^9, 3.5696541741303825`*^9}, {
+  3.5696543008536305`*^9, 3.569654327886177*^9}}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Stride representation (one)", "Subtitle",
+ CellChangeTimes->{{3.569656866477376*^9, 3.569656877303995*^9}, {
+  3.5696571066731143`*^9, 3.569657111213374*^9}}],
+
+Cell[BoxData[
+ RowBox[{"DynamicModule", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"binIndex", "=", "1"}], ",", 
+     RowBox[{"strideIndex", "=", "1"}]}], "}"}], ",", 
+   RowBox[{"Dynamic", "@", 
+    RowBox[{"DrawStridePlotsFromBinInfo", "[", 
+     RowBox[{"diffs", ",", "binIndex", ",", "strideIndex", ",", 
+      RowBox[{"Verbose", "\[Rule]", "False"}]}], "]"}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.5696568830573244`*^9, 3.569656940608616*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Stride representation (multiple)", "Subtitle",
+ CellChangeTimes->{{3.569656866477376*^9, 3.569656877303995*^9}, {
+  3.5696571066731143`*^9, 3.5696571282613487`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"DynamicModule", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"binIndex", "=", "1"}], ",", 
+     RowBox[{"strideIndex", "=", "1"}]}], "}"}], ",", 
+   RowBox[{"Dynamic", "@", 
+    RowBox[{"DrawStridePlotsFromBinInfo", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"diffs", ",", "actualDiffs"}], "}"}], ",", "binIndex", ",", 
+      "strideIndex", ",", 
+      RowBox[{"Verbose", "\[Rule]", "False"}], ",", 
+      RowBox[{"\"\<HistogramPresentation\>\"", "\[Rule]", "None"}]}], 
+     "]"}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.5696568830573244`*^9, 3.569656940608616*^9}, {
+  3.5696571384299307`*^9, 3.5696571803363276`*^9}, {3.56965802326554*^9, 
+  3.569658027661792*^9}, {3.569663282462952*^9, 3.5696632923865194`*^9}, {
+  3.5696641889618006`*^9, 3.569664229806137*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Manipulate", "Subtitle",
+ CellChangeTimes->{{3.5696648260532403`*^9, 3.5696648316665616`*^9}}],
+
+Cell["One", "Subsubtitle",
+ CellChangeTimes->{{3.5696648669295783`*^9, 3.5696648705167837`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"ViewDiffsWithStridePlots", "[", 
+  RowBox[{"diffs", ",", "\"\<Difuzija\>\"", ",", 
+   RowBox[{"PlotStyle", "\[Rule]", 
+    RowBox[{"Directive", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"ColorData", "[", "1", "]"}], "[", "2", "]"}], ",", "Thick"}], 
+     "]"}]}], ",", 
+   RowBox[{"SaveDefinitions", "\[Rule]", "False"}], ",", 
+   RowBox[{"Verbose", "\[Rule]", "False"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.5696648524697514`*^9, 3.5696648773231726`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Multiple", "Subsubtitle",
+ CellChangeTimes->{{3.5696648524697514`*^9, 3.569664886507698*^9}}],
+
+Cell[BoxData[
+ RowBox[{"ViewDiffsWithStridePlots", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"diffs", ",", "actualDiffs"}], "}"}], ",", "\"\<Difuzija\>\"", 
+   ",", 
+   RowBox[{"PlotStyle", "\[Rule]", 
+    RowBox[{"Directive", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"ColorData", "[", "1", "]"}], "[", "2", "]"}], ",", "Thick"}], 
+     "]"}]}], ",", 
+   RowBox[{"SaveDefinitions", "\[Rule]", "False"}], ",", 
+   RowBox[{"Verbose", "\[Rule]", "False"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.5696648524697514`*^9, 3.569664875083045*^9}}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Misc", "Subtitle",
+ CellChangeTimes->{{3.569140927476508*^9, 3.569140927559513*^9}, {
+  3.5691433739494386`*^9, 3.569143388109248*^9}, {3.569149240800003*^9, 
+  3.5691492424230957`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"For", " ", "easier", " ", "storage", " ", "in", " ", "Git"}], 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"SetOptions", "[", 
+     RowBox[{
+      RowBox[{"InputNotebook", "[", "]"}], ",", 
+      RowBox[{"PrivateNotebookOptions", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{"\"\<FileOutlineCache\>\"", "\[Rule]", "False"}], "}"}]}], 
+      ",", 
+      RowBox[{"TrackCellChangeTimes", "\[Rule]", "False"}]}], "]"}], ";", 
+    RowBox[{
+    "FrontEndTokenExecute", "[", "\"\<DeleteGeneratedCells\>\"", "]"}], ";"}],
+    "\n", 
+   RowBox[{"(*", 
+    RowBox[{"Auto", " ", "delete", " ", "output", " ", "on", " ", "close"}], 
+    "*)"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"SetOptions", "[", 
+    RowBox[{
+     RowBox[{"EvaluationNotebook", "[", "]"}], ",", 
+     RowBox[{"NotebookEventActions", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"\"\<WindowClose\>\"", "\[RuleDelayed]", 
+        RowBox[{
+        "FrontEndTokenExecute", "[", "\"\<DeleteGeneratedCells\>\"", "]"}]}], 
+       "}"}]}]}], "]"}], ";"}], "\[IndentingNewLine]"}]], "Input"],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.569217232244891*^9, 3.5692172602254915`*^9}}]
+}, Open  ]]
+},
+NotebookEventActions->{
+ "WindowClose" :> FrontEndTokenExecute["DeleteGeneratedCells"]},
+WindowSize->{1006, 1078},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+PrivateNotebookOptions->{"FileOutlineCache"->False},
+FrontEndVersion->"9.0 for Microsoft Windows (64-bit) (November 20, 2012)",
+StyleDefinitions->"Default.nb",
+$CellContext`TrackCellChangeTimes -> False
+]
+

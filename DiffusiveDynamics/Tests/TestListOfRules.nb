@@ -1,0 +1,87 @@
+Notebook[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"filename", "=", 
+    RowBox[{
+     RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
+     "\"\<\\\\Data\\\\diffs.mx.gz\>\""}]}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"Export", "[", 
+     RowBox[{"filename", ",", "diffs"}], "]"}], ";"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"diffs", "=", 
+   RowBox[{"Import", "[", "filename", "]"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.569568530519542*^9, 3.56956853519481*^9}, {
+  3.5695685757391286`*^9, 3.5695686575568085`*^9}}],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.5695685372559276`*^9, 3.5695685550359445`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"listOfRules", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", "__Rule", "}"}], ".."}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"listOfListOfRules", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", "__Rule", "}"}], ".."}], "}"}], ".."}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"listOfListOfListOfRules", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", "__Rule", "}"}], ".."}], "}"}], ".."}], "}"}], ".."}], 
+    "}"}]}], ";"}], "\n"}], "Input",
+ CellChangeTimes->{{3.569568672771679*^9, 3.569568672778679*^9}, {
+  3.569568732920119*^9, 3.5695687331201305`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"MatchQ", "[", 
+  RowBox[{
+   RowBox[{"diffs", "[", 
+    RowBox[{"[", 
+     RowBox[{"All", ",", "1"}], "]"}], "]"}], ",", "listOfRules"}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"MatchQ", "[", 
+  RowBox[{"diffs", ",", "listOfListOfRules"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"MatchQ", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"diffs", ",", "diffs"}], "}"}], ",", "listOfListOfListOfRules"}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.5695686637981653`*^9, 3.569568728322856*^9}, {
+  3.569568795827717*^9, 3.5695688206111345`*^9}}],
+
+Cell[BoxData["True"], "Output",
+ CellChangeTimes->{{3.569568684262336*^9, 3.5695686941249*^9}, {
+   3.5695688028591194`*^9, 3.569568820944154*^9}, 3.56956902963309*^9}],
+
+Cell[BoxData["True"], "Output",
+ CellChangeTimes->{{3.569568684262336*^9, 3.5695686941249*^9}, {
+   3.5695688028591194`*^9, 3.569568820944154*^9}, 3.5695690296360903`*^9}],
+
+Cell[BoxData["True"], "Output",
+ CellChangeTimes->{{3.569568684262336*^9, 3.5695686941249*^9}, {
+   3.5695688028591194`*^9, 3.569568820944154*^9}, 3.56956902963809*^9}]
+}, Open  ]]
+},
+WindowSize->{703, 867},
+WindowMargins->{{108, Automatic}, {75, Automatic}},
+FrontEndVersion->"9.0 for Microsoft Windows (64-bit) (November 20, 2012)",
+StyleDefinitions->"Default.nb"
+]
+

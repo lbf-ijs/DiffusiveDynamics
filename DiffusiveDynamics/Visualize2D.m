@@ -12,6 +12,13 @@ Draw2DHistogram::usage="Draw2DHistogram[bindata] Draws a discrete density 2D plo
 Draw3DHistogram::usage="Draw3DHistogram[bindata] Draws a 3D barchart kind histogram";    
 DrawSmooth3DHistogram::usage="TODO";
 (*Gets the bin centers and widths from binspec*)
+
+ClearAll[GetHistogramListFrom2DPDF, GetStepsHistogramDiffusion];
+GetHistogramListFrom2DPDF::usage="GetHistogramListFrom2DPDF[dist,{xmin,xmax,xn},{ymin,ymax,yn}]
+Returns the data in the same format as HistogramList, when given a PDF and the ranges to plot";
+GetStepsHistogramDiffusion::usage=="
+Get the theoretical steps histogram form the diffusion. Returns same format as HistogramList"
+
 ClearAll[GetBinCenters, GetBinCentersAndWidths, GetBinsAsRectangles, DrawBinsAsRectangles,GetBinsFromBinsOrSpec,GetBinCentersAndWidthsFromDiffusionInfo];
 GetBinCenters         ::usage="GetBinCenters[binSpec] \nGets bin centers from binSpec {{minX,maxY,dx},{minY,maxY,dy}}";
 GetBinCentersAndWidths::usage="GetBinCentersAndWidths[binSpec] \nGets bin centers and widths from binSpec {{minX,maxY,dx},{minY,maxY,dy}}";
@@ -23,13 +30,42 @@ GetBinsFromBinsOrSpec::usage="GetBinsFromBinsOrSpec[binsOrSpec] Gets the bins {{
 
 GetBinCentersAndWidthsFromDiffusionInfo::usage="GetBinCentersAndWidthsFromDiffusionInfo[diffinfo] Gets the bins from a list of diffusion info";
 
-ClearAll[GetDiffFrom2DTensor,Get2DTensorFromDiff, Get2DTensorRepresentation, DrawDiffusionTensorRepresentations];
+ClearAll[GetDiffFrom2DTensor,Get2DTensorFromDiff, Get2DCovarianceFromDiff, Get2DTensorRepresentation, DrawDiffusionTensorRepresentations];
 GetDiffFrom2DTensor::usage="GetDiffFrom2DTensor[D2tensor] returns {Dx,Dy,Dalpha} from the 2D tensor."
-Get2DTensorFromDiff::uasge="Get2DTensorFromDiff[Dx, Dy, Da] returns a 2D tensor that represents the covariance matrix of the bivariate normal Gaussian distribution."
+Get2DTensorFromDiff::uasge="Get2DTensorFromDiff[Dx, Dy, Da] returns a 2D tensor that represents the sigma matrix of the bivariate normal Gaussian distribution."
+Get2DCovarianceFromDiff::usage="Get2DCovarianceFromDiff[Dx, Dy, Da] returns a 2D covariance matrix representing the diffusion. Can be plugged in directly into the bivariate normal Gaussian distribution"
 Get2DTensorRepresentation::usage="Draws a represnetation of the diffusion tensor from the tensor or the diffusion points Dx, Dy, Da."; 
 
 DrawDiffusionTensorRepresentations::usage="DrawDiffusionTensorRepresentations[diffInfos, cellRange] 
 takes a list of diffusion info rules and plots the tensor represntation in each bin."
+
+
+(*For patteren matching lists of diffusion info*)
+listOfRules = {{__Rule} ..};
+listOfListOfRules = {{{__Rule} ..} ..};
+listOfListOfListOfRules ={{{{__Rule} ..} ..}..};
+diffInfoOneBin = {__Rule};
+diffInfosWithStride = listOfListOfRules;
+listOfDiffInfosWithStide = listOfListOfListOfRules;
+NumericOrSymbolQ=(NumericQ[#] ||Head[#]===Symbol)&;
+
+ClearAll[DiffBinRectangle];
+DiffBinRectangle[{center_,w_}] := Rectangle[center-w/2.,center+w/2.];
+
+  
+ClearAll[GetBinIndexFromPoint];
+GetBinIndexFromPoint::usage="TODO";
+GetBinIndexFromPoint[pt_,bins_] :=
+    Block[ {i},
+       (*Puts[StringForm["GetBinIndexFromPoint: pt `1` bins `2`",pt,bins]];*)
+        For[i = 1,i<=Length[bins],i++,
+        If[ PointInBinQ[pt,bins[[i]]],
+            Return[i]
+        ]];
+        (*If we get here return null*)                                        
+        Return[-1];
+    ];  
+   
 
 Begin["`Private`"] (* Begin Private Context *) 
 
@@ -56,11 +92,13 @@ QucikDensityHistogram[data_,binspec_,hspec_:Automatic] :=
     
 
 SetAttributes[Draw2DHistogram,HoldFirst];
-Draw2DHistogram[bindata_] :=
+Options[Draw2DHistogram]=Options@ListContourPlot;
+Draw2DHistogram[bindata_, opts:OptionsPattern[]] :=
+(*TODO: Danger if a function is passed insted of bindata, it gets evaluated twice, every time bindata is called*)
     Block[ {bins,counts,datarange,wh},
         If[ Length[bindata]===0,
             Return[Missing[]]
-        ];
+        ]; 
         {bins,counts} = bindata;
         datarange = bins[[All,{1,-1}]];
         wh = Flatten[Differences[#]&/@datarange];
@@ -69,7 +107,7 @@ Draw2DHistogram[bindata_] :=
                                   White,
                                   ColorData[{"SolarColors","Reverse"}][#]
                               ]&),
-              PlotRange->Full, ImageSize->Medium]
+              opts]
     ];
         
 
@@ -113,7 +151,7 @@ Draw3DHistogram[bindata_, opts:OptionsPattern[]] :=
         Graphics3D[{EdgeForm@outlineStyle, FaceForm@fillStyle}~Join~cuboids, BoxRatios -> boxRatios, injectedOptions]	
     ];    
 
-ClearAll[DrawSmooth3DHistogram];
+
 SetAttributes[DrawSmooth3DHistogram,HoldFirst];
 Options[DrawSmooth3DHistogram]={"PlotColor" -> Directive[Blue],(*The color used for the histogram*)
     					  "FillStyle" -> Automatic,  
@@ -121,7 +159,8 @@ Options[DrawSmooth3DHistogram]={"PlotColor" -> Directive[Blue],(*The color used 
     					  Axes -> True,
     					  BoxRatios -> Automatic, (*Wil make the x and y units 1 to 1*)
 						  "Verbose":>$VerbosePrint,  (*Log output*)
- 					      "VerboseLevel":>$VerboseLevel
+ 					      "VerboseLevel":>$VerboseLevel,
+ 					      PlotRange-> All
             }~Join~Options@ListPlot3D;
 DrawSmooth3DHistogram[bindata_, opts:OptionsPattern[]] :=
     Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1,
@@ -145,7 +184,7 @@ DrawSmooth3DHistogram[bindata_, opts:OptionsPattern[]] :=
         boxRatios = If[#===Automatic, {wh[[1]]/wh[[2]], 1, 1}, #]&@OptionValue@BoxRatios;
         fillStyle = If[#===Automatic, Directive[color,Opacity@.5], #]&@OptionValue@"FillStyle";
         outlineStyle= If[#===Automatic, Directive[color,Opacity@.8], #]&@OptionValue@"OutlineStyle";
-        injectedOptions=FilterRules[{opts}~Join~Options@Draw3DHistogram,Options@ListPlot3D];
+        injectedOptions=FilterRules[{opts}~Join~Options@DrawSmooth3DHistogram,Options@ListPlot3D];
         
         ListPlot3D[points, PlotStyle->fillStyle,MeshStyle->outlineStyle,BoxRatios->boxRatios,injectedOptions]
         	
@@ -269,10 +308,12 @@ GetDiffFrom2DTensor[tensor_] :=
     ];
 
 Get2DTensorFromDiff[Dx_,Dy_,Da_]:=
-	RotationMatrix[Da*Degree].{{1/Dx^2, 0}, {0, 1/Dy^2}}.RotationMatrix[-Da*Degree];
+	RotationMatrix[Da*Degree].{{1/Dx^2, 0}, {0, 1/Dy^2}}.RotationMatrix[-Da*Degree]; (*TODO: Ali je to narobe! manjka 2*)
+Get2DCovarianceFromDiff[Dx_,Dy_,Da_]:=
+    Chop[RotationMatrix[Da*Degree].{{2*Dx, 0}, {0, 2*Dy}}.RotationMatrix[-Da*Degree],10^-8];	
 
-Options[Get2DTensorRepresentation] = {"Center"->{0,0},"ShapeType"->"Disk","Scale"->1,"Verbose"->False};
-Get2DTensorRepresentation[Dx_,Dy_,alpha_,opt:OptionsPattern[]] :=
+Options[Get2DTensorRepresentation] = {"Center"->{0,0},"ShapeType"->"Circle","Scale"->1,"Verbose"->False};
+Get2DTensorRepresentation[Dx_,Dy_,alpha_,opts:OptionsPattern[]] :=
 Block[ {$VerbosePrint = OptionValue@"Verbose"},
     Module[ {e1,e2,RM,s,c},
         If[ MatchQ[Dx,Missing[___] ]|| MatchQ[Dy,Missing[___]] ||MatchQ[alpha,Missing[___]],
@@ -289,7 +330,7 @@ Block[ {$VerbosePrint = OptionValue@"Verbose"},
         
          Switch[OptionValue["ShapeType"],
            "Arrows",
-             {Arrow[{c,e1+c}],
+             {Arrow[{c,e1+c}], 
               Arrow[{c,e2+c}],
               Arrow[{c,-e1+c}],
               Arrow[{c,-e2+c}]},
@@ -315,11 +356,24 @@ Get2DTensorRepresentation[tensor_,opt:OptionsPattern[]] :=
     ];
 
 
+(*Wrap plots in an event handler, so that they respond to clicks*)
+ClearAll[WrapBinClickEventHandler];
+(*Must be HoldFirst, so binIndex emulates. HoldAll does not work becuase binsList does not get expanded!*)
+Attributes@WrapBinClickEventHandler=HoldFirst; 
+WrapBinClickEventHandler[binIndex_,binsList_,plot_]:=
+    MouseAppearance[EventHandler[plot,
+     {{"MouseClicked", 1}:>Block[{pt},
+         pt = MousePosition["Graphics"];
+         binIndex = GetBinIndexFromPoint[pt,binsList];
+         (*Print["pt: ",pt, " binIndex: ",binIndex];*)
+         If[ binIndex==-1,binIndex = 1];
+     ]},PassEventsDown->False],"LinkHand"];                   
+
 
 (*takes a list of diffusion info rules and plots the tensor represntation in each bin*)
 Options[DrawDiffusionTensorRepresentations] = {
-                                    "FillStyle"->Directive@Opacity@0,
-                                    "OutlineStyle"->Directive[Thick,Black],
+                                    "FillStyle"->Automatic,
+                                    PlotStyle->Automatic,
                                     "Scale"->6,
                                     "ShapeType"->"Disk",
                                     "CellRange"->Automatic,
@@ -328,17 +382,28 @@ Options[DrawDiffusionTensorRepresentations] = {
                                     "NonNormalOutlineStyle"->None,
                                     "Verbose":>$VerbosePrint,  (*Log output*)
 						            "VerboseLevel":>$VerboseLevel,
+						            "Clickable" -> False,
+						            "MarkSelectedBin" -> False,
+						            "MarkedBinDynamic" -> Automatic,
+						            "MarkedBinFillStyle" -> None,
+						            "MarkedBinOutlineStyle" -> Directive[Thick, Black, Opacity@.5],
 						            Axes->True,
 						            Frame->True,
 						            PlotRange->Automatic, 
 						            AspectRatio->Automatic
 						            }~Join~Options@Graphics;
-DrawDiffusionTensorRepresentations[diffInfos_,opts:OptionsPattern[]] :=
-Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1},
-    Module[{values,reps,nonNormalReps,nonNormals,cellRange,bins,plotRange,aspectRatio},
+Attributes@DrawDiffusionTensorRepresentations={HoldRest};
+						            
+DrawDiffusionTensorRepresentations[diffInfos:listOfRules,binIndex_,opts:OptionsPattern[]] :=
+Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1,br},
+    Module[{values,reps,nonNormalReps,nonNormals,cellRange,bins,plotRange,aspectRatio,plotStyle, fillStyle, markedBinDynamic},
         Puts["********DrawDiffusionTensorRepresentations********"];
         PutsOptions[DrawDiffusionTensorRepresentations,{opts},LogLevel->2];
         
+        plotStyle=If[#===Automatic,Directive[Thick,ColorData[1][1]],#]&@OptionValue[PlotStyle];
+        fillStyle=If[#===Automatic,None,#]&@OptionValue["FillStyle"];
+        Puts["plotStyle: ",plotStyle];
+        Puts["fillStyle: ",fillStyle];
         values=GetValues[{"x","y","Dx","Dy","Da"},diffInfos];
 		PutsE["DiffValues:\n",values,LogLevel->3];
 		     
@@ -352,6 +417,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
             Get2DTensorRepresentation[#[[3]],#[[4]],#[[5]],Center->#[[1;;2]],"ShapeType"->OptionValue["ShapeType"],Scale->OptionValue["Scale"]]&/@Pick[values,nonNormals,False]
             ,(*else return empty list*){}];
             (*Todo: should perhaps delete the normal reps?*)
+            
         bins=GetValues[{{"x", "y"}, {"xWidth", "yWidth"}},diffInfos];
         cellRange=If[#===Automatic, GetCellRangeFromBins@bins,#]&@OptionValue@"CellRange";
         plotRange=If[#===Automatic, Transpose@cellRange,#]&@OptionValue@PlotRange;
@@ -361,14 +427,89 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
         PutsE["aspectRatio: ",aspectRatio,LogLevel->2];
         Puts["Passed Options:", {FilterRules[{opts}~Join~Options@DrawDiffusionTensorRepresentations,Options@Graphics]},LogLevel->5];
         
-        Graphics[
-        	{FaceForm@OptionValue["FillStyle"],EdgeForm@OptionValue["OutlineStyle"]}~Join~reps~Join~
-        	{FaceForm@OptionValue["NonNormalFillStyle"],EdgeForm@OptionValue["NonNormalOutlineStyle"]}~Join~nonNormalReps,
-        	PlotRange->plotRange,AspectRatio->aspectRatio,FilterRules[{opts}~Join~Options@DrawDiffusionTensorRepresentations,Options@Graphics]]
+        reps={FaceForm@fillStyle,EdgeForm@plotStyle}~Join~reps~Join~
+            {FaceForm@OptionValue["NonNormalFillStyle"],EdgeForm@OptionValue["NonNormalOutlineStyle"]}~Join~nonNormalReps;
+
+        If[OptionValue@"MarkSelectedBin", (*then*)
+          (*Wrap bin marker in Dynamic if the graph is clickable if "MarkedBinDynamic" True *)
+          markedBinDynamic=If[ # === Automatic, OptionValue@"Clickable", #]&@OptionValue@"MarkedBinDynamic";
+          
+          br=If[markedBinDynamic,Dynamic@DiffBinRectangle[ bins[[binIndex]] ], DiffBinRectangle[ bins[[binIndex]] ]];
+          reps=reps~Join~{EdgeForm@OptionValue@"MarkedBinOutlineStyle",FaceForm@OptionValue@"MarkedBinFillStyle", br};  
+        ];    
+        reps=Graphics[reps
+        	,PlotRange->plotRange,AspectRatio->aspectRatio,FilterRules[{opts}~Join~Options@DrawDiffusionTensorRepresentations,Options@Graphics]];
+        
+        If[ OptionValue@"Clickable",
+            reps = WrapBinClickEventHandler[binIndex,bins,reps];
+        ];          	
+        reps	
+    ]
+]
+  
+DrawDiffusionTensorRepresentations[diffInfos:listOfListOfRules,binIndex_,opts:OptionsPattern[]] :=
+Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1, i},
+    Module[{plotStyles,fillStyles,plots,bins},
+        Puts["********DrawDiffusionTensorRepresentations (multipe lists)********"];
+        PutsOptions[DrawDiffusionTensorRepresentations,{opts},LogLevel->2];
+        
+        plotStyles=If[#===Automatic,
+            Table[Directive[Thick,Opacity@1,ColorData[1][i]],{i,Length@diffInfos}]
+            ,#]&@OptionValue[PlotStyle];
+        fillStyles=If[#===Automatic,
+            Table[None,{i,Length@diffInfos}]
+            ,#]&@OptionValue["FillStyle"];            
+        Puts["plotStyles: ",plotStyles];
+        Puts["fillStyles: ",fillStyles];
+        
+        plots=Show@@Table[DrawDiffusionTensorRepresentations[diffInfos[[i]], binIndex,
+                PlotStyle->plotStyles[[i]],"FillStyle"->fillStyles[[i]],"Clickable"->False,
+                (*Mark bin of only first graph if bins should be marked. Also make it dynamic if it is clickable*)
+                "MarkSelectedBin"-> (OptionValue@"MarkSelectedBin" && i==1 ),
+                "MarkedBinDynamic"->(OptionValue@"MarkSelectedBin" && i==1 && OptionValue@"Clickable"), opts]
+            ,{i,Length@diffInfos}];
+        
+        
+        If[ OptionValue@"Clickable",
+            bins=GetValues[{{"x", "y"}, {"xWidth", "yWidth"}},First@diffInfos];
+            plots = WrapBinClickEventHandler[binIndex,bins,plots];
+        ];              
+        plots    
+             
     ]
 ]
 
 
+GetHistogramListFrom2DPDF[dist_,{xmin_,xmax_,xn_},{ymin_,ymax_,yn_}]:=
+Block[{xbins,ybins,data,x,y},
+(*    xbins=FindDivisions[{xmin,xmax},xn];
+    ybins=FindDivisions[{ymin,ymax},yn];*)
+    xbins=Range[xmin,xmax,(xmax-xmin)/xn];
+    ybins=Range[ymin,ymax,(ymax-ymin)/yn];
+    data=Table[PDF[dist,{x,y}],{x,xbins},{y,ybins}];
+    {{xbins,ybins},data}	
+];  
+Options@GetStepsHistogramDiffusion={"binNum"->{30,30}}
+
+GetStepsHistogramDiffusion[{Dx_,Dy_,Da_},stride_:1,opts:OptionsPattern[]]:=
+Block[{D, rD, dist, maxX,maxY, binN, $VerboseIndentLevel=$VerboseIndentLevel+1},
+    Puts["***GetStepsHistogramDiffusion***"];
+    PutsF["Dx: ``; Dy: ``; Da: ``; stride: ``",Dx,Dy,Da,stride,LogLevel->2];
+    PutsOptions[GetStepsHistogramDiffusion,{opts}];
+    
+    D=Get2DCovarianceFromDiff[Dx*stride,Dy*stride,Da];
+    binN=OptionValue@"binNum";
+    
+	    (*Get the plotting range*)
+	    rD=RotationMatrix[Da*Degree].{{3*Sqrt[stride*Dx], 0}, {0,3*Sqrt[stride*Dy]}}.RotationMatrix[-Da*Degree];
+	    (*Get the max X and maxY from the rotated diff vectors *)
+	    {maxX,maxY}=Max/@(Transpose@rD);
+     
+    Puts["D:\n",D];
+    dist=MultinormalDistribution[{0,0},D];
+    Puts["D:\n",dist];
+    GetHistogramListFrom2DPDF[dist,{maxX,-maxX,First@binN},{maxY,-maxY,Last@binN}]
+]
 
 End[] (* End Private Context *)
 

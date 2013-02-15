@@ -1,0 +1,236 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Initalization", "Subtitle",
+ CellChangeTimes->{{3.5695973216292996`*^9, 3.569597329717762*^9}, {
+  3.5695977491287513`*^9, 3.5695977517589016`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"$HistoryLength", "=", "1"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+   "If", " ", "package", " ", "is", " ", "installed", " ", "to", " ", "a", 
+    " ", "non", " ", "standard", " ", "dir", " ", "add", " ", "it", " ", "to",
+     " ", "path", " ", "just", " ", "in", " ", "case"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"pfn", "=", 
+      RowBox[{"ExpandFileName", "@", 
+       RowBox[{"FileNameJoin", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"NotebookDirectory", "[", "]"}], ",", "\"\<..\>\"", ",", 
+          "\"\<..\>\""}], "}"}], "]"}]}]}], "}"}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"!", 
+        RowBox[{"MemberQ", "[", 
+         RowBox[{"$Path", ",", "pfn"}], "]"}]}], ",", " ", 
+       RowBox[{"PrependTo", "[", 
+        RowBox[{"$Path", ",", "pfn"}], "]"}]}], "]"}], ";"}]}], 
+   "\[IndentingNewLine]", "]"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Needs", "[", "\"\<Developer`\>\"", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Get", "[", "\"\<DiffusiveDynamics`\>\"", "]"}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.5695977616564674`*^9, 3.569597762099493*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"filename", "=", 
+    RowBox[{
+     RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
+     "\"\<\\\\Data\\\\diffs.mx.gz\>\""}]}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"Export", "[", 
+     RowBox[{"filename", ",", "diffs"}], "]"}], ";"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"diffs", "=", 
+   RowBox[{"Import", "[", "filename", "]"}]}], ";"}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.569568530519542*^9, 3.56956853519481*^9}, {
+  3.5695685757391286`*^9, 3.5695686575568085`*^9}, {3.569597318503121*^9, 
+  3.569597320496235*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"filename", "=", 
+    RowBox[{
+     RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
+     "\"\<\\\\Data\\\\actual.diffs.mx.gz\>\""}]}], ";"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{"Export", "[", 
+    RowBox[{"filename", ",", "actualDiffs"}], "]"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"actualDiffs", "=", 
+   RowBox[{"Import", "[", "filename", "]"}]}], ";"}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.5696576570695953`*^9, 3.569657666470133*^9}, {
+  3.5696577384602504`*^9, 3.569657778610547*^9}, {3.569658002783369*^9, 
+  3.5696580084556932`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["One set of diffusions", "Subtitle",
+ CellChangeTimes->{{3.5695685372559276`*^9, 3.5695685550359445`*^9}, {
+  3.5695973368751717`*^9, 3.5695973464187174`*^9}, {3.569652156594986*^9, 
+  3.5696521602591953`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Mod", "[", 
+  RowBox[{"5615", ",", "180"}], "]"}]], "Input"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Graphics", "[", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Get2DTensorRepresentation", "[", 
+      RowBox[{"5", ",", "15", ",", "10"}], "]"}], ",", "Red", ",", "Thick", 
+     ",", 
+     RowBox[{"Get2DTensorRepresentation", "[", 
+      RowBox[{"15", ",", "5", ",", 
+       RowBox[{"10", "+", "90", "+", "180"}]}], "]"}]}], "}"}], "]"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"testDiff", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"\"\<Dx\>\"", "\[Rule]", "5"}], ",", 
+     RowBox[{"\"\<Dy\>\"", "\[Rule]", "15"}], ",", 
+     RowBox[{"\"\<Da\>\"", "->", "10"}], ",", 
+     RowBox[{"\"\<Krneki\>\"", "\[Rule]", "1"}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Dx", "=", "34"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"testval", "=", 
+  RowBox[{"GetValue", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"Dx", ",", "Dy", ",", "Da"}], "}"}], ",", "testDiff"}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"GetValue", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"\"\<Dx\>\"", ",", "\"\<Dy\>\"", ",", "\"\<Da\>\""}], "}"}], ",", 
+   "testDiff"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"DiffusionNormalForm", "[", 
+  RowBox[{"5", ",", "15", ",", "10"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"DiffusionNormalForm", "[", "testval", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"DiffusionNormalForm", "[", "testDiff", "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"DiffusionNormalForm", "[", 
+   RowBox[{"{", 
+    RowBox[{"testDiff", ",", "testDiff", ",", "testDiff", ",", "testDiff"}], 
+    "}"}], "]"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]"}], "Input"],
+
+Cell[BoxData[{
+ RowBox[{"AbsoluteTiming", "[", 
+  RowBox[{
+   RowBox[{"normActualDiffs", "=", 
+    RowBox[{"DiffusionNormalForm", "@", "actualDiffs"}]}], ";"}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"AbsoluteTiming", "[", 
+  RowBox[{
+   RowBox[{"normDiffs", "=", 
+    RowBox[{"DiffusionNormalForm", "@", "diffs"}]}], ";"}], "]"}]}], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Manipulate", "Subtitle",
+ CellChangeTimes->{{3.5696648260532403`*^9, 3.5696648316665616`*^9}}],
+
+Cell["One", "Subsubtitle",
+ CellChangeTimes->{{3.5696648669295783`*^9, 3.5696648705167837`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"ViewDiffsWithStridePlots", "[", 
+  RowBox[{"diffs", ",", "\"\<Difuzija\>\"", ",", 
+   RowBox[{"SaveDefinitions", "\[Rule]", "False"}], ",", 
+   RowBox[{"Verbose", "\[Rule]", "False"}]}], "]"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["Multiple", "Subsubtitle",
+ CellChangeTimes->{{3.5696648524697514`*^9, 3.569664886507698*^9}}],
+
+Cell[BoxData[
+ RowBox[{"ViewDiffsWithStridePlots", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"normDiffs", ",", "normActualDiffs"}], "}"}], ",", 
+   "\"\<Difuzija\>\"", ",", 
+   RowBox[{"SaveDefinitions", "\[Rule]", "False"}], ",", 
+   RowBox[{"Verbose", "\[Rule]", "False"}]}], "]"}]], "Input"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Misc", "Subtitle",
+ CellChangeTimes->{{3.569140927476508*^9, 3.569140927559513*^9}, {
+  3.5691433739494386`*^9, 3.569143388109248*^9}, {3.569149240800003*^9, 
+  3.5691492424230957`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"For", " ", "easier", " ", "storage", " ", "in", " ", "Git"}], 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"SetOptions", "[", 
+     RowBox[{
+      RowBox[{"InputNotebook", "[", "]"}], ",", 
+      RowBox[{"PrivateNotebookOptions", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{"\"\<FileOutlineCache\>\"", "\[Rule]", "False"}], "}"}]}], 
+      ",", 
+      RowBox[{"TrackCellChangeTimes", "\[Rule]", "False"}]}], "]"}], ";", 
+    RowBox[{
+    "FrontEndTokenExecute", "[", "\"\<DeleteGeneratedCells\>\"", "]"}], ";"}],
+    "\n", 
+   RowBox[{"(*", 
+    RowBox[{"Auto", " ", "delete", " ", "output", " ", "on", " ", "close"}], 
+    "*)"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"SetOptions", "[", 
+    RowBox[{
+     RowBox[{"EvaluationNotebook", "[", "]"}], ",", 
+     RowBox[{"NotebookEventActions", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"\"\<WindowClose\>\"", "\[RuleDelayed]", 
+        RowBox[{
+        "FrontEndTokenExecute", "[", "\"\<DeleteGeneratedCells\>\"", "]"}]}], 
+       "}"}]}]}], "]"}], ";"}], "\[IndentingNewLine]"}]], "Input"],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.569217232244891*^9, 3.5692172602254915`*^9}}]
+}, Open  ]]
+},
+NotebookEventActions->{
+ "WindowClose" :> FrontEndTokenExecute["DeleteGeneratedCells"]},
+WindowSize->{1006, 1078},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+PrivateNotebookOptions->{"FileOutlineCache"->False},
+FrontEndVersion->"9.0 for Microsoft Windows (64-bit) (November 20, 2012)",
+StyleDefinitions->"Default.nb",
+$CellContext`TrackCellChangeTimes -> False
+]
+

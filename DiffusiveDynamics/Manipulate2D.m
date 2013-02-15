@@ -8,7 +8,7 @@ DrawStridePlotsFromBinInfo::usage="TODO"
 
 ViewDiffsWithStridePlots::usage="TODO";
 
-
+DrawDiffsWithStridePlots::usage="TODO";
 
 Begin["`Private`"] (* Begin Private Context *) 
 
@@ -223,20 +223,61 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
 
 
 ClearAll[DrawDiffsWithStridePlots];
-SetAttributes[DrawDiffsWithStridePlots,HoldRest];
+
+(*binindex_,strideIndex_ can be passed by value, that is why HoldRest is needed *)
+SetAttributes[DrawDiffsWithStridePlots,HoldAll];
+
 Options[DrawDiffsWithStridePlots] = {
                       "CellRange"->Automatic,
                       "Verbose":>$VerbosePrint,  (*Log output*)
                       "VerboseLevel":>$VerboseLevel,
                       "MarkNonNormal" -> True,(*Should non normal distributions be marked?*)
                       PlotStyle->Automatic,
-                      Frame->True
-                      };(*~Join~Options[ListPlot];*)
+                      Frame->True,
+                      "Clickable"->False,
+                      "Scale"->3,
+                      "HistogramPresentation" -> DrawSmooth3DHistogram,
+                      "MarkSelectedBin" -> True,
+                      "LegendCaptions"->None
+                      }~Join~
+                      Options[DrawDiffusionTensorRepresentations]~Join~
+                      Options[DrawStridePlotsFromBinInfo];
 
-DrawDiffsWithStridePlots[diffs_,title_,opts:OptionsPattern[]] :=
-Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1,
-        binIndex,scale, strideIndex,histogramPresentation(*These are just for syntax higlighting inside WB*)},
-        sdd
+DrawDiffsWithStridePlots[diffs_,binIndex_,strideIndex_,opts:OptionsPattern[]] :=
+Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1},
+    Module[ {diffsDim,bins,cellRange,tensors, binfo,tensorRepOpts,stridePlotOpts, selectedStr, legendRow},
+        Puts["****DrawDiffsWithStridePlots****"];
+        PutsOptions[DrawDiffsWithStridePlots,{opts},LogLevel->2];
+        diffsDim = Dimensions@diffs;
+        Assert[(Length@diffsDim==3) || (Length@diffsDim==4),"diffs must be either a list of {bins, stride, rules} or {diff, bins, stride, rules}"];
+        bins=GetValues[{{"x", "y"}, {"xWidth", "yWidth"}}, diffs[[All, 1]]];
+        cellRange = If[ #===Automatic,GetCellRangeFromBins@bins,#]&@OptionValue@"CellRange";
+        
+        tensorRepOpts=FilterRules[{opts}~Join~Options[DrawDiffsWithStridePlots],Options@DrawDiffusionTensorRepresentations];
+        
+        If[ Length@diffsDim==3, (*One set of diffusions*)
+            tensors = DrawDiffusionTensorRepresentations[diffs[[All,strideIndex]],binIndex, Evaluate@tensorRepOpts];
+            (*else*),
+            tensors = DrawDiffusionTensorRepresentations[diffs[[All,All,strideIndex]],binIndex, Evaluate@tensorRepOpts];
+        ];
+        
+        stridePlotOpts=FilterRules[{opts}~Join~Options[DrawDiffsWithStridePlots],Options@DrawStridePlotsFromBinInfo];
+     
+        binfo = DrawStridePlotsFromBinInfo[diffs,binIndex,strideIndex,Evaluate@stridePlotOpts];
+        selectedStr=Style[StringForm["Slected bin `1` Stride `2`",GetValue["SelectedBinCenter",binfo],GetValue["SelectedStride",binfo]],Medium];
+        legendRow=If[OptionValue["LegendCaptions"]=!=None && Length@diffsDim==4,
+        legendRow=Row@RowLegend[OptionValue@"LegendCaptions",PlotStyle->OptionValue@PlotStyle]
+        (*else*), Style["",0]];
+        
+        Column[{
+            legendRow,
+            Grid@Partition[{
+               Labeled[tensors,selectedStr,Top], GetValue["SelectedHistogram",binfo],
+               GetValue["StridePlotX",binfo],    GetValue["StridePlotY",binfo],
+               GetValue["StridePlotA",binfo],    GetValue["StridePlotN",binfo]
+            },2]
+        },Center]
+    ]
 ]   
 
 ClearAll[ViewDiffsWithStridePlots];
@@ -251,11 +292,12 @@ Options[ViewDiffsWithStridePlots] = {
                       "MarkNonNormal" -> True,(*Should non normal distributions be marked?*)
                       PlotStyle->Automatic,
                       Frame->True
-                      };(*~Join~Options[ListPlot];*)
+                      }~Join~
+                      Options[DrawDiffsWithStridePlots];
 ViewDiffsWithStridePlots[diffs_,title_,opts:OptionsPattern[]] :=
 Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1,
         binIndex,scale, strideIndex,histogramPresentation(*These are just for syntax higlighting inside WB*)},
-     Module[ {man,nb,diffsDim,histogramButtons, stepdeltaLength},
+     Module[ {man,nb,diffsDim,histogramButtons, stepdeltaLength,drawDiffsOpts},
          Puts["****ViewDiffsWithStridePlots****"];
          PutsOptions[ViewDiffsWithStridePlots,{opts},LogLevel->2];
          diffsDim=Dimensions@diffs;
@@ -267,49 +309,24 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
          ,(*else*)
              histogramButtons = {DrawSmooth3DHistogram->"Smooth 3D Histogram", Null->"None"};
              stepdeltaLength = Length@diffs[[1,1]];
-         ];               
-         man = DynamicModule[{cellRange,tensors,binfo},
-         With[{
-                bins=GetValues[{{"x", "y"}, {"xWidth", "yWidth"}}, diffs[[All, 1]]],
-                drawDiffusionOptions=FilterRules[{"Clickable"->True,"MarkSelectedBin"->True,ImageSize->Medium}~Join~
-                    {opts}~Join~Options@ViewDiffsWithStridePlots,Options@DrawDiffusionTensorRepresentations],
-                drawStridePlotsOptions=FilterRules[{opts}~Join~Options@ViewDiffsWithStridePlots,Options@DrawStridePlotsFromBinInfo]
-              },
-
-                cellRange=If[#===Automatic,GetCellRangeFromBins@bins,#]&@OptionValue@"CellRange";   
-                          
-                     Manipulate[
-                         Puts["Manipulate evaluate: ViewDiffsWithStridePlots"];
-                         If[Length@diffsDim==3, (*One set of diffusions*)
-	                         tensors = DrawDiffusionTensorRepresentations[diffs[[All,strideIndex]],
-	                             binIndex,"Scale"->scale,drawDiffusionOptions];
-                         (*else*),
-	                         tensors = DrawDiffusionTensorRepresentations[diffs[[All,All,strideIndex]],
-	                             binIndex,"Scale"->scale,drawDiffusionOptions];
-                         ];
-                         
-                         
-                          
-                         binfo = DrawStridePlotsFromBinInfo[diffs,binIndex,strideIndex,
-                             "HistogramPresentation"->histogramPresentation,"MarkNonNormal"->OptionValue@"MarkNonNormal", drawStridePlotsOptions];
-                       
-                         Column[{
-                             Style[StringForm["Slected bin `1` Stride `2`",GetValue["SelectedBinCenter",binfo],GetValue["SelectedStride",binfo]],Medium],
-                             Grid@Partition[{
-                                tensors,GetValue["SelectedHistogram",binfo],
-                                GetValue["StridePlotX",binfo],GetValue["StridePlotY",binfo],
-                                GetValue["StridePlotA",binfo],GetValue["StridePlotN",binfo]
-                             },2]
-                         },Center]
-                     ,Style[title,Large]
-                     ,Row[{
-                         Control[{{scale,5,"Disc Scale"},0,10,Appearance->"Labeled"}]
-                        ,Control[{{strideIndex,1,"Stride"},1,stepdeltaLength,1,Appearance->"Labeled"}]
-                         }]
-                     ,{{histogramPresentation,DrawSmooth3DHistogram,"Histograma presentation"},histogramButtons}
-                     ,{{binIndex ,If[ #==-1,1,#]&@GetBinIndexFromPoint[{0,0},bins]},None},
-                     SaveDefinitions->OptionValue["SaveDefinitions"],TrackedSymbols:>{strideIndex,binIndex,scale,histogramPresentation},AppearanceElements->All,Alignment->Center]
-                 ]];
+         ]; 
+         drawDiffsOpts=FilterRules[{opts}~Join~Options[ViewDiffsWithStridePlots],Options@DrawDiffsWithStridePlots];           
+         man = DynamicModule[{},
+	         Manipulate[
+	             Puts["Manipulate evaluate: ViewDiffsWithStridePlots"];    
+                 DrawDiffsWithStridePlots[diffs,binIndex,strideIndex,"HistogramPresentation"->histogramPresentation,"Clickable"->True,Evaluate@drawDiffsOpts]	             
+	         ,Style[title,Large]
+			    ,Row[{
+			       Control[{{scale,5,"Disc Scale"},0,10,Appearance->"Labeled"}]
+			      ,Control[{{strideIndex,1,"Stride"},1,stepdeltaLength,1,Appearance->"Labeled"}]
+			       }]                         
+	         ,{{histogramPresentation,DrawSmooth3DHistogram,"Histograma presentation"},histogramButtons}
+	         ,{{binIndex ,1},None}
+	         ,{{strideIndex, 1}, None},
+	         SaveDefinitions->OptionValue["SaveDefinitions"],TrackedSymbols:>{strideIndex,binIndex,scale,histogramPresentation},AppearanceElements->All,Alignment->Center
+	         ]];
+	         
+	         
         nb = CreateDocument[{man},
                 WindowTitle->title,
                 WindowMargins->Automatic,

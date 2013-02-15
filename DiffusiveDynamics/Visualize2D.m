@@ -49,6 +49,7 @@ diffInfosWithStride = listOfListOfRules;
 listOfDiffInfosWithStide = listOfListOfListOfRules;
 NumericOrSymbolQ=(NumericQ[#] ||Head[#]===Symbol)&;
 
+RowLegend::usage=="Gives a row line legend";
 ClearAll[DiffBinRectangle];
 DiffBinRectangle[{center_,w_}] := Rectangle[center-w/2.,center+w/2.];
 
@@ -387,6 +388,7 @@ Options[DrawDiffusionTensorRepresentations] = {
 						            "MarkedBinDynamic" -> Automatic,
 						            "MarkedBinFillStyle" -> None,
 						            "MarkedBinOutlineStyle" -> Directive[Thick, Black, Opacity@.5],
+						            ImageSize->Medium,
 						            Axes->True,
 						            Frame->True,
 						            PlotRange->Automatic, 
@@ -434,7 +436,10 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
           (*Wrap bin marker in Dynamic if the graph is clickable if "MarkedBinDynamic" True *)
           markedBinDynamic=If[ # === Automatic, OptionValue@"Clickable", #]&@OptionValue@"MarkedBinDynamic";
           
-          br=If[markedBinDynamic,Dynamic@DiffBinRectangle[ bins[[binIndex]] ], DiffBinRectangle[ bins[[binIndex]] ]];
+          (*There was some problem with dynamic if bins were not injected*)
+          With[{ibins=bins},
+             br=If[markedBinDynamic,Dynamic@DiffBinRectangle[ ibins[[binIndex]] ], DiffBinRectangle[ ibins[[binIndex]] ]];
+          ];
           reps=reps~Join~{EdgeForm@OptionValue@"MarkedBinOutlineStyle",FaceForm@OptionValue@"MarkedBinFillStyle", br};  
         ];    
         reps=Graphics[reps
@@ -479,6 +484,23 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
     ]
 ]
 
+ClearAll@RowLegend;
+Options@RowLegend = {PlotStyle -> Automatic,
+                     TextStyle -> Bold};
+RowLegend[legends_, opts : OptionsPattern[]] :=
+Block[ {plotStyles,i},
+        plotStyles = 
+         If[ # === Automatic,
+             Table[Directive[Thick, Opacity@1, ColorData[1][i]], {i, Length@legends}],#
+           ] &@OptionValue[PlotStyle];
+        Assert[Length@legends == Length@legends, "PlotStyles and legends must be of the sam elength "];
+        Table[
+            Column[{
+	            Style[ legends[[i]], OptionValue[TextStyle],plotStyles[[i]]],
+	            Graphics[{plotStyles[[i]],Line[{{0,0},{1,0}}]},AspectRatio->1/10]
+            }, Center, Spacings->0],
+        {i,Length@legends}]
+]
 
 GetHistogramListFrom2DPDF[dist_,{xmin_,xmax_,xn_},{ymin_,ymax_,yn_}]:=
 Block[{xbins,ybins,data,x,y},

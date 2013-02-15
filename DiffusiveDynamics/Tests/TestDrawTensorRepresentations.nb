@@ -290,6 +290,49 @@ Cell[BoxData[
 
 Cell[CellGroupData[{
 
+Cell["DrawDiffsWithStridePlots", "Subtitle"],
+
+Cell[BoxData[
+ RowBox[{"DrawDiffsWithStridePlots", "[", 
+  RowBox[{"diffs", ",", "1", ",", "1"}], "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"DrawDiffsWithStridePlots", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"diffs", ",", "actualDiffs"}], "}"}], ",", "1", ",", "1", ",", 
+   RowBox[{"\"\<LegendCaptions\>\"", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"\"\<Fitted\>\"", ",", "\"\<Target\>\""}], "}"}]}]}], 
+  "]"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell["DynamicModule", "Subsubtitle"],
+
+Cell[BoxData[
+ RowBox[{"DynamicModule", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"bi", "=", "1"}], ",", 
+     RowBox[{"si", "=", "1"}]}], "}"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"Dynamic", "@", 
+    RowBox[{"AbsoluteTiming", "@", 
+     RowBox[{"DrawDiffsWithStridePlots", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"diffs", ",", "actualDiffs"}], "}"}], ",", "bi", ",", "si", 
+       ",", 
+       RowBox[{"\"\<Clickable\>\"", "\[Rule]", "True"}], ",", 
+       RowBox[{"\"\<MarkSelectedBin\>\"", "\[Rule]", "True"}], ",", 
+       RowBox[{"\"\<MarkedBinDynamic\>\"", "\[Rule]", "True"}]}], "]"}]}]}]}],
+   "\[IndentingNewLine]", "]"}]], "Input"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
 Cell["Manipulate", "Subtitle",
  CellChangeTimes->{{3.5696648260532403`*^9, 3.5696648316665616`*^9}}],
 
@@ -299,15 +342,8 @@ Cell["One", "Subsubtitle",
 Cell[BoxData[
  RowBox[{"ViewDiffsWithStridePlots", "[", 
   RowBox[{"diffs", ",", "\"\<Difuzija\>\"", ",", 
-   RowBox[{"PlotStyle", "\[Rule]", 
-    RowBox[{"Directive", "[", 
-     RowBox[{
-      RowBox[{
-       RowBox[{"ColorData", "[", "1", "]"}], "[", "2", "]"}], ",", "Thick"}], 
-     "]"}]}], ",", 
-   RowBox[{"SaveDefinitions", "\[Rule]", "False"}], ",", 
-   RowBox[{"Verbose", "\[Rule]", "False"}]}], "]"}]], "Input",
- CellChangeTimes->{{3.5696648524697514`*^9, 3.5696648773231726`*^9}}],
+   RowBox[{"SaveDefinitions", "\[Rule]", "True"}], ",", 
+   RowBox[{"Verbose", "\[Rule]", "False"}]}], "]"}]], "Input"],
 
 Cell[CellGroupData[{
 
@@ -320,15 +356,12 @@ Cell[BoxData[
    RowBox[{"{", 
     RowBox[{"diffs", ",", "actualDiffs"}], "}"}], ",", "\"\<Difuzija\>\"", 
    ",", 
-   RowBox[{"PlotStyle", "\[Rule]", 
-    RowBox[{"Directive", "[", 
-     RowBox[{
-      RowBox[{
-       RowBox[{"ColorData", "[", "1", "]"}], "[", "2", "]"}], ",", "Thick"}], 
-     "]"}]}], ",", 
-   RowBox[{"SaveDefinitions", "\[Rule]", "False"}], ",", 
-   RowBox[{"Verbose", "\[Rule]", "False"}]}], "]"}]], "Input",
- CellChangeTimes->{{3.5696648524697514`*^9, 3.569664875083045*^9}}]
+   RowBox[{"SaveDefinitions", "\[Rule]", "True"}], ",", 
+   RowBox[{"Verbose", "\[Rule]", "False"}], ",", 
+   RowBox[{"\"\<LegendCaptions\>\"", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"\"\<Fitted\>\"", ",", "\"\<Actual\>\""}], "}"}]}]}], 
+  "]"}]], "Input"]
 }, Open  ]]
 }, Open  ]],
 
@@ -375,7 +408,24 @@ Cell[BoxData[
        "}"}]}]}], "]"}], ";"}], "\[IndentingNewLine]"}]], "Input"],
 
 Cell[BoxData[""], "Input",
- CellChangeTimes->{{3.569217232244891*^9, 3.5692172602254915`*^9}}]
+ CellChangeTimes->{{3.569217232244891*^9, 3.5692172602254915`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"RowLegend", "[", 
+  RowBox[{"{", 
+   RowBox[{
+   "\"\<Fitane difuzije\>\"", ",", "\"\<Prave dif\[CapitalSHacek]uzije\>\"", 
+    ",", "\"\<\[CapitalSHacek]e kr ene difuzije\>\""}], "}"}], 
+  "]"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Save", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"NotebookDirectory", "[", "]"}], "<>", "\"\<TEST.m\>\""}], ",", 
+   "\"\<DiffusiveDynamics`\>\""}], "]"}]], "Input"],
+
+Cell[BoxData["$ContextPath"], "Input"]
 }, Open  ]]
 },
 NotebookEventActions->{

@@ -47,11 +47,7 @@ Cell[BoxData[{
   RowBox[{"(*", 
    RowBox[{
    "Load", " ", "the", " ", "data", " ", "on", " ", "paralle", " ", 
-    "Kernels"}], "*)"}]}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"CloseKernels", "[", "]"}], ";"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"LaunchKernels", "@", "6"}], ";"}], "\[IndentingNewLine]", 
+    "Kernels"}], "*)"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"With", "[", 
    RowBox[{
@@ -119,12 +115,7 @@ Cell[BoxData[{
         RowBox[{"\[Alpha]", " ", "\[Degree]"}], "]"}], "]"}]}], "]"}]}], 
    ";"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]"}], "Input",
  CellGroupingRules->{GroupTogetherGrouping, 10000.},
- InitializationCell->True,
- CellChangeTimes->{{3.5686137054631243`*^9, 3.568613706492183*^9}, {
-  3.5686994346992607`*^9, 3.5686994360153356`*^9}, {3.5687040265528994`*^9, 
-  3.568704030866146*^9}, {3.5696578429632273`*^9, 3.5696578464044247`*^9}, {
-  3.5696578850276337`*^9, 3.569657890348938*^9}, {3.5696597732256327`*^9, 
-  3.5696597822521486`*^9}}]
+ InitializationCell->True]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -228,11 +219,7 @@ Cell[BoxData[{
    RowBox[{"ClearAll", "[", "ENERGY", "]"}], ";"}], " ", 
   RowBox[{"(*", 
    RowBox[{"energija", " ", "v", " ", "enotah", " ", "kT"}], 
-   "*)"}]}]}], "Input",
- CellGroupingRules->{GroupTogetherGrouping, 10000.},
- InitializationCell->True],
-
-Cell[BoxData[
+   "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"energyExp", "=", 
    RowBox[{"1", "-", 
@@ -250,7 +237,7 @@ Cell[BoxData[
              RowBox[{"CELLRANGE", "/", "4"}], ")"}], "^", "2"}], "]"}]}], 
          "]"}], ",", 
         RowBox[{"{", 
-         RowBox[{"x", ",", "y"}], "}"}]}], "]"}]}]}]}]}], ";"}]], "Input",
+         RowBox[{"x", ",", "y"}], "}"}]}], "]"}]}]}]}]}], ";"}]}], "Input",
  CellGroupingRules->{GroupTogetherGrouping, 10000.},
  InitializationCell->True],
 
@@ -295,7 +282,7 @@ Cell[BoxData[{
     RowBox[{"rw", " ", "=", " ", 
      RowBox[{"ParallelGenerateDiffusionTrajectory2D", "[", 
       RowBox[{
-       RowBox[{"STEPS", "=", "4000000"}], " ", ",", " ", "DIFFX", ",", " ", 
+       RowBox[{"STEPS", "=", "400000"}], " ", ",", " ", "DIFFX", ",", " ", 
        "DIFFY", ",", " ", "DIFFA", ",", " ", "ENERGY", ",", " ", "KT", ",", 
        " ", "STEP", ",", " ", 
        RowBox[{"{", 
@@ -312,60 +299,74 @@ Cell[BoxData[{
    RowBox[{"w", " ", "=", " ", 
     RowBox[{
      RowBox[{"{", 
-      RowBox[{"250", ",", " ", "125"}], "}"}], "*", "1"}]}], ";"}], 
-  RowBox[{"(*", 
-   RowBox[{"width", " ", "of", " ", "bin"}], "*)"}]}], "\n", 
- RowBox[{
-  RowBox[{
+      RowBox[{"250", ",", " ", "125"}], "}"}], "*", "1"}]}], ";", 
+   RowBox[{"(*", 
+    RowBox[{"width", " ", "of", " ", "bin"}], "*)"}], "\n", 
    RowBox[{"w0", " ", "=", " ", 
     RowBox[{"{", 
-     RowBox[{"0", ",", " ", "0"}], "}"}]}], ";"}], " ", 
-  RowBox[{"(*", 
-   RowBox[{"lower", " ", "left", " ", "point", " ", "of", " ", "bin"}], 
-   "*)"}]}], "\n", 
- RowBox[{
-  RowBox[{"ListPlot", "[", 
-   RowBox[{
-    RowBox[{"rw", "[", 
-     RowBox[{"[", 
-      RowBox[{"All", ",", " ", 
-       RowBox[{";;", " ", ";;", " ", 
-        RowBox[{"Ceiling", "[", 
-         RowBox[{"STEPS", "/", "10000"}], "]"}]}], ",", " ", 
-       RowBox[{"{", 
-        RowBox[{"2", ",", " ", "3"}], "}"}]}], "]"}], "]"}], ",", " ", 
-    RowBox[{"PlotRange", " ", "->", " ", 
-     RowBox[{"Transpose", "@", 
-      RowBox[{"{", 
-       RowBox[{
-        RowBox[{"-", "CELLRANGE"}], ",", " ", "CELLRANGE"}], "}"}]}]}], ",", 
-    " ", 
-    RowBox[{"GridLines", " ", "->", " ", 
-     RowBox[{"Transpose", "@", 
-      RowBox[{"{", 
-       RowBox[{
-        RowBox[{"-", "CELLRANGE"}], ",", " ", "CELLRANGE"}], "}"}]}]}], ",", 
-    " ", 
-    RowBox[{"GridLinesStyle", " ", "->", " ", 
-     RowBox[{"Directive", "[", 
-      RowBox[{"Red", ",", " ", "Thick", ",", " ", "Dashed"}], "]"}]}], ",", 
-    "\n", " ", 
-    RowBox[{"Epilog", " ", "->", " ", 
-     RowBox[{"{", 
-      RowBox[{
-       RowBox[{"Opacity", "[", "0", "]"}], ",", " ", 
-       RowBox[{"EdgeForm", "[", 
+     RowBox[{"0", ",", " ", "0"}], "}"}]}], ";", " ", 
+   RowBox[{"(*", 
+    RowBox[{"lower", " ", "left", " ", "point", " ", "of", " ", "bin"}], 
+    "*)"}], "\n", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{
+     RowBox[{"rw", "[", 
+      RowBox[{"[", 
+       RowBox[{"All", ",", " ", 
+        RowBox[{";;", " ", ";;", " ", 
+         RowBox[{"Ceiling", "[", 
+          RowBox[{"STEPS", "/", "10000"}], "]"}]}], ",", " ", 
         RowBox[{"{", 
-         RowBox[{"Red", ",", " ", "Thick"}], "}"}], "]"}], ",", " ", 
-       RowBox[{"Rectangle", "[", 
+         RowBox[{"2", ",", " ", "3"}], "}"}]}], "]"}], "]"}], ",", " ", 
+     RowBox[{"PlotRange", " ", "->", " ", 
+      RowBox[{"Transpose", "@", 
+       RowBox[{"{", 
         RowBox[{
-         RowBox[{"w0", " ", "-", " ", 
-          RowBox[{"w", "/", "2"}]}], ",", " ", 
-         RowBox[{"w0", " ", "+", " ", 
-          RowBox[{"w", "/", "2"}]}]}], "]"}]}], "}"}]}]}], "]"}], 
+         RowBox[{"-", "CELLRANGE"}], ",", " ", "CELLRANGE"}], "}"}]}]}], ",", 
+     " ", 
+     RowBox[{"GridLines", " ", "->", " ", 
+      RowBox[{"Transpose", "@", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"-", "CELLRANGE"}], ",", " ", "CELLRANGE"}], "}"}]}]}], ",", 
+     " ", 
+     RowBox[{"GridLinesStyle", " ", "->", " ", 
+      RowBox[{"Directive", "[", 
+       RowBox[{"Red", ",", " ", "Thick", ",", " ", "Dashed"}], "]"}]}], ",", 
+     "\n", " ", 
+     RowBox[{"Epilog", " ", "->", " ", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"Opacity", "[", "0", "]"}], ",", " ", 
+        RowBox[{"EdgeForm", "[", 
+         RowBox[{"{", 
+          RowBox[{"Red", ",", " ", "Thick"}], "}"}], "]"}], ",", " ", 
+        RowBox[{"Rectangle", "[", 
+         RowBox[{
+          RowBox[{"w0", " ", "-", " ", 
+           RowBox[{"w", "/", "2"}]}], ",", " ", 
+          RowBox[{"w0", " ", "+", " ", 
+           RowBox[{"w", "/", "2"}]}]}], "]"}]}], "}"}]}]}], "]"}]}], 
   "\n"}], "\n"}], "Input",
- InitializationCell->True]
+ InitializationCell->True],
+
+Cell[BoxData["\[IndentingNewLine]"], "Input"]
 }, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Get energy surface", "Subtitle"],
+
+Cell["\<\
+AbsoluteTiming[fE = GetFreeEnergy[rw];]
+\
+\>", "Text"],
+
+Cell["\<\
+DrawSmooth3DHistogram[fE, PlotColor -> Red]
+Draw2DHistogram[fE, PlotRange -> All, InterpolationOrder -> 3]\
+\>", "Text"]
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -383,7 +384,7 @@ Cell["Fitted diffusion", "Subsubtitle",
 Cell[BoxData[{
  RowBox[{
   RowBox[{"w", "=", 
-   RowBox[{"CELLRANGE", "/", "4"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"CELLRANGE", "/", "1"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"binSpec", "=", 
    RowBox[{"Transpose", "[", 
@@ -394,8 +395,13 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{"strides", "=", 
    RowBox[{"{", 
-    RowBox[{"1", ",", "5", ",", "7", ",", "10", ",", "20", ",", "30"}], 
-    "}"}]}], ";"}]}], "Input",
+    RowBox[{
+    "1", ",", "5", ",", "7", ",", "10", ",", " ", "50", ",", "100", ",", 
+     "400"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"strides", "=", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "200"}], "}"}]}], ";"}]}], "Input",
  InitializationCell->True],
 
 Cell[BoxData[{
@@ -416,7 +422,13 @@ Cell[BoxData[{
       RowBox[{"\"\<WarnIfEmpty\>\"", "\[Rule]", "False"}], ",", 
       RowBox[{"\"\<NormalitySignificanceLevel\>\"", "\[Rule]", ".01"}]}], 
      "]"}]}], ";"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"diffs", "=", 
+   RowBox[{"DiffusionNormalForm", "@", "diffs"}]}], 
+  ";"}], "\[IndentingNewLine]", 
  RowBox[{"Dimensions", "@", "diffs"}]}], "Input"],
+
+Cell[BoxData[""], "Input"],
 
 Cell[BoxData[""], "Input"]
 }, Open  ]],
@@ -459,33 +471,19 @@ Cell[BoxData[{
     RowBox[{"actualDiffs", "=", 
      RowBox[{"GetDiffusionInfoFromParameters", "[", 
       RowBox[{
-      "binSpec", ",", "strides", ",", "DIFFX", ",", "DIFFY", ",", "DIFFA", 
-       ",", 
+      "binSpec", ",", "STEP", ",", "strides", ",", "DIFFX", ",", "DIFFY", ",",
+        "DIFFA", ",", 
        RowBox[{"\"\<ReturnStepsHistogram\>\"", "\[Rule]", "True"}], ",", 
        RowBox[{"\"\<Parallel\>\"", "\[Rule]", "True"}]}], "]"}]}], ",", 
     "10"}], "]"}]}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"Dimensions", "@", "actualDiffs"}], ";"}]}], "Input",
- CellChangeTimes->{{3.5687104790029583`*^9, 3.568710517794177*^9}, {
-   3.5687179250088453`*^9, 3.5687179335543346`*^9}, {3.5687190581366568`*^9, 
-   3.5687190605087924`*^9}, {3.568720626086338*^9, 3.5687206277544336`*^9}, 
-   3.5687207221068306`*^9, {3.5687229451229796`*^9, 3.5687229512083273`*^9}, {
-   3.5687230535951843`*^9, 3.568723056724363*^9}, {3.568723537189844*^9, 
-   3.5687235450582943`*^9}, {3.5689635771207256`*^9, 
-   3.5689635978379107`*^9}, {3.5691427403942013`*^9, 3.5691427408172255`*^9}, 
-   3.569143314099015*^9, {3.569145380232191*^9, 3.5691453808582273`*^9}, {
-   3.569145775210783*^9, 3.5691457756808095`*^9}, {3.569146651490903*^9, 
-   3.569146652083937*^9}, {3.569147466531521*^9, 3.5691474712507906`*^9}, {
-   3.5691492440581894`*^9, 3.569149285293548*^9}, {3.569149366783209*^9, 
-   3.569149393825756*^9}, {3.5691494457717266`*^9, 3.5691494621746655`*^9}, {
-   3.5691496128922853`*^9, 3.5691496144283733`*^9}, {3.569237849275118*^9, 
-   3.569237888732375*^9}, {3.5692379632656384`*^9, 3.5692379732872114`*^9}, 
-   3.5692382580805006`*^9, {3.569238458448961*^9, 3.569238459136*^9}, {
-   3.569240406131362*^9, 3.5692404067053947`*^9}, {3.5692407739964027`*^9, 
-   3.5692407741474113`*^9}, {3.569240852254879*^9, 3.5692408524838915`*^9}, {
-   3.569241092075596*^9, 3.569241092760635*^9}, {3.5692412549749126`*^9, 
-   3.5692412553319335`*^9}, {3.569241904212047*^9, 3.5692419066271853`*^9}, {
-   3.56973549633889*^9, 3.5697354968029165`*^9}}]
+  RowBox[{"actualDiffs", "=", 
+   RowBox[{"DiffusionNormalForm", "@", "actualDiffs"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Dimensions", "@", "actualDiffs"}], ";"}]}], "Input"],
+
+Cell[BoxData[""], "Input"]
 }, Open  ]]
 }, Open  ]],
 
@@ -539,6 +537,8 @@ Cell[BoxData[
     "\[IndentingNewLine]", "*)"}]}]], "Input",
  InitializationCell->True],
 
+Cell[BoxData["Grid"], "Input"],
+
 Cell[BoxData[
  RowBox[{
   RowBox[{"(*", "Export", "*)"}], "\[IndentingNewLine]", 
@@ -550,6 +550,9 @@ Cell[BoxData[
     RowBox[{"Export", "[", 
      RowBox[{"actualDiffsfFileName", ",", "actualDiffs"}], "]"}]}], 
    "\[IndentingNewLine]"}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Dimensions", "@", "actualDiffs"}]], "Input"],
 
 Cell[BoxData["\[IndentingNewLine]"], "Input",
  InitializationCell->True],
@@ -570,9 +573,7 @@ Cell[BoxData[
     RowBox[{"[", 
      RowBox[{"All", ",", "1"}], "]"}], "]"}], ",", "6", ",", 
    RowBox[{"Scale", "\[Rule]", "3"}], ",", 
-   RowBox[{"\"\<MarkSelectedBin\>\"", "\[Rule]", "False"}]}], "]"}]], "Input",
- CellChangeTimes->{{3.569597174810902*^9, 3.5695972413447075`*^9}, {
-  3.5696557672625046`*^9, 3.5696557678505383`*^9}}],
+   RowBox[{"\"\<MarkSelectedBin\>\"", "\[Rule]", "False"}]}], "]"}]], "Input"],
 
 Cell[BoxData[
  RowBox[{"DrawDiffusionTensorRepresentations", "[", 
@@ -586,20 +587,7 @@ Cell[BoxData[
       RowBox[{"[", 
        RowBox[{"All", ",", "1"}], "]"}], "]"}]}], "}"}], ",", "1", ",", 
    RowBox[{"Verbose", "\[Rule]", "False"}], ",", 
-   RowBox[{"Scale", "\[Rule]", "4"}]}], "]"}]], "Input",
- CellChangeTimes->{{3.5687104790029583`*^9, 3.568710517794177*^9}, {
-   3.5687179250088453`*^9, 3.5687179335543346`*^9}, {3.5687190581366568`*^9, 
-   3.5687190605087924`*^9}, {3.568720626086338*^9, 3.5687206277544336`*^9}, 
-   3.5687207221068306`*^9, {3.5687229451229796`*^9, 3.5687229512083273`*^9}, {
-   3.5687230535951843`*^9, 3.568723056724363*^9}, {3.568723537189844*^9, 
-   3.5687235450582943`*^9}, {3.5689635771207256`*^9, 
-   3.5689635978379107`*^9}, {3.5691427403942013`*^9, 3.5691427408172255`*^9}, 
-   3.569143314099015*^9, {3.5695639094722333`*^9, 3.56956393563673*^9}, {
-   3.56956567927046*^9, 3.569565690607108*^9}, 3.5695670401632986`*^9, {
-   3.569567131109501*^9, 3.569567137462864*^9}, {3.569567261140938*^9, 
-   3.569567274844722*^9}, {3.5695675549277415`*^9, 3.5695675586019516`*^9}, {
-   3.569569328923208*^9, 3.5695693329154367`*^9}, {3.5695971717527275`*^9, 
-   3.5695971719367375`*^9}, {3.5696557875276637`*^9, 3.5696557940880384`*^9}}]
+   RowBox[{"Scale", "\[Rule]", "4"}]}], "]"}]], "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -616,21 +604,8 @@ Cell[BoxData[
       RowBox[{
        RowBox[{"ColorData", "[", "1", "]"}], "[", "2", "]"}], ",", "Thick"}], 
      "]"}]}], ",", 
-   RowBox[{"SaveDefinitions", "\[Rule]", "True"}], ",", 
-   RowBox[{"Verbose", "\[Rule]", "False"}]}], "]"}]], "Input",
- CellChangeTimes->{{3.5687104790029583`*^9, 3.568710517794177*^9}, {
-   3.5687179250088453`*^9, 3.5687179335543346`*^9}, {3.5687190581366568`*^9, 
-   3.5687190605087924`*^9}, {3.568720626086338*^9, 3.5687206277544336`*^9}, 
-   3.5687207221068306`*^9, {3.5687229451229796`*^9, 3.5687229512083273`*^9}, {
-   3.5687230535951843`*^9, 3.568723056724363*^9}, {3.568723537189844*^9, 
-   3.5687235450582943`*^9}, {3.5689635771207256`*^9, 
-   3.5689635978379107`*^9}, {3.5691427403942013`*^9, 3.5691427408172255`*^9}, 
-   3.569143314099015*^9, {3.569145380232191*^9, 3.5691453808582273`*^9}, {
-   3.569145775210783*^9, 3.5691457756808095`*^9}, {3.569146651490903*^9, 
-   3.569146652083937*^9}, {3.569147466531521*^9, 3.5691474712507906`*^9}, {
-   3.5691492440581894`*^9, 3.569149246533331*^9}, {3.5692427912997856`*^9, 
-   3.5692428376104345`*^9}, {3.5697364793951178`*^9, 3.569736484873431*^9}, {
-   3.569741228765766*^9, 3.5697412291387873`*^9}}],
+   RowBox[{"SaveDefinitions", "\[Rule]", "False"}], ",", 
+   RowBox[{"Verbose", "\[Rule]", "False"}]}], "]"}]], "Input"],
 
 Cell[BoxData[
  RowBox[{"ViewDiffsWithStridePlots", "[", 

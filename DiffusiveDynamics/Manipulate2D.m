@@ -79,6 +79,7 @@ Options[DrawStridePlotsFromBinInfo] = { "Verbose":>$VerbosePrint,  (*Log output*
                                         "MarkNonNormal" -> True,(*Should non normal distributions be marked?*)
                                         "Clickable" -> True,(*Wrap the plots in an EventHandler so that stride can be changed*)
                                         PlotStyle -> Automatic,
+                                        PlotMarkers->{Graphics@{Disk[]},0.03},
                                         ImageSize -> Medium
                                       };
 
@@ -122,7 +123,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
                           PlotRange->{All,{0,All}},Joined->True,GridLines->{{stridex[[strideIndex,1]]},{}},
                           GridLinesStyle->{Directive[Dashed],Automatic},
                           PlotStyle->plotStyle, ImagePadding -> {{40, 10}, {40, 0}},
-                          PlotMarkers->{Graphics@{Disk[]},0.03}
+                          PlotMarkers->OptionValue@PlotMarkers
                         ];
   
        stridexPlot = ListPlot[stridex,FrameLabel->{"Stride","Dx"},strideplotopts]; 
@@ -162,7 +163,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
        injectedOptions=FilterRules[{PlotRange->All}~Join~{opts}~Join~Options@DrawStridePlotsFromBinInfo,Options@histDraw];
  
        (*Draw the histogram or show the normalstr  *)
-       strideHistogram = If[ !(MatchQ[strideHistogram,Missing[___]]|| strideHistogram===Null || OptionValue["HistogramPresentation"] === Null ||  OptionValue["HistogramPresentation"] === None),
+       strideHistogram = If[ !(MatchQ[strideHistogram,Missing[___]] || strideHistogram===Null || OptionValue["HistogramPresentation"] === Null ||  OptionValue["HistogramPresentation"] === None),
                           (*then*)
                             If[histIs3D, (*then*)                             
                                 Show[histDraw[strideHistogram,"FillStyle"->plotStyle,"OutlineStyle"->plotStyle,injectedOptions], AxesLabel-> {"Steps x","Steps y","P(x,y)"}, PlotLabel-> normalstr, RotationAction -> "Clip",ImageSize->{300,300},LabelStyle->Medium]
@@ -170,7 +171,9 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
                                 Show[histDraw[strideHistogram,injectedOptions], FrameLabel->{{"Steps y",""},{"Steps x",normalstr}} ,ImageSize->{300,300},LabelStyle->Medium]
                             ] 
                           ,(*else*)
-                             Graphics[Style[Text@"None",Large],ImageSize->{300,300}]
+                            (*SpanFromLeft*)
+                             (*Graphics[Style[Text@"No histogram",Large],ImageSize->{300,300}]*)
+                             None
                          ];
        
        
@@ -195,11 +198,16 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
         plots=Table[DrawStridePlotsFromBinInfo[diffInfos[[i]],binIndex,strideIndex,
                 PlotStyle->plotStyles[[i]],"Clickable"->False,(*"HistogramPresentation" -> DrawSmooth3DHistogram,*) opts]
             ,{i,Length@diffInfos}];
+       
+       histograms= GetValues["SelectedHistogram",plots];
+       (*Some bins may not exist, be missing. So Delete the "SelectedHistogram" text before showing*) 
+       histograms=DeleteCases[histograms,"SelectedHistogram"];
+       histograms=Show@@histograms;   
             
-       stridexPlot = Show@@GetValues["StridePlotX",plots];
-       strideyPlot = Show@@GetValues["StridePlotY",plots];
-       strideAPlot = Show@@GetValues["StridePlotA",plots];
-       strideNPlot = Show@@GetValues["StridePlotN",plots];
+       stridexPlot = Show@@DeleteCases[GetValues["StridePlotX",plots],"StridePlotX"];
+       strideyPlot = Show@@DeleteCases[GetValues["StridePlotY",plots],"StridePlotY"];
+       strideAPlot = Show@@DeleteCases[GetValues["StridePlotA",plots],"StridePlotA"];
+       strideNPlot = Show@@DeleteCases[GetValues["StridePlotN",plots],"StridePlotN"];
        (*Only the first binInfo is made clickable*)
        If[OptionValue@"Clickable", (*then*)
            strides = GetValues["Stride",diffInfos[[1,binIndex]]];
@@ -209,7 +217,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
            strideNPlot = WrapStrideClickEventHandler[strideIndex,strides,strideNPlot];  
        ];
       
-       histograms= Show@@GetValues["SelectedHistogram",plots];            
+   
         (*rules=plots[[1,All,1]];(*all the rules names. Could also be DeleteDuplicates@plots[[All,All,1]]*);  *)
         {"SelectedBinCenter"->GetValue["SelectedBinCenter",First@plots],
          "SelectedStride"->GetValue["SelectedStride",First@plots],
@@ -257,7 +265,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
         
         If[ Length@diffsDim==3, (*One set of diffusions*)
             tensors = DrawDiffusionTensorRepresentations[diffs[[All,strideIndex]],binIndex, Evaluate@tensorRepOpts];
-            (*else*),
+            (*else multiple sets of diffusion*),
             tensors = DrawDiffusionTensorRepresentations[diffs[[All,All,strideIndex]],binIndex, Evaluate@tensorRepOpts];
         ];
         
@@ -272,13 +280,13 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
         Column[{
             legendRow,
             Grid@Partition[{
-               Labeled[tensors,selectedStr,Top], GetValue["SelectedHistogram",binfo],
+               Labeled[tensors,selectedStr,Top], If[#===None,SpanFromLeft,#]&@GetValue["SelectedHistogram",binfo],
                GetValue["StridePlotX",binfo],    GetValue["StridePlotY",binfo],
                GetValue["StridePlotA",binfo],    GetValue["StridePlotN",binfo]
             },2]
         },Center]
     ]
-]   
+]    
 
 ClearAll[ViewDiffsWithStridePlots];
 SetAttributes[ViewDiffsWithStridePlots,HoldFirst];
@@ -289,6 +297,7 @@ Options[ViewDiffsWithStridePlots] = {
                       "CellRange"->Automatic,
                       "Verbose":>$VerbosePrint,  (*Log output*)
                       "VerboseLevel":>$VerboseLevel,
+                      "Scale"-> 1,
                       "MarkNonNormal" -> True,(*Should non normal distributions be marked?*)
                       PlotStyle->Automatic,
                       Frame->True
@@ -296,34 +305,59 @@ Options[ViewDiffsWithStridePlots] = {
                       Options[DrawDiffsWithStridePlots];
 ViewDiffsWithStridePlots[diffs_,title_,opts:OptionsPattern[]] :=
 Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1,
-        binIndex,scale, strideIndex,histogramPresentation(*These are just for syntax higlighting inside WB*)},
-     Module[ {man,nb,diffsDim,histogramButtons, stepdeltaLength,drawDiffsOpts},
+        binIndex,scale, strideIndex,histogramPresentation,markNonNormal,showPlotMarkers,showNormalizedDiff,showMinBins(*These are just for syntax higlighting inside WB*)},
+     Module[ {man,nb,diffsDim,histogramButtons, stepdeltaLength,drawDiffsOpts,strideFactor},
          Puts["****ViewDiffsWithStridePlots****"];
          PutsOptions[ViewDiffsWithStridePlots,{opts},LogLevel->2];
          diffsDim=Dimensions@diffs;
          Assert[(Length@diffsDim==3) || (Length@diffsDim==4),"diffs must be either a list of {bins, stride, rules} or {diff, bins, stride, rules}"];
          (*Not all histogram presentations work well when presenting multiple data sets*)
          If[Length@diffsDim==3,
-             histogramButtons = {Draw2DHistogram->"2D Histogram",DrawSmooth3DHistogram->"Smooth 3D Histogram", Draw3DHistogram->"3D Histogram",Null->"None"};
+             histogramButtons = {Draw2DHistogram->"2D Histogram",DrawSmooth3DHistogram->"Smooth 3D Histogram", (*Draw3DHistogram->"3D Histogram",*)Null->"None"};
              stepdeltaLength = Length@First@diffs; (*All the bines have the same strides*)
          ,(*else*)
              histogramButtons = {DrawSmooth3DHistogram->"Smooth 3D Histogram", Null->"None"};
              stepdeltaLength = Length@diffs[[1,1]];
          ]; 
+         
+
+         
          drawDiffsOpts=FilterRules[{opts}~Join~Options[ViewDiffsWithStridePlots],Options@DrawDiffsWithStridePlots];           
          man = DynamicModule[{},
 	         Manipulate[
 	             Puts["Manipulate evaluate: ViewDiffsWithStridePlots"];    
-                 DrawDiffsWithStridePlots[diffs,binIndex,strideIndex,"HistogramPresentation"->histogramPresentation,"Clickable"->True,Evaluate@drawDiffsOpts]	             
+                 
+                          If[ showNormalizedDiff, (*then*)
+                              strideFactor = 1,
+                          (*else get the curernt stride*)
+                              If[ Length@diffsDim==3,
+                                  strideFactor = ("Stride"/.diffs[[binIndex,strideIndex]]),(*else*)
+                                  strideFactor = ("Stride"/.diffs[[1,binIndex,strideIndex]])
+                              ];
+                          ];
+                 DrawDiffsWithStridePlots[diffs,binIndex,strideIndex,"HistogramPresentation"->histogramPresentation, 
+                     "MarkNonNormal"->markNonNormal, "Clickable"->True, "Scale"->scale*strideFactor,
+                     "ShowMinBins"->showMinBins,
+                     PlotMarkers->If[showPlotMarkers,{Graphics@{Disk[]},0.03},None], Evaluate@drawDiffsOpts]	             
 	         ,Style[title,Large]
 			    ,Row[{
-			       Control[{{scale,5,"Disc Scale"},0,10,Appearance->"Labeled"}]
-			      ,Control[{{strideIndex,1,"Stride"},1,stepdeltaLength,1,Appearance->"Labeled"}]
+			       Control@{{scale,OptionValue@"Scale","Disc Scale"},0,10,Appearance->"Labeled"}
+			      ,Control@{{strideIndex,1,"Stride"},1,stepdeltaLength,1,Appearance->"Labeled"}
 			       }]                         
-	         ,{{histogramPresentation,DrawSmooth3DHistogram,"Histograma presentation"},histogramButtons}
+	         ,Row[{
+	               Control@{{histogramPresentation,DrawSmooth3DHistogram,"Histogram presentation"},histogramButtons}," "
+	              ,Column[{
+	                  Control@{{markNonNormal,OptionValue@"MarkNonNormal","Mark nonormal"},{True,False}}
+	                 ,Control@{{showPlotMarkers,True,"Show markers"},{True,False}}
+	                      }]," "
+                  ,Column[{
+                      Control@{{showNormalizedDiff,True,"Show time normalized diff"},{True,False}}
+                     ,Control@{{showMinBins,False,"Show min bins"},{True,False}}
+                          }]	                      
+	             }]
 	         ,{{binIndex ,1},None}
 	         ,{{strideIndex, 1}, None},
-	         SaveDefinitions->OptionValue["SaveDefinitions"],TrackedSymbols:>{strideIndex,binIndex,scale,histogramPresentation},AppearanceElements->All,Alignment->Center
+	         SaveDefinitions->OptionValue["SaveDefinitions"],TrackedSymbols:>True(*{strideIndex,binIndex,scale,histogramPresentation}*),AppearanceElements->All,Alignment->Center
 	         ]];
 	         
 	         

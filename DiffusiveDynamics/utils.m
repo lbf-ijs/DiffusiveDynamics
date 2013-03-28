@@ -53,6 +53,14 @@ ClearAll[LetL];
 LetL::usage="LetL[const, body] implements nested With blocks for each constant. 
 So it is possible to use previous constants in the definition of next constants."
 
+(**)
+withoutIndeterminate /: (f : Min | Max)[withoutIndeterminate[args___]] :=
+  Block[{Indeterminate = f[]}, f[args]];
+
+Clear[LoadData, LoadHeader, TakeData];
+LoadData::usage="TODO";
+LoadHeader::usage="TODO";
+TakeData::usafe="TakeData[data,header,take] given a table and a header, extracts the coresponfing columns in in take-";
 Begin["`Private`"]
 (* Implementation of the package *)
 
@@ -67,7 +75,8 @@ SetAttributes[Puts,HoldAll];
 Options[Puts] = {LogLevel->1};
 
 Puts[Shortest[msgs__], opt:OptionsPattern[]] :=
-    (If[ $VerbosePrint &&($VerboseLevel>=OptionValue["LogLevel"]),
+    (If[ ($VerbosePrint &&($VerboseLevel>=OptionValue["LogLevel"]) || 
+         (OptionValue["LogLevel"]===0) (*For quick hacks to force printing*)),
          (*Print["msg puts"];*)
          $VerbosePrintFunction[GetVerboseIndentString[],msgs]
      ];
@@ -203,6 +212,103 @@ LetL[{head_}, expr_] := With[{head}, expr];
 LetL[{head_, tail__}, expr_] := 
   Block[{With}, Attributes[With] = {HoldAll};
     With[{head}, Evaluate[LetL[{tail}, expr]]]];
+
+
+LoadData::nofile="Filename `1` does not exist";
+
+Options[LoadData] = {"Type"->"Table",
+                     "Stride"->1, 
+                     "FirstElement"->1, 
+                     "LastElement"->-1,
+                     "PackArray"->True, (*Should try ro return packed array*)
+                     "AutoStrideIfMoreThan"->Null,  
+                     "DataHeader"->Null,
+                     "Verbose":>$VerbosePrint,  (*Log output*)
+                     "VerboseLevel":>$VerboseLevel};
+   
+LoadData[afilename_,opt:OptionsPattern[]] :=
+    Module[{filename=afilename,data,stride},
+        
+        Puts["Loading data from file ",filename];
+        
+        (* If file does not exist try using / as \\ *)
+        If[!FileExistsQ@filename,
+            filename=StringReplace[filename,"/"->"\\"];
+            Puts["Trying with name by replacing / to \\ ",filename,LogLevel->2];
+           ];
+
+        If[!FileExistsQ@filename, 
+            Message[LoadData::nofile,filename];
+            Return[$Failed];
+            ]; 
+        
+        If[ StringMatchQ[OptionValue@"Type","Real*"],(*then*)
+            data = Import[filename,OptionValue@"Type"]; 
+            (*Partition the data according to the header, since binary data is not partitioned*)
+            If[ OptionValue@"DataHeader"=!=Null, (*then*)
+                data = Partition[data,Length[OptionValue@"DataHeader"]]
+            ];
+         ,(*else*)
+            data = N[Import[filename,OptionValue@"Type","IgnoreEmptyLines"->True,"Numeric"->True]];
+            (*Take everything that has a numeric first part*)
+            data = Select[data,NumericQ[#[[1]]]&];
+            
+        ];
+        
+        If[OptionValue@"PackArray",
+            data = Developer`ToPackedArray@data;
+          ];
+        (*Print["First ", OptionValue[FirstElement]," Last ", OptionValue[LastElement]," Stride ", OptionValue[Stride]];*)
+        If[ OptionValue@"AutoStrideIfMoreThan"===Null, (*then*)
+            data = data[[OptionValue@"FirstElement" ;; OptionValue@"LastElement" ;; OptionValue@"Stride"]];
+        ,(*else*)        
+        (*Make sure we return approx AutoStrideIfMoreThan points*)
+            data = data[[OptionValue@"FirstElement"  ;; OptionValue@"LastElement"]];
+            If[ Length[data]>OptionValue"AutoStrideIfMoreThan",(*then*)
+                stride = Round[Length[data]/OptionValue"AutoStrideIfMoreThan"];
+                Puts["Autostride is ",stride,LogLevel->2];
+                data = data[[1;;-1;;stride]];
+            ];
+        ];
+        Puts["Loaded ",Length[data]," from ", filename];
+        Return[data];
+    ];
+ 
+Clear[LoadMultipleData];
+Options[LoadMultipleData] = {"Type"->"Table","Stride"->1};
+
+LoadMultipleData[filenames_,opt:OptionsPattern[]] :=
+    Module[ {},
+        Flatten[LoadData[#,Type->OptionValue[Type]]&/@files,1][[;; ;; OptionValue[Stride]]]
+    ];
+
+
+Options[LoadHeader] = {"CommentChar"->"#","Separator"->WhitespaceCharacter..};
+
+LoadHeader[filename_,opt:OptionsPattern[]] :=
+    (*Loads the first line, ignoring any present Comments Char *)
+        StringTrim[
+         DeleteCases[
+            StringSplit[
+              Import[filename,{"Lines",1}],
+              OptionValue@"Separator"
+            ]
+          ,OptionValue@"CommentChar"]  
+        ];
+
+Clear[TakeData];
+Options[TakeData] = {};
+
+TakeData[data_,header_,take_List,opt:OptionsPattern[]] :=
+    Module[ {ind,takestr},
+        takestr = ToString[#]&/@take;
+        (*Print[FullForm[takestr]];*)
+        ind = Flatten[(Position[header,#])&/@takestr];
+        (*Print[FullForm[ind]];
+        Print[data[[;;10,ind]]];*)
+        Return[data[[All,ind]]]
+    ];
+
 
 End[]
 

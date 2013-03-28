@@ -126,6 +126,7 @@ compiledSelectBin = Compile[{{points,_Real, 2},{min,_Real, 1},{max,_Real, 1}},
 ] 
 
 ClearAll[GetDiffsFromBinnedPoints];
+Attributes[GetDiffsFromBinnedPoints]={HoldAll};
 (*SetAttributes[GetDiffsFromBinnedPoints,{HoldAll}];*)
 Options[GetDiffsFromBinnedPoints] = {"Verbose":>$VerbosePrint,  (*Log output*)
 						        "VerboseLevel":>$VerboseLevel,(*The amount of details to log. Higher number means more details*)
@@ -147,7 +148,7 @@ GetDiffsFromBinnedPoints[binnedInd_,rwData_,dt_,{min_,max_},{cellMin_,cellMax_},
             PutsE["Steps:\n",steps,LogLevel->5];
 
             GetDiffsFromSteps[steps,dt, OptionValue["Stride"]]~Join~{"Stride"->OptionValue["Stride"], "x"->bincenter[[1]], "y"->bincenter[[2]],
-                      "xWidth"->binwidth[[1]], "yWidth"->binwidth[[2]], "StepsInBin"->Length[steps],
+                      "xWidth"->binwidth[[1]], "yWidth"->binwidth[[2]], "StepsInBin"->Length[steps], "dt"->dt,
                       "StepsHistogram"->If[ OptionValue["ReturnStepsHistogram"],
                                             N@HistogramList[steps,"Sturges","PDF"]
                                         ]}
@@ -156,6 +157,8 @@ GetDiffsFromBinnedPoints[binnedInd_,rwData_,dt_,{min_,max_},{cellMin_,cellMax_},
 
 
 ClearAll[GetStepsFromBinnedPoints];
+Attributes[GetStepsFromBinnedPoints]={HoldAll};
+
 Options[GetStepsFromBinnedPoints] = {"Verbose":>$VerbosePrint,  (*Log output*)
 						        "VerboseLevel":>$VerboseLevel,  (*The amount of details to log. Higher number means more details*)
                                 "Stride"->1.,                   (*Number of points between a step*)
@@ -193,12 +196,20 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
 
             PutsE["Indpaths lengths:\n",BeforeAppendLenghts=Length/@indpaths,LogLevel->3];
             Puts["Mean: ",N@Mean[Length/@indpaths],LogLevel->2];
-            Puts[Histogram[Length/@indpaths,{5},PlotRange->{{0,100},Automatic}],LogLevel->5];
-            (*Add ds steps to the beggining and end, so that we get at least 2 steps for each point in bin at largest ds*)
+            Puts[Histogram[Length/@indpaths,{5},PlotRange->{{0,All},{0,All}}],LogLevel->5];
+            (*Add ds steps to the begining and end, so that we get at least 2 steps for each point in bin at largest ds*)
+            (*Do this only if length of path is less or equal to  ds *)
             If[ OptionValue["PadSteps"], (*then*)
-                indpaths = Map[AppendLeftRight[#,ds,Length[rwData]]&, indpaths];
+                indpaths = Map[
+                    If[Length@#<=ds, (*then*)
+                        AppendLeftRight[#,ds,Length[rwData]]
+                      ,(*else just returned unchanged*)
+                        #
+                      ]
+                    &, indpaths];
                 PutsE["Indpaths lengths (after padding):\n",AfterAppendLengths=Length/@indpaths,LogLevel->3];
                 Puts["Mean (after padding): ",N@Mean[Length/@indpaths],LogLevel->2];
+                Puts[Histogram[Length/@indpaths,{5},PlotRange->{{0,All},{0,All}}],LogLevel->5];
                 PutsE["Indpaths lengths differences:\n",AfterAppendLengths-BeforeAppendLenghts];
             ];
             
@@ -225,7 +236,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
             data = Developer`ToPackedArray[Flatten[data,1]];
 
             PutsE["Consecutive steps:\n",data,LogLevel->5];
-            Puts["Steps are is packed: ", Developer`PackedArrayQ[data], LogLevel->5];
+            Puts["Steps are is packed: ", Developer`PackedArrayQ[data], LogLevel->4];
             Puts["STEP LENGTH: ",Length[data],LogLevel->2];
 
             If[ Length[data]==0,(*then*)
@@ -259,7 +270,7 @@ GetDifferences = Compile[{{l,_Real, 2},{ds,_Integer,0}},
   Block[ {lr},
       lr = {{}};
       (*If[ds==1,(*then*)lr=Differences[l];];*)
-      If[ Length[l]-ds>0,(*if list is long enoug then*)
+      If[ Length[l]>ds,(*if list is long enough then*)
           lr = Drop[l,ds]-Drop[l,-ds]
       ];
       lr
@@ -280,18 +291,22 @@ Returns a list of replacement rules for higher flexibility.
 *)
 (*TODO: here it would be possible to get parameters using FindDistribution and MultinormalDistribution. 
 Or add a test for normality in any other way*) 
+Attributes[GetDiffsFromSteps]={HoldFirst};
 GetDiffsFromSteps[data_,dt_,ds_] :=  Block[{$VerboseIndentLevel = $VerboseIndentLevel+1},
-    Module[ {ux,uy,rDx,rDy,rDa,pVal=Null,isNormal=Null},
+    Module[ {ux,uy,sx,sy,rDx,rDy,rDa,pVal=Null,isNormal=Null},
         Puts["***GetDiffsFromSteps***"];
         If[ Length[data]==0, (*If no steps then*)
             {ux,uy,rDx,rDy,rDa} = ConstantArray[Missing[],5];,(*else*)
             (*TODO: Perhaps add option to choose if we want the normality test and which test is wanted *)
             (*{ux,uy,rDx,rDy,rDa} = GetTensorFromMoments[data];*)
-            {ux,uy,rDx,rDy,rDa,pVal,isNormal}=GetTensorFromMomentsWithNormalityTest[data];
+            {ux,uy,sx,sy,rDa,pVal,isNormal}=GetTensorFromMomentsWithNormalityTest[data];
+            
             (*We fitted the principal sigmas... transform into diffusion and devide by StepsDelta*)
-            {rDx,rDy} = ({rDx,rDy}^2)/(2 dt)/ds; (*TODO: 4!*)
+            {rDx,rDy} = ({sx,sy}^2)/(2*dt*ds);
         ];
-        {"Dx"->rDx,"Dy"->rDy,"Da"->rDa,"ux"->ux,"uy"->uy,"PValue"->pVal,"IsNormal"->isNormal}
+        {"Dx"->rDx,"Dy"->rDy,"Da"->rDa,"ux"->ux,"uy"->uy,"sx"->sx,"sy"->sy,
+         "PValue"->pVal,"IsNormal"->isNormal,"xMinWidth"->Max@Abs@{6*sx*Cos[rDa*Degree],6*sy*Cos[(rDa+90)*Degree]},
+                                             "yMinWidth"->Max@Abs@{6*sy*Sin[rDa*Degree],6*sx*Sin[(rDa+90)*Degree]} (*99.7 steps are inside the bin*)}
     ]
 ];
 
@@ -338,6 +353,7 @@ isNormal -- Is this a normal distribution according to AndersonDarlingTest
 Options[GetTensorFromMomentsWithNormalityTest]={HoldFirst};
 GetTensorFromMomentsWithNormalityTest[data_] :=
     Module[ {ux,uy,a,b,c,eval,evec,sx,sy,alpha,dist,hypothesis,params,pVal, isNormal},
+		
 		dist = MultinormalDistribution[{ux, uy}, {{a, c}, {c, b}}];
 
 		hypothesis=AndersonDarlingTest[data, dist, "HypothesisTestData",SignificanceLevel->$SignificanceLevel]; 
@@ -347,6 +363,7 @@ GetTensorFromMomentsWithNormalityTest[data_] :=
 		(*Retrive the parameters*)
 		params=hypothesis["FittedDistributionParameters"];
 		{ux,uy,a,b,c}={ux,uy,a,b,c}/.params;
+		{a,b,c}={a,b,c}/.params;
 		
 		(*The tensor is symmetric*)
         {eval,evec} = Eigensystem[{{a,c},{c,b}}];
@@ -565,7 +582,6 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
     Module[ {},
             Puts["********GetDiffusionInBins********"];
             PutsOptions[GetDiffusionInBins,{opts},LogLevel->2];
-            
             Switch[OptionValue@"Method",
             Select,(*then*)
             	GetDiffusionInBinsBySelect[rwData,dt,binSpec, FilterRules[{opts},Options@GetDiffusionInBinsBySelect]],
@@ -578,11 +594,13 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
     ];
 
 ClearAll@GetDiffusionInfoForBinFromParameters;
-GetDiffusionInfoForBinFromParameters[{{x_,y_},{dx_,dy_}}, stride_,DiffX_,DiffY_,DiffA_,ReturnHistograms_:False]:=
- {"Dx"->DiffX[x,y],"Dy"->DiffY[x,y],"Da"->DiffA[x,y],
-  "x"->x,"y"->y,"xWidth"->dx,"yWidth"->dy, "ux"->0,"uy"->0,
-  "StepsHistogram"->If[ReturnHistograms, GetStepsHistogramDiffusion[{DiffX[x,y], DiffY[x,y], DiffA[x,y]}, stride]],  
-  "StepsInBin"->Null,"Stride"->stride,"PValue"->1, "IsNormal"->True};
+GetDiffusionInfoForBinFromParameters[{{x_,y_},{dx_,dy_}}, timestep_,stride_,DiffX_,DiffY_,DiffA_,ReturnHistograms_:False]:=
+With[{Dx=DiffX[x,y],Dy=DiffY[x,y],Da=DiffA[x,y]},
+	 {"Dx"->Dx,"Dy"->Dy,"Da"->Da, "sx"->Sqrt[2*Dx*stride*timestep], "sy"->Sqrt[2*Dy*stride*timestep],
+	  "x"->x,"y"->y,"xWidth"->dx,"yWidth"->dy, "ux"->0,"uy"->0, "dt"->timestep,
+	  "StepsHistogram"->If[ReturnHistograms, GetStepsHistogramDiffusion[{DiffX[x,y], DiffY[x,y], DiffA[x,y]}, stride]],  
+	  "StepsInBin"->Null,"Stride"->stride, "PValue"->1, "IsNormal"->True,"xMinWidth"->dx,"yMinWidth"->dy}
+];
 (*TODO: Perhaps I could fill a Gaussian StepsHistogram. StepDelta could be passed in as an option.  *)
 
 Options@GetDiffusionInfoFromParameters = {
@@ -592,18 +610,18 @@ Options@GetDiffusionInfoFromParameters = {
                "Parallel" -> True
 }
 
-GetDiffusionInfoFromParameters[binsOrBinspec_, stride_?NumericQ, DiffX_,DiffY_,DiffA_,opts:OptionsPattern[]]:=
+GetDiffusionInfoFromParameters[binsOrBinspec_, timestep_?NumericQ, stride_?NumericQ, DiffX_,DiffY_,DiffA_,opts:OptionsPattern[]]:=
 Block[{$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"], $VerboseIndentLevel = $VerboseIndentLevel+1}, 
     Module[{bins},
         Puts["********GetDiffusionInfoFromParameters********"];
         (*PutsOptions[GetDiffusionInfoFromParameters,{opts},LogLevel->2];  *)      
         bins=GetBinsFromBinsOrSpec@binsOrBinspec;
-        GetDiffusionInfoForBinFromParameters[#,stride,DiffX,DiffY,DiffA,OptionValue@"ReturnStepsHistogram"]&/@bins     
+        GetDiffusionInfoForBinFromParameters[#, timestep, stride,DiffX,DiffY,DiffA,OptionValue@"ReturnStepsHistogram"]&/@bins     
     ]
 ]     
 
 
-GetDiffusionInfoFromParameters[binsOrBinspec_,strides_List, DiffX_,DiffY_,DiffA_,opts:OptionsPattern[]]:=
+GetDiffusionInfoFromParameters[binsOrBinspec_,timestep_?NumericQ, strides_List, DiffX_,DiffY_,DiffA_,opts:OptionsPattern[]]:=
 Block[{$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],  $VerboseIndentLevel=$VerboseIndentLevel+1}, 
     Block[{bins, bin, stride (*just for syntax higlighting in WB*), tabelF = If[OptionValue@"Parallel", ParallelTable, Table]},
         Puts["********GetDiffusionInfoFromParameters********"];
@@ -611,7 +629,7 @@ Block[{$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Verb
         bins=GetBinsFromBinsOrSpec@binsOrBinspec;
         With[{iDiffX=DiffX,iDiffY=DiffY,iDiffA=DiffA,returnHistograms=OptionValue@"ReturnStepsHistogram"},
         tabelF[
-            GetDiffusionInfoForBinFromParameters[bin,stride,iDiffX,iDiffY,iDiffA,returnHistograms],
+            GetDiffusionInfoForBinFromParameters[bin, timestep, stride,iDiffX,iDiffY,iDiffA,returnHistograms],
         {bin,bins},{stride,strides}]
         ]      
     ]

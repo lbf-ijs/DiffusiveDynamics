@@ -39,6 +39,8 @@ Get2DTensorRepresentation::usage="Draws a represnetation of the diffusion tensor
 DrawDiffusionTensorRepresentations::usage="DrawDiffusionTensorRepresentations[diffInfos, cellRange] 
 takes a list of diffusion info rules and plots the tensor represntation in each bin."
 
+ClearAll[GetFreeEnergy];
+GetFreeEnergy::usage="Get a list of free energy points";
 
 (*For patteren matching lists of diffusion info*)
 listOfRules = {{__Rule} ..};
@@ -93,22 +95,26 @@ QucikDensityHistogram[data_,binspec_,hspec_:Automatic] :=
     
 
 SetAttributes[Draw2DHistogram,HoldFirst];
-Options[Draw2DHistogram]=Options@ListContourPlot;
+Options[Draw2DHistogram]= {InterpolationOrder->0,
+                           ColorFunction->(If[ #<.1,
+                                  White,
+                                  ColorData[{"SolarColors","Reverse"}][#]
+                              ]&)
+                              
+                            }~Join~ 
+   Options@ListContourPlot;
 Draw2DHistogram[bindata_, opts:OptionsPattern[]] :=
 (*TODO: Danger if a function is passed insted of bindata, it gets evaluated twice, every time bindata is called*)
-    Block[ {bins,counts,datarange,wh},
+    Block[ {bins,counts,datarange,wh, iopts},
         If[ Length[bindata]===0,
             Return[Missing[]]
         ]; 
         {bins,counts} = bindata;
         datarange = bins[[All,{1,-1}]];
         wh = Flatten[Differences[#]&/@datarange];
-        ListContourPlot[Transpose@counts,InterpolationOrder->0,DataRange->datarange,AspectRatio->wh[[2]]/wh[[1]],
-              ColorFunction->(If[ #<.1,
-                                  White,
-                                  ColorData[{"SolarColors","Reverse"}][#]
-                              ]&),
-              opts]
+        iopts=FilterRules[{opts}~Join~Options@Draw2DHistogram,Options@ListContourPlot];
+        ListContourPlot[Transpose@counts,DataRange->datarange,AspectRatio->wh[[2]]/wh[[1]], iopts
+              ]
     ];
         
 
@@ -199,6 +205,38 @@ ShowStepsDensityHistogram[steps_] :=
         Return[Rasterize[Show[g,PlotRange->{plr,plr}],ImageSize->Medium]];
     ];
 
+
+(*
+returns a list of {x, y, FreeEnergy}
+
+rw -- data in the form {step, x,y}*)
+
+Options@GetFreeEnergy= {"binSpec" -> "Sturges", (*bin specification*)
+                        "hSpec"   -> "PDF",
+                        "SetMinToZero" -> True,
+                        "ReturnHistogramList" -> True
+                       };
+                       
+GetFreeEnergy[rw_,opts:OptionsPattern[]]:=
+Block[{$VerboseIndentLevel = $VerboseIndentLevel+1, 
+       bins, counts, points, i,j},
+    (*Flatten the list, if multiple trajs given, take the {x, y} and create histogram list*)
+    
+        
+    {bins,counts}=N@HistogramList[Flatten[rw, 1][[All, {2, 3}]], OptionValue@"binSpec", OptionValue@"hSpec"];
+    counts=-Log@counts;
+    If[OptionValue@"SetMinToZero", counts = counts - Min@withoutIndeterminate[counts] ];
+    
+    If[OptionValue@"ReturnHistogramList",
+        Return[{bins,counts}]
+    ,(*else*)
+	    points=Flatten[ 
+	         Table[{(bins[[1, i]] + bins[[1, i + 1]])/2, (bins[[2, j]] + bins[[2, j + 1]])/2, counts[[i, j]]}, 
+	           {i, Length@bins[[1]]-1}, {j, Length@bins[[2]]-1}],
+	         1];
+	    points
+    ]
+];
 
 DiffusionParameters2DPlots[Dx_,Dy_,Da_,Energy_,CellRange_] :=
     Module[ {br = (2 CellRange/Max[CellRange])~Join~{1}},
@@ -375,11 +413,11 @@ WrapBinClickEventHandler[binIndex_,binsList_,plot_]:=
 Options[DrawDiffusionTensorRepresentations] = {
                                     "FillStyle"->Automatic,
                                     PlotStyle->Automatic,
-                                    "Scale"->6,
+                                    "Scale"->1,
                                     "ShapeType"->"Disk",
                                     "CellRange"->Automatic,
                                     "MarkNonNormal" -> False, (*Should non normal distributions be marked?*)
-                                    "NonNormalFillStyle"->Directive[Red,Opacity@.5],
+                                    "NonNormalFillStyle"->Directive[Red,Opacity@.3],
                                     "NonNormalOutlineStyle"->None,
                                     "Verbose":>$VerbosePrint,  (*Log output*)
 						            "VerboseLevel":>$VerboseLevel,
@@ -388,6 +426,9 @@ Options[DrawDiffusionTensorRepresentations] = {
 						            "MarkedBinDynamic" -> Automatic,
 						            "MarkedBinFillStyle" -> None,
 						            "MarkedBinOutlineStyle" -> Directive[Thick, Black, Opacity@.5],
+						            "ShowMinBins" -> False,
+						            "MinBinsOutlineStyle" -> Automatic,
+						            "MinBinsFillStyle" -> Automatic,
 						            ImageSize->Medium,
 						            Axes->True,
 						            Frame->True,
@@ -398,7 +439,8 @@ Attributes@DrawDiffusionTensorRepresentations={HoldRest};
 						            
 DrawDiffusionTensorRepresentations[diffInfos:listOfRules,binIndex_,opts:OptionsPattern[]] :=
 Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1,br},
-    Module[{values,reps,nonNormalReps,nonNormals,cellRange,bins,plotRange,aspectRatio,plotStyle, fillStyle, markedBinDynamic},
+    Module[{values,reps,nonNormalReps,nonNormals,cellRange,bins,plotRange,aspectRatio,plotStyle, fillStyle, markedBinDynamic,
+        minbins,minbinsOutlineStyle,minbinsFillStyle},
         Puts["********DrawDiffusionTensorRepresentations********"];
         PutsOptions[DrawDiffusionTensorRepresentations,{opts},LogLevel->2];
         
@@ -442,6 +484,15 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
           ];
           reps=reps~Join~{EdgeForm@OptionValue@"MarkedBinOutlineStyle",FaceForm@OptionValue@"MarkedBinFillStyle", br};  
         ];    
+        
+        If[OptionValue@"ShowMinBins" && MemberQ[diffInfos,"xMinWidth",Infinity], (*then*)
+            
+            minbins=GetValues[{{"x", "y"}, {"xMinWidth", "yMinWidth"}},diffInfos];
+            minbinsOutlineStyle=If[#===Automatic,plotStyle,#]&@OptionValue["MinBinsOutlineStyle"];
+            minbinsFillStyle=If[#===Automatic,fillStyle,#]&@OptionValue["MinBinsFillStyle"]; 
+            reps=reps~Join~{EdgeForm@minbinsOutlineStyle,FaceForm[minbinsFillStyle], GetBinsAsRectangles@GetBinsFromBinsOrSpec@minbins};  
+        ];
+        
         reps=Graphics[reps
         	,PlotRange->plotRange,AspectRatio->aspectRatio,FilterRules[{opts}~Join~Options@DrawDiffusionTensorRepresentations,Options@Graphics]];
         

@@ -1,5 +1,5 @@
 (* Mathematica Init File *)
-
+ 
 (*While developing it's convinietn to force packages to reload *)
 Get["DiffusiveDynamics`Utils`"];
 Get["DiffusiveDynamics`Generate2D`"];
@@ -19,4 +19,5 @@ ParallelEvaluate[
 
 BeginPackage["DiffusiveDynamics`",{"DiffusiveDynamics`Utils`","DiffusiveDynamics`Generate2D`","DiffusiveDynamics`Analyze2D`","DiffusiveDynamics`Visualize2D`"}];
 
+ 
 EndPackage[];

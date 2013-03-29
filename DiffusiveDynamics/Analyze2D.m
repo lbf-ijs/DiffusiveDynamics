@@ -97,9 +97,14 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
                    data = Map[Part[compiledSelectBin[#,min,max],All,1]&,rwData];
              ];
 
-            Puts["select data took: ", First@t,LogLevel->3];
-            PutsE["after select:\n",data, LogLevel->3];
+            Puts["select data took: ", First@t,LogLevel->2];
 
+            t = AbsoluteTiming[   
+                   data = Map[(Interval@@compiledGetContigIntervals[#])&,data];
+             ];
+            Puts["Finding contigous inds took: ", First@t, LogLevel->2];
+            PutsE["after select and contig:\n",data, LogLevel->5];
+            
             (*if OptionValue["Strides"] only one number and not a list convert it to list {x}*)
             sd = If[ NumericQ[OptionValue["Strides"]],
                      {OptionValue["Strides"]},
@@ -176,14 +181,14 @@ Options[GetDiffsFromBinnedPoints] = {"Verbose":>$VerbosePrint,  (*Log output*)
                                 "Stride"->1., (*kdaj sta dva koraka zaporedna*)
                                 "PadSteps"->True, (*if NextStepNum steps should be added to each continous traj*)
                                 "ReturnStepsHistogram"->True};
-GetDiffsFromBinnedPoints[binnedInd_,rwData_,dt_,{min_,max_},{cellMin_,cellMax_},opts:OptionsPattern[]] :=
+GetDiffsFromBinnedPoints[binnedIndInterval_,rwData_,dt_,{min_,max_},{cellMin_,cellMax_},opts:OptionsPattern[]] :=
     Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1},
         Module[ {steps, bincenter = (min+max)/2,binwidth = (max-min)},
             Puts["***GetDiffsFromBinnedPoints***"];
             PutsOptions[GetDiffsFromBinnedPoints,{opts},LogLevel->2];
             
             steps = Developer`ToPackedArray@Flatten[
-                    Table[GetStepsFromBinnedPoints[binnedInd[[i]],rwData[[i]],dt,{min,max},{cellMin,cellMax}, 
+                    Table[GetStepsFromBinnedPoints[binnedIndInterval[[i]],rwData[[i]],dt,{min,max},{cellMin,cellMax}, 
                             "Stride"->OptionValue["Stride"], "Verbose"->OptionValue["Verbose"],"PadSteps"->OptionValue["PadSteps"]]
                           ,{i,Length[rwData]}]
                   ,1];
@@ -210,22 +215,22 @@ Options[GetStepsFromBinnedPoints] = {"Verbose":>$VerbosePrint,  (*Log output*)
 GetStepsFromBinnedPoints::tofewAbort =          "To few steps (`1`) To construct histogram in bin {`2`,`3`}! Returning Missing value";
 *)
 GetStepsFromBinnedPoints::zerodata =            "Zero data (empty list) in bin {`1`,`2`}! Returning empty list";
-GetStepsFromBinnedPoints[binnedInd_,rwData_,dt_,{min_,max_},{cellMin_,cellMax_},opts:OptionsPattern[]] :=
+GetStepsFromBinnedPoints[binnedIndInterval_,rwData_,dt_,{min_,max_},{cellMin_,cellMax_},opts:OptionsPattern[]] :=
 Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1},
-    Module[ {data,indpaths,cellWidth,bincenter,ds,BeforeAppendLenghts,AfterAppendLengths},
+    Module[ {data,indpaths,cellWidth,bincenter,ds,indLengths},
             Puts["********GetStepsFromBinnedPoints********"];
             PutsOptions[GetStepsFromBinnedPoints,{opts},LogLevel->2];
             Puts[Row@{"min: ", min," max: ", max},LogLevel->2];
             Puts[Row@{"cellMin: ", cellMin," cellMax: ", cellMax},LogLevel->2];
             PutsE["rwData:\n",rwData,LogLevel->5];
-            PutsE["binnedInd:\n",binnedInd,LogLevel->5];
+            PutsE["binnedInd:\n",binnedIndInterval,LogLevel->5];
             Puts["Length rwData: ",Length[rwData],LogLevel->3];
-            If[ Length@binnedInd>0, (*then*)
-                Puts["binnedInd min: ",Round@binnedInd[[1]]," max: ", Round@binnedInd[[-1]],LogLevel->2];
+            If[ Length@binnedIndInterval>0, (*then*)
+                Puts["binnedInd min: ",Min@binnedIndInterval," max: ", Max@binnedIndInterval,LogLevel->2];
             ];
 
             ds = OptionValue["Stride"];
-            If[ Length[binnedInd]==0,(*then*)
+            If[ Length[binnedIndInterval]==0,(*then*)
                 Message[GetStepsFromBinnedPoints::zerodata,min,max];
                 Return[{}];
             ];
@@ -233,32 +238,36 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
             bincenter = (min+max)/2;
 
 
-            (*Split indices into continuous segments. 
-            One sub list is inside the bin the whole time. Works by splitting the list if the difference in steps is not 1.*)
-            indpaths = Split[binnedInd,#2-#1==1.&];
-
-            PutsE["Indpaths lengths:\n",BeforeAppendLenghts=Length/@indpaths,LogLevel->3];
-            Puts["Mean: ",N@Mean[Length/@indpaths],LogLevel->2];
-            Puts[Histogram[Length/@indpaths,{5},PlotRange->{{0,All},{0,All}}],LogLevel->3];
+            indpaths = binnedIndInterval;
+            PutsE["Indpaths: ", indpaths,LogLevel->5];
+            PutsE["Indpaths lengths:\n",indLengths=(Last@#-First@#+1)&/@(List@@indpaths),LogLevel->2];
+            PutsF["Indpaths count `` mean ``:\n",Length@indLengths, N@Mean@indLengths, LogLevel->2];
+            Puts[Histogram[indLengths,{5},PlotRange->{{0,All},{0,All}}],LogLevel->5];
             (*Add ds steps to the begining and end, so that we get at least 2 steps for each point in bin at largest ds*)
             (*Do this only if length of path is less or equal to  ds *)
             If[ OptionValue["PadSteps"], (*then*)
-                indpaths = Map[
-                    If[Length@#<=ds, (*then*)
-                        AppendLeftRight[#,ds,Length[rwData]]
-                      ,(*else just returned unchanged*)
-                        #
-                      ]
-                    &, indpaths];
-                PutsE["Indpaths lengths (after padding):\n",AfterAppendLengths=Length/@indpaths,LogLevel->3];
-                Puts["Mean (after padding): ",N@Mean[Length/@indpaths],LogLevel->2];
-                Puts[Histogram[Length/@indpaths,{5},PlotRange->{{0,All},{0,All}}],LogLevel->5];
-                PutsE["Indpaths lengths differences:\n",AfterAppendLengths-BeforeAppendLenghts];
+                (*Expand the intervals. Unions are automagically preformed*)
+                indpaths = indpaths + Interval[{-ds, ds}];
+                (*Stay within the limits*)
+                indpaths = IntervalIntersection[indpaths, Interval[{1, Length@rwData}]];
+                
+                PutsF["After padding (with `1`):",ds,LogLevel->2];
+                PutsE["Indpaths: ", indpaths,LogLevel->5];
+                PutsE["Indpaths lengths:\n",indLengths=(Last@#-First@#+1)&/@(List@@indpaths),LogLevel->2];
+                PutsF["Indpaths count `` mean `` (after padding ``):\n",Length@indLengths, N@Mean@indLengths,ds, LogLevel->2];
+                Puts[Histogram[indLengths,{5},PlotRange->{{0,All},{0,All}}],LogLevel->5];
+                (*Puts["Mean (after padding): ",N@Mean[(Differences[#]+1)&/@indpaths],LogLevel->0];
+                Puts[Histogram[(Differences[#]+1)&/@indpaths,{5},PlotRange->{{0,All},{0,All}}],LogLevel->3];*)
+                
             ];
             
-            data = rwData[[Round@#]]&/@indpaths;
+            
+            (*get the contigs x,y*)
+            data = rwData[[First@#;;Last@#,{2,3}]]&/@(List@@indpaths);
+           
             PutsE["All data:\n",data,LogLevel->5];
-            Puts["data is packed: ", And@@(Developer`PackedArrayQ[#]&/@indpaths),LogLevel->5];
+            
+            Puts["data is packed: ", And@@(Developer`PackedArrayQ[#]&/@data),LogLevel->2];
             Puts[
              Module[ {dp},
                  dp = StrideData[Flatten[data,1],5000];
@@ -270,32 +279,39 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
              ],LogLevel->3];
 
 
-
+            
            (*calculate the steps (diferences between consecutive points*)
-            data = GetDifferences[#,ds]&/@data;
-            (*Delete empty lists*)
-            data = DeleteCases[data,{{}}];
-            PutsE["Steps:\n",data, LogLevel->5];
-            data = Developer`ToPackedArray[Flatten[data,1]];
-
-            PutsE["Consecutive steps:\n",data,LogLevel->5];
-            Puts["Steps are is packed: ", Developer`PackedArrayQ[data], LogLevel->4];
-            Puts["STEP LENGTH: ",Length[data],LogLevel->2];
-
+            data = Differences[#,1,ds]&/@data;
+            (*Delete empty lists (*TODO: Perhaps this is still neede?*)
+            data = DeleteCases[data,{{}}];*)
+            
             If[ Length[data]==0,(*then*)
                 Message[GetStepsFromBinnedPoints::zerodata,min,max];
                 Return[{}];
             ];
-            (*If[Length[data]<500,Message[GetDiffFromBinnedData::tofewAbort,Length[data],min,max];Return[Missing[StringForm["To few ``",Length[data]]]]];
-            If[Length[data]<1000,Message[GetDiffFromBinnedData::few,Length[data],min,max]];*)
-            data = data[[All,{2,3}]];
-
+            
+            data = Developer`ToPackedArray[Flatten[data,1]];
             (*Pick the shortest of the steps. This is needed if the step was over the periodic boundary limit. 
             Used for each ccordinate seperatly.
             MakeInPeriodicCell is listable.*)
+            
             data[[All,1]] = MakeInPeriodicCell[data[[All,1]], cellWidth[[1]]];
             data[[All,2]] = MakeInPeriodicCell[data[[All,2]], cellWidth[[2]]];
-            Puts["data is packed: ", Developer`PackedArrayQ[data]];
+            
+            
+            
+            
+
+            
+            PutsE["Steps: \n",data,LogLevel->5];
+            
+            Puts["Steps are packed: ", Developer`PackedArrayQ[data], LogLevel->2];
+            PutsF["STEPS: num ``; average length `` ",Length[data],Mean[Norm/@data],LogLevel->2];
+               
+
+
+
+            
             (*Puts[Module[{g,plr},
               g=DensityHistogram[data,30(*,PerformanceGoal->"Speed"*)];
               plr={Min@#1,Max@#2}&@@Transpose[PlotRange/.Options[g]];

@@ -31,6 +31,16 @@ compiledSelectBin::usage="compiledSelectBin[points, min, max]
 Takes a list of 2D points and the boundaries of the bin (min, max). 
 Returns all the points that are in the bin (between min and max)";
 
+ClearAll[compiledGetContigIntervals]
+compiledGetContigIntervals::usage="Returns the intervals where the difference between the sorted integers is not 1
+
+Params:
+   ind -- a floating point list of integers eg {1., 2., 3. ,6. 7. 8.}
+
+Result:
+   a list of intervals as a packed (integer) array. For example:
+   {{1, 3}, {6,8}}";
+
 ClearAll[CompileFunctions,CompileFunctionsIfNecessary];
 CompileFunctions::usage="CompileFunctions[] recompiles all CompiledFunctions in package. Use $Analyze2DCompilationTarge to set the compilation target to \"C\" or \"VWM\"";
 CompileFunctionsIfNecessary::usage="CompileFunctionsIfNecessary[] only compiles functions if they have not been compiled yet";
@@ -125,6 +135,39 @@ compiledSelectBin = Compile[{{points,_Real, 2},{min,_Real, 1},{max,_Real, 1}},
    "RuntimeOptions"->"Speed"];
 ] 
 
+(*Returns the intervals where the difference between the sorted integers is not 1
+
+Params:
+   ind -- a floating point list of integers eg {1., 2., 3. ,6. 7. 8.}
+
+Result:
+   a list of intervals as a packed (integer) array. For example:
+   {{1, 3}, {6,8}}
+*)
+
+ClearAll[compiledGetContigIntervals, compiledGetContigIntervalsUncompiled];
+compiledGetContigIntervalsUncompiled[]:=Block[{ind},   (*This block is just for syntax coloring in WB*) 
+	compiledGetContigIntervals = Compile[{{ind,_Real, 1}},
+	    Block[{i, openInterval = 0, result = Internal`Bag[Most@{0}]},
+	        openInterval = Round@ind[[1]];(*the first oppening interval*)
+	        
+	        (*loop through all the indices and check for diffrences <> 1. If that is the case stuff the interval *)
+	        (*Floating points implicitly compared with tolerances*)
+	        Do[With[{curr=Round@ind[[i]], prev=Round@ind[[i-1]]},
+	            If[ (curr-prev)!=1,
+	             Internal`StuffBag[result, openInterval];
+	             Internal`StuffBag[result, prev ];
+	             openInterval=curr;      
+	             ];
+	        ], {i,2,Length@ind}];
+
+           Internal`StuffBag[result, openInterval];    
+           Internal`StuffBag[result, Round@ind[[-1]]];
+	       (*return the intervals*) 
+	       Partition[Internal`BagPart[result, All], 2]
+	    ]  
+	];
+];
 ClearAll[GetDiffsFromBinnedPoints];
 Attributes[GetDiffsFromBinnedPoints]={HoldAll};
 (*SetAttributes[GetDiffsFromBinnedPoints,{HoldAll}];*)
@@ -196,7 +239,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
 
             PutsE["Indpaths lengths:\n",BeforeAppendLenghts=Length/@indpaths,LogLevel->3];
             Puts["Mean: ",N@Mean[Length/@indpaths],LogLevel->2];
-            Puts[Histogram[Length/@indpaths,{5},PlotRange->{{0,All},{0,All}}],LogLevel->5];
+            Puts[Histogram[Length/@indpaths,{5},PlotRange->{{0,All},{0,All}}],LogLevel->3];
             (*Add ds steps to the begining and end, so that we get at least 2 steps for each point in bin at largest ds*)
             (*Do this only if length of path is less or equal to  ds *)
             If[ OptionValue["PadSteps"], (*then*)
@@ -437,6 +480,7 @@ CompileFunctions[] :=
      compiledSelectBinUncompiled[];
      GetDifferencesUncompiled[];
      MakeInPeriodicCellUncompiled[];
+     compiledGetContigIntervalsUncompiled[];
      $HaveFunctionsBeenCompiled = True; 
     );
 

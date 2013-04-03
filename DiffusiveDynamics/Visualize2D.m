@@ -410,7 +410,7 @@ WrapBinClickEventHandler[binIndex_,binsList_,plot_]:=
 
 
 (*takes a list of diffusion info rules and plots the tensor represntation in each bin*)
-Options[DrawDiffusionTensorRepresentations] = {
+Options[DrawDiffusionTensorRepresentations] := {
                                     "FillStyle"->Automatic,
                                     PlotStyle->Automatic,
                                     "Scale"->1,
@@ -444,7 +444,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
         Puts["********DrawDiffusionTensorRepresentations********"];
         PutsOptions[DrawDiffusionTensorRepresentations,{opts},LogLevel->2];
         
-        plotStyle=If[#===Automatic,Directive[Thick,ColorData[1][1]],#]&@OptionValue[PlotStyle];
+        plotStyle=If[#===Automatic,Directive[ColorData[1][1]],#]&@OptionValue[PlotStyle];
         fillStyle=If[#===Automatic,None,#]&@OptionValue["FillStyle"];
         Puts["plotStyle: ",plotStyle];
         Puts["fillStyle: ",fillStyle];
@@ -487,10 +487,11 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
         
         If[OptionValue@"ShowMinBins" && MemberQ[diffInfos,"xMinWidth",Infinity], (*then*)
             
-            minbins=GetValues[{{"x", "y"}, {"xMinWidth", "yMinWidth"}},diffInfos];
+            minbins=GetValue[{{"x", "y"}, {"xMinWidth", "yMinWidth"}},diffInfos[[binIndex]]];
+            Print[minbins];
             minbinsOutlineStyle=If[#===Automatic,plotStyle,#]&@OptionValue["MinBinsOutlineStyle"];
             minbinsFillStyle=If[#===Automatic,fillStyle,#]&@OptionValue["MinBinsFillStyle"]; 
-            reps=reps~Join~{EdgeForm@minbinsOutlineStyle,FaceForm[minbinsFillStyle], GetBinsAsRectangles@GetBinsFromBinsOrSpec@minbins};  
+            reps=reps~Join~{EdgeForm@minbinsOutlineStyle,FaceForm[minbinsFillStyle], GetBinsAsRectangles@GetBinsFromBinsOrSpec@{minbins}};  
         ];
         
         reps=Graphics[reps
@@ -510,7 +511,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
         PutsOptions[DrawDiffusionTensorRepresentations,{opts},LogLevel->2];
         
         plotStyles=If[#===Automatic,
-            Table[Directive[Thick,Opacity@1,ColorData[1][i]],{i,Length@diffInfos}]
+            Table[Directive[Opacity@1,ColorData[1][i]],{i,Length@diffInfos}]
             ,#]&@OptionValue[PlotStyle];
         fillStyles=If[#===Automatic,
             Table[None,{i,Length@diffInfos}]

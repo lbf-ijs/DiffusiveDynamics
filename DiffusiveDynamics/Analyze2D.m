@@ -66,7 +66,7 @@ $SignificanceLevel = 0.05;
 
 
 
-Options[GetDiffusionInBin] = {"Verbose":>$VerbosePrint,  (*Log output*)
+Options[GetDiffusionInBin] := {"Verbose":>$VerbosePrint,  (*Log output*)
 						   "VerboseLevel":>$VerboseLevel,(*The amount of details to log. Higher number means more details*)
                            "Strides"->1.,     (*How many points between what is considered to be a step- 1 means consecutive points in the raw list*)
                            "PadSteps"->True,     (*Take points that are outside of the bin on order to improve the statistics *)
@@ -74,8 +74,8 @@ Options[GetDiffusionInBin] = {"Verbose":>$VerbosePrint,  (*Log output*)
                            "ReturnStepsHistogram"->False, (*Returns the density histogram of steps. Slows down the calcualtion considerably. Useful for debuging and visualization.*)
                            "WarnIfEmpty"->False, (*Prints a warning if too litle points in bin*)
                            "NormalitySignificanceLevel"-> .05 (*Significance level for the normality test*)
-           };
-
+           }~Join~Options[GetDiffsFromBinnedPoints];
+ 
 GetDiffusionInBin[rwData_,dt_,{min_,max_},{cellMin_,cellMax_},opts:OptionsPattern[]] :=
 Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseLevel"],$VerboseIndentLevel=$VerboseIndentLevel+1,
        $SignificanceLevel=OptionValue@"NormalitySignificanceLevel"}, 
@@ -91,33 +91,42 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
 
             bincenter = (max+min)/2.;
             binwidth = (max-min);
-            (*select the steps in the bin*)
-            (*Take just the step's indexes*)
-            t = AbsoluteTiming[   
-                   data = Map[Part[compiledSelectBin[#,min,max],All,1]&,rwData];
-             ];
-
-            Puts["select data took: ", First@t,LogLevel->2];
-
-            t = AbsoluteTiming[   
-                   data = Map[(Interval@@compiledGetContigIntervals[#])&,data];
-             ];
-            Puts["Finding contigous inds took: ", First@t, LogLevel->2];
-            PutsE["after select and contig:\n",data, LogLevel->5];
             
             (*if OptionValue["Strides"] only one number and not a list convert it to list {x}*)
             sd = If[ NumericQ[OptionValue["Strides"]],
                      {OptionValue["Strides"]},
                      OptionValue["Strides"]
-                 ];
-            
+                 ];            
+       
             If[OptionValue@"WarnIfEmpty",On[GetStepsFromBinnedPoints::zerodata],
                                          Off[GetStepsFromBinnedPoints::zerodata]];
+                        
+            (*select the steps in the bin*)
+            (*Take just the step's indexes*)
+            t = AbsoluteTiming[   
+                   data = Map[Part[compiledSelectBin[#,min,max],All,1]&,rwData];
+             ];
+      
+            Puts["select data took: ", First@t,LogLevel->2];
+
             
+            t = AbsoluteTiming[   
+                   data = Map[(If[Length[#] != 0, 
+                                   Interval@@compiledGetContigIntervals[#],
+                                   Interval[]]
+                               )&,data];
+             ];
+            Puts["Finding contigous inds took: ", First@t, LogLevel->2];
+            PutsE["after select and contig:\n",data, LogLevel->5];
+            
+
+            
+
             diffs = Map[With[{stepdelta = #},
                             GetDiffsFromBinnedPoints[data,rwData,dt,{min,max},{cellMin,cellMax}
                             ,"Stride"->stepdelta
-                            ,"PadSteps"->OptionValue["PadSteps"],"ReturnStepsHistogram"->OptionValue["ReturnStepsHistogram"]]
+                            ,"PadSteps"->OptionValue["PadSteps"],"PadOnlyShort"->OptionValue@"PadOnlyShort"
+                            ,"ReturnStepsHistogram"->OptionValue["ReturnStepsHistogram"]]
                         ]&,sd];
             diffs
         ]
@@ -154,6 +163,7 @@ ClearAll[compiledGetContigIntervals, compiledGetContigIntervalsUncompiled];
 compiledGetContigIntervalsUncompiled[]:=Block[{ind},   (*This block is just for syntax coloring in WB*) 
 	compiledGetContigIntervals = Compile[{{ind,_Real, 1}},
 	    Block[{i, openInterval = 0, result = Internal`Bag[Most@{0}]},
+	        
 	        openInterval = Round@ind[[1]];(*the first oppening interval*)
 	        
 	        (*loop through all the indices and check for diffrences <> 1. If that is the case stuff the interval *)
@@ -176,11 +186,10 @@ compiledGetContigIntervalsUncompiled[]:=Block[{ind},   (*This block is just for 
 ClearAll[GetDiffsFromBinnedPoints];
 Attributes[GetDiffsFromBinnedPoints]={HoldAll};
 (*SetAttributes[GetDiffsFromBinnedPoints,{HoldAll}];*)
-Options[GetDiffsFromBinnedPoints] = {"Verbose":>$VerbosePrint,  (*Log output*)
+Options[GetDiffsFromBinnedPoints] := {"Verbose":>$VerbosePrint,  (*Log output*)
 						        "VerboseLevel":>$VerboseLevel,(*The amount of details to log. Higher number means more details*)
                                 "Stride"->1., (*kdaj sta dva koraka zaporedna*)
-                                "PadSteps"->True, (*if NextStepNum steps should be added to each continous traj*)
-                                "ReturnStepsHistogram"->True};
+                                "ReturnStepsHistogram"->True}~Join~Options[GetStepsFromBinnedPoints];
 GetDiffsFromBinnedPoints[binnedIndInterval_,rwData_,dt_,{min_,max_},{cellMin_,cellMax_},opts:OptionsPattern[]] :=
     Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1},
         Module[ {steps, bincenter = (min+max)/2,binwidth = (max-min)},
@@ -188,8 +197,9 @@ GetDiffsFromBinnedPoints[binnedIndInterval_,rwData_,dt_,{min_,max_},{cellMin_,ce
             PutsOptions[GetDiffsFromBinnedPoints,{opts},LogLevel->2];
             
             steps = Developer`ToPackedArray@Flatten[
-                    Table[GetStepsFromBinnedPoints[binnedIndInterval[[i]],rwData[[i]],dt,{min,max},{cellMin,cellMax}, 
-                            "Stride"->OptionValue["Stride"], "Verbose"->OptionValue["Verbose"],"PadSteps"->OptionValue["PadSteps"]]
+                    Table[GetStepsFromBinnedPoints[binnedIndInterval[[i]],rwData[[i]],dt,{min,max},{cellMin,cellMax} 
+                            ,"Stride"->OptionValue["Stride"], "Verbose"->OptionValue["Verbose"]
+                            ,"PadSteps"->OptionValue["PadSteps"],"PadOnlyShort"->OptionValue@"PadOnlyShort"]
                           ,{i,Length[rwData]}]
                   ,1];
 
@@ -210,21 +220,20 @@ Attributes[GetStepsFromBinnedPoints]={HoldAll};
 Options[GetStepsFromBinnedPoints] = {"Verbose":>$VerbosePrint,  (*Log output*)
 						        "VerboseLevel":>$VerboseLevel,  (*The amount of details to log. Higher number means more details*)
                                 "Stride"->1.,                   (*Number of points between a step*)
-                                "PadSteps"->True                (*if Stride steps should be added to each continous segment of the trayectory in bbin*)};
-(*GetStepsFromBinnedPoints::few =                 "Few steps (`1`) when constructing histogram in bin {`2`,`3`}!";
-GetStepsFromBinnedPoints::tofewAbort =          "To few steps (`1`) To construct histogram in bin {`2`,`3`}! Returning Missing value";
-*)
+                                "PadSteps"->True,               (*if Stride steps should be added to each continous segment of the trayectory in bbin*)
+                                "PadOnlyShort"->True            (*Pad only intervals smaller or equal than ds (If PadSteps is true) *)};
+
 GetStepsFromBinnedPoints::zerodata =            "Zero data (empty list) in bin {`1`,`2`}! Returning empty list";
 GetStepsFromBinnedPoints[binnedIndInterval_,rwData_,dt_,{min_,max_},{cellMin_,cellMax_},opts:OptionsPattern[]] :=
 Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1},
     Module[ {data,indpaths,cellWidth,bincenter,ds,indLengths},
-            Puts["********GetStepsFromBinnedPoints********"];
+            Puts["********GetStepsFromBinnedPoints********",LogLevel->1];
             PutsOptions[GetStepsFromBinnedPoints,{opts},LogLevel->2];
             Puts[Row@{"min: ", min," max: ", max},LogLevel->2];
             Puts[Row@{"cellMin: ", cellMin," cellMax: ", cellMax},LogLevel->2];
             PutsE["rwData:\n",rwData,LogLevel->5];
-            PutsE["binnedInd:\n",binnedIndInterval,LogLevel->5];
-            Puts["Length rwData: ",Length[rwData],LogLevel->3];
+            PutsE["binnedInd:\n",binnedIndInterval,LogLevel->3];
+            Puts["Length rwData: ",Length[rwData],LogLevel->2];
             If[ Length@binnedIndInterval>0, (*then*)
                 Puts["binnedInd min: ",Min@binnedIndInterval," max: ", Max@binnedIndInterval,LogLevel->2];
             ];
@@ -247,11 +256,19 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
             (*Do this only if length of path is less or equal to  ds *)
             If[ OptionValue["PadSteps"], (*then*)
                 (*Expand the intervals. Unions are automagically preformed*)
-                indpaths = indpaths + Interval[{-ds, ds}];
+                
+                If[ OptionValue@"PadOnlyShort",
+                    indpaths=If[(Last@# - First@#) <= ds, {First@# - ds, Last@# + ds}, #] & /@indpaths;
+                     Puts["PaddingOnlyShort",LogLevel->5];
+                ,(*else*)
+                    indpaths = indpaths + Interval[{-ds, ds}];
+                    Puts["PaddingAll",LogLevel->5];
+                ]; 
+
                 (*Stay within the limits*)
                 indpaths = IntervalIntersection[indpaths, Interval[{1, Length@rwData}]];
-                
-                PutsF["After padding (with `1`):",ds,LogLevel->2];
+                 
+                PutsF["After padding (with `1`):",ds,LogLevel->2]; 
                 PutsE["Indpaths: ", indpaths,LogLevel->5];
                 PutsE["Indpaths lengths:\n",indLengths=(Last@#-First@#+1)&/@(List@@indpaths),LogLevel->2];
                 PutsF["Indpaths count `` mean `` (after padding ``):\n",Length@indLengths, N@Mean@indLengths,ds, LogLevel->2];
@@ -261,10 +278,10 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
                 
             ];
             
-            
+            Puts["Before getting data",LogLevel->5];
             (*get the contigs x,y*)
             data = rwData[[First@#;;Last@#,{2,3}]]&/@(List@@indpaths);
-           
+            Puts["After getting data",LogLevel->5];
             PutsE["All data:\n",data,LogLevel->5];
             
             Puts["data is packed: ", And@@(Developer`PackedArrayQ[#]&/@data),LogLevel->2];
@@ -272,7 +289,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
              Module[ {dp},
                  dp = StrideData[Flatten[data,1],5000];
                  (*dp=Tooltip[#[[{2,3}]],#[[1]]]&/@dp;*)
-                 dp = dp[[All,{2,3}]];
+                 
                  ListPlot[dp,Frame->True,PlotStyle->Opacity[.4],PlotRange->Transpose[{cellMin,cellMax}],
                         Epilog->{Opacity[0],EdgeForm[{Red,Thick}],Rectangle[min,max]},
                         ImageSize->Medium]
@@ -281,23 +298,40 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
 
             
            (*calculate the steps (diferences between consecutive points*)
-            data = Differences[#,1,ds]&/@data;
-            (*Delete empty lists (*TODO: Perhaps this is still neede?*)
+            Puts["Before getting Diffrences",LogLevel->5];
+           
+                       
+            data = (If[Length[#]<=ds,{},(*If less than ds steps, then return empty list*)
+                    Drop[#,ds]-Drop[#,-ds]])&/@data;
+            
+            (*This is not supported in mma 8.
+            BUG IN Differences
+            If[$VersionNumber>=9,
+                data = Differences[#,1,ds]&/@data;
+            ,(*else*)
+                data = (Drop[#,ds]-Drop[#,-ds])&/@data;
+            ];*)
+            Puts["After getting Diffrences",LogLevel->5];
+
+            (*Delete empty lists (*TODO: Perhaps this is still needed?*)
             data = DeleteCases[data,{{}}];*)
             
-            If[ Length[data]==0,(*then*)
+
+            
+            data = Developer`ToPackedArray[Flatten[data,1]];
+
+            If[ Length[data]===0,(*then*)
                 Message[GetStepsFromBinnedPoints::zerodata,min,max];
                 Return[{}];
             ];
-            
-            data = Developer`ToPackedArray[Flatten[data,1]];
+
             (*Pick the shortest of the steps. This is needed if the step was over the periodic boundary limit. 
             Used for each ccordinate seperatly.
             MakeInPeriodicCell is listable.*)
-            
+            Puts["Before Calling MakeInPeriodicCell",LogLevel->4];
             data[[All,1]] = MakeInPeriodicCell[data[[All,1]], cellWidth[[1]]];
             data[[All,2]] = MakeInPeriodicCell[data[[All,2]], cellWidth[[2]]];
-            
+            Puts["After Calling MakeInPeriodicCell",LogLevel->4];	            
             
             
             
@@ -511,7 +545,7 @@ CompileFunctionsIfNecessary[]:= If[! $HaveFunctionsBeenCompiled, CompileFunction
  binSpec -- specfication of the bins {min,max,dstep}
  cellMinMax The periodic cell limits {{minx,minY},{maxX, maxY}. If Null then taken form binSpec}*)
 
-Options[GetDiffusionInBinsBySelect] = {"Parallel"->True,(*Use parallel functions*)
+Options[GetDiffusionInBinsBySelect] := {"Parallel"->True,(*Use parallel functions*)
     								   "CellRange"->Automatic (*cell range in {{MinX,MinY},{MaxX,MaxY}}. If automatic, then calculated from binsOrBinSpec*)
 							          }~Join~Options[GetDiffusionInBin];
 Attributes[GetDiffusionInBinsBySelect]={HoldFirst};
@@ -632,7 +666,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
  binSpec -- specfication of the bins {{minX,maxX,dstepX},{minY,maxY,dstepY}}
  cellRange The periodic cell limits {{minx,minY},{maxX, maxY}. If Null then taken form binSpec}*)
 
-Options[GetDiffusionInBins] = {"Parallel"->True,(*Use parallel functions*)
+Options[GetDiffusionInBins] := {"Parallel"->True,(*Use parallel functions*)
 							   "Method"->Select, (*The method of binning. For now select is redone for each bin. GatherBy would bin the data only once, but is not yet implemented*) 
 							   "CellRange"->Automatic (*cell range in {{MinX,MinY},{MaxX,MaxY}}. If automatic, then calculated from binsOrBinSpec*)
 							   }~Join~Options[GetDiffusionInBin];

@@ -173,7 +173,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
                           ,(*else*)
                             (*SpanFromLeft*)
                              (*Graphics[Style[Text@"No histogram",Large],ImageSize->{300,300}]*)
-                             None
+                             If[histIs3D,Graphics3D[],Graphics[]]
                          ];
        
        

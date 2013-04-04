@@ -249,8 +249,8 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
 
             indpaths = binnedIndInterval;
             PutsE["Indpaths: ", indpaths,LogLevel->5];
-            PutsE["Indpaths lengths:\n",indLengths=(Last@#-First@#+1)&/@(List@@indpaths),LogLevel->2];
-            PutsF["Indpaths count `` mean ``:\n",Length@indLengths, N@Mean@indLengths, LogLevel->2];
+            PutsE["Indpaths lengths:\n",indLengths=(Last@#-First@#+1)&/@(List@@indpaths),LogLevel->3];
+            PutsF["Indpaths count `` mean ``:\n",Length@indLengths, N@Mean@indLengths, LogLevel->3];
             Puts[Histogram[indLengths,{5},PlotRange->{{0,All},{0,All}}],LogLevel->5];
             (*Add ds steps to the begining and end, so that we get at least 2 steps for each point in bin at largest ds*)
             (*Do this only if length of path is less or equal to  ds *)
@@ -270,8 +270,8 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
                  
                 PutsF["After padding (with `1`):",ds,LogLevel->2]; 
                 PutsE["Indpaths: ", indpaths,LogLevel->5];
-                PutsE["Indpaths lengths:\n",indLengths=(Last@#-First@#+1)&/@(List@@indpaths),LogLevel->2];
-                PutsF["Indpaths count `` mean `` (after padding ``):\n",Length@indLengths, N@Mean@indLengths,ds, LogLevel->2];
+                PutsE["Indpaths lengths:\n",indLengths=(Last@#-First@#+1)&/@(List@@indpaths),LogLevel->3];
+                PutsF["Indpaths count `` mean `` (after padding ``):\n",Length@indLengths, N@Mean@indLengths,ds, LogLevel->3];
                 Puts[Histogram[indLengths,{5},PlotRange->{{0,All},{0,All}}],LogLevel->5];
                 (*Puts["Mean (after padding): ",N@Mean[(Differences[#]+1)&/@indpaths],LogLevel->0];
                 Puts[Histogram[(Differences[#]+1)&/@indpaths,{5},PlotRange->{{0,All},{0,All}}],LogLevel->3];*)

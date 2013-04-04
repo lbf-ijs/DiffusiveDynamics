@@ -488,7 +488,6 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
         If[OptionValue@"ShowMinBins" && MemberQ[diffInfos,"xMinWidth",Infinity], (*then*)
             
             minbins=GetValue[{{"x", "y"}, {"xMinWidth", "yMinWidth"}},diffInfos[[binIndex]]];
-            Print[minbins];
             minbinsOutlineStyle=If[#===Automatic,plotStyle,#]&@OptionValue["MinBinsOutlineStyle"];
             minbinsFillStyle=If[#===Automatic,fillStyle,#]&@OptionValue["MinBinsFillStyle"]; 
             reps=reps~Join~{EdgeForm@minbinsOutlineStyle,FaceForm[minbinsFillStyle], GetBinsAsRectangles@GetBinsFromBinsOrSpec@{minbins}};  

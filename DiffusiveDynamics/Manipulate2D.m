@@ -1,6 +1,6 @@
 (* Mathematica Package *)
 
-BeginPackage["DiffusiveDynamics`Manipulate2D`",{"DiffusiveDynamics`Utils`","DiffusiveDynamics`Visualize2D`","Developer`"}]
+BeginPackage["DiffusiveDynamics`Manipulate2D`",{"DiffusiveDynamics`Utils`","DiffusiveDynamics`Visualize2D`","DiffusiveDynamics`Analyze2D`","Developer`"}]
 (* Exported symbols added here with SymbolName::usage *)  
 
 ClearAll[DrawStridePlotsFromBinInfo, ViewDiffsWithStridePlots];
@@ -9,6 +9,8 @@ DrawStridePlotsFromBinInfo::usage="TODO"
 ViewDiffsWithStridePlots::usage="TODO";
 
 DrawDiffsWithStridePlots::usage="TODO";
+ClearAll[ViewDiffsWithStridePlotsFromFiles];
+ViewDiffsWithStridePlotsFromFiles::usage="TODO";
 
 Begin["`Private`"] (* Begin Private Context *) 
 
@@ -202,7 +204,8 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
        histograms= GetValues["SelectedHistogram",plots];
        (*Some bins may not exist, be missing. So Delete the "SelectedHistogram" text before showing*) 
        histograms=DeleteCases[histograms,"SelectedHistogram"];
-       histograms=Show@@histograms;   
+       histograms=If[histograms=!={},Show@@histograms,Style["",0]];
+       
             
        stridexPlot = Show@@DeleteCases[GetValues["StridePlotX",plots],"StridePlotX"];
        strideyPlot = Show@@DeleteCases[GetValues["StridePlotY",plots],"StridePlotY"];
@@ -249,11 +252,12 @@ Options[DrawDiffsWithStridePlots] = {
                       "LegendCaptions"->None
                       }~Join~
                       Options[DrawDiffusionTensorRepresentations]~Join~
-                      Options[DrawStridePlotsFromBinInfo];
+                      Options[DrawStridePlotsFromBinInfo]~Join~
+                      Options[RowLegend];
 
 DrawDiffsWithStridePlots[diffs_,binIndex_,strideIndex_,opts:OptionsPattern[]] :=
 Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1},
-    Module[ {diffsDim,bins,cellRange,tensors, binfo,tensorRepOpts,stridePlotOpts, selectedStr, legendRow},
+    Module[ {diffsDim,bins,cellRange,tensors, binfo,tensorRepOpts,stridePlotOpts, selectedStr, legendRow,legendRowOpts},
         Puts["****DrawDiffsWithStridePlots****"];
         PutsOptions[DrawDiffsWithStridePlots,{opts},LogLevel->2];
         diffsDim = Dimensions@diffs;
@@ -273,9 +277,12 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
      
         binfo = DrawStridePlotsFromBinInfo[diffs,binIndex,strideIndex,Evaluate@stridePlotOpts];
         selectedStr=Style[StringForm["Slected bin `1` Stride `2`",GetValue["SelectedBinCenter",binfo],GetValue["SelectedStride",binfo]],Medium];
-        legendRow=If[OptionValue["LegendCaptions"]=!=None && Length@diffsDim==4,
-        legendRow=Row@RowLegend[OptionValue@"LegendCaptions",PlotStyle->OptionValue@PlotStyle]
-        (*else*), Style["",0]];
+        legendRow=If[(Length@OptionValue["LegendCaptions"]>1) && (Length@diffsDim==4),
+            legendRowOpts=FilterRules[{opts}~Join~Options[DrawDiffsWithStridePlots],Options@RowLegend];
+            legendRow=Row@RowLegend[OptionValue@"LegendCaptions",legendRowOpts]
+        (*else*), 
+            Style["",0]
+        ];
         
         Column[{
             legendRow,
@@ -378,6 +385,35 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
         ];
     ];
     ];
+
+
+
+Options[ViewDiffsWithStridePlotsFromFiles] = {
+                      }~Join~
+                      Options[ViewDiffsWithStridePlots];
+ViewDiffsWithStridePlotsFromFiles[fileList_,title_,opts:OptionsPattern[]] :=
+Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1,
+        injectedOptions,diffsData,diffs, metadata},
+         Puts["****ViewDiffsWithStridePlotsFromFiles****"];
+         PutsOptions[ViewDiffsWithStridePlotsFromFiles,{opts},LogLevel->2];
+         injectedOptions=injectedOptions=FilterRules[{opts}~Join~Options@ViewDiffsWithStridePlots,Options@ViewDiffsWithStridePlots];
+         diffsData=LoadDiffusions[#]&/@fileList;
+         PutsE[diffsData,LogLevel->5];
+         metadata=GetValue["Metadata",diffsData];
+         diffs=GetValue["Diffusions",diffsData];
+         PutsE[diffs,LogLevel->0];
+         (*GetSubValue["Metadata"->"Title",#]&/@diffsData*)
+         DynamicModule[{idiffs=diffs}, 
+         (*ViewDiffsWithStridePlots has hold first, so when the block goes out of scope, 
+         we would get an undefined diffs without this Dynamic module*)
+         ViewDiffsWithStridePlots[idiffs,title,
+             "LegendCaptions"->GetValue["Title",metadata],
+             Tooltip->         GetValue["Description",metadata],
+             PopupWindow ->    metadata,
+             injectedOptions]
+         ]     
+    ]; 
+
 
 ClearAll[ExportDiffs];
 ExportDiffs[title_,datafile_,dir_:"finished"] :=

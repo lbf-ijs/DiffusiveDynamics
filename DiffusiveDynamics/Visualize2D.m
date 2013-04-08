@@ -538,22 +538,36 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
     ]
 ]
 
+
 ClearAll@RowLegend;
 Options@RowLegend = {PlotStyle -> Automatic,
-                     TextStyle -> Bold};
+                     TextStyle -> Bold,
+                     Tooltip->None, (*Array of tooltips to be displayed*)
+                     PopupWindow->None (*Array of   data to be displayed in popupwindows*)};
 RowLegend[legends_, opts : OptionsPattern[]] :=
-Block[ {plotStyles,i},
+Block[ {plotStyles,i,l,tooltips, metadata},
         plotStyles = 
          If[ # === Automatic,
              Table[Directive[Thick, Opacity@1, ColorData[1][i]], {i, Length@legends}],#
            ] &@OptionValue[PlotStyle];
-        Assert[Length@legends == Length@legends, "PlotStyles and legends must be of the sam elength "];
-        Table[
+        Assert[Length@legends === Length@plotStyles, "PlotStyles and legends must be of the same length"];
+        l=Table[
             Column[{
 	            Style[ legends[[i]], OptionValue[TextStyle],plotStyles[[i]]],
 	            Graphics[{plotStyles[[i]],Line[{{0,0},{1,0}}]},AspectRatio->1/10]
             }, Center, Spacings->0],
-        {i,Length@legends}]
+        {i,Length@legends}];
+        If[OptionValue@Tooltip =!= None, 
+            tooltips=OptionValue@Tooltip;
+            Assert[Length[legends] === Length[tooltips], "legends and tooltips must be of the same length"];
+            l=Table[ Tooltip[l[[i]],tooltips[[i]] ] ,{i,Length@legends}];
+        ];
+        If[OptionValue@PopupWindow =!= None, 
+            metadata=OptionValue@PopupWindow;
+            Assert[Length[legends] === Length[metadata], "legends and metadata must be of the same length"];
+            l=Table[ PopupWindow[l[[i]], metadata[[i]],WindowTitle->legends[[i]] ] ,{i,Length@legends}];
+        ];
+        l    
 ]
 
 GetHistogramListFrom2DPDF[dist_,{xmin_,xmax_,xn_},{ymin_,ymax_,yn_}]:=

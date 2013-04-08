@@ -47,7 +47,7 @@ SetKernelsDirectory::usage="TODO";
 ClearAll[GetValues,GetValue];
 GetValues::usage="TODO";
 GetValue::usage="TODO";
-
+GetSubValue::usage="";
 
 ClearAll[LetL];
 LetL::usage="LetL[const, body] implements nested With blocks for each constant. 

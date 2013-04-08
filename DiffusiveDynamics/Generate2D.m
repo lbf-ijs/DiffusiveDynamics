@@ -63,7 +63,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
     	     gradF (*gradient of the free energy*), 
     	     stepfunctionexp(*the step function expression*),
     	     stepfunction (*the compiled step function*),
-    	     x,y,g1,g2 (*temporary variables used in compilation of the step function*)},
+    	     x,y,g1,g2 (*tParallelGenerateDiffusionTrajectory2Demporary variables used in compilation of the step function*)},
      
         Puts["***GenerateDiffusionTrajectory2D***"];
         PutsOptions[GenerateDiffusionTrajectory2D,{opt}];

@@ -1,6 +1,6 @@
 (* Mathematica Package *)
 
-BeginPackage["DiffusiveDynamics`Visualize2D`",{"DiffusiveDynamics`Utils`"}]
+BeginPackage["DiffusiveDynamics`Visualize2D`",{"DiffusiveDynamics`Utils`","ErrorBarPlots`"}]
 (* Exported symbols added here with SymbolName::usage *)  
 
    
@@ -69,6 +69,9 @@ GetBinIndexFromPoint[pt_,bins_] :=
         Return[-1];
     ];  
    
+
+DrawErrDiagram::usage="Draws a stride plot with errors. Data must be in the format {{{x,y},ErrorBar},...}";
+GetMeanAndErrFromBins::usage="Gives the average of a certain quantaty from diff over all the bins ";
 
 Begin["`Private`"] (* Begin Private Context *) 
 
@@ -583,6 +586,56 @@ Block[{D, rD, dist, maxX,maxY, binN, $VerboseIndentLevel=$VerboseIndentLevel+1},
     Puts["D:\n",dist];
     GetHistogramListFrom2DPDF[dist,{maxX,-maxX,First@binN},{maxY,-maxY,Last@binN}]
 ]
+
+
+
+ClearAll@GetMeanAndErrFromBins;
+GetMeanAndErrFromBins[name_, diffs_] :=
+    Module[ {strides, vals, means, errs, data, stridesNum},
+        Puts["***GetMeanAndErrFromBins***"];
+        strides = GetValue["Stride", diffs[[1]]];
+        stridesNum = Length@strides;
+        vals = GetValue[name, diffs[[All, #]]] & /@ Range@stridesNum;
+        vals = DeleteCases[vals, Missing[___], 2];
+        means = Mean /@ vals;
+        errs = StandardDeviation /@ vals;
+        data = 
+        Table[{{strides[[i]], means[[i]]}, ErrorBar[errs[[i]] ]}, 
+            {i, stridesNum}]
+    ];
+
+ClearAll@DrawErrDiagram;
+Options[DrawErrDiagram] :=
+    {"LastIsJoined" -> True,     
+    PlotLegends -> Automatic, Frame -> True, Axes -> False, 
+    LabelStyle -> Medium, ImageSize -> Medium}~Join~Options[ErrorListPlot];
+    
+DrawErrDiagram[data_, type_, xplotRange_, opts : OptionsPattern[]] :=
+    Block[ {tdata = data, joined, injectedOptions, strides},
+        Puts["***DrawErrDiagram***"];
+        PutsF["Getting type ``", type];
+        strides = tdata[[1, All, 1, 1]];
+        PutsE[strides];
+        tdata[[All, All, 1, 1]] = Log2@tdata[[All, All, 1, 1]];
+        (*Do a manual increment*)
+        Do[tdata[[i, All, 1, 1]] = 
+        tdata[[i, All, 1, 
+           1]] + (i - 1)*(Log2@Last@xplotRange - Log2@First@xplotRange)/
+           40, {i, Length@tdata - 1}];
+        injectedOptions = 
+        FilterRules[{opts}~Join~Options@DrawErrDiagram, 
+        Options@ErrorListPlot];
+        joined = ConstantArray[False, Length@data - 1];
+        AppendTo[joined, OptionValue@"LastIsJoined"];
+        PutsE[joined];
+        ErrorListPlot[tdata,
+            PlotRange -> {xplotRange, All},
+            FrameLabel -> {"Log2[Stride]", type},
+            Joined -> joined, 
+        FrameTicks -> {Table[{Log2@s, s}, {s, strides}], Automatic},
+            PlotLegends -> Placed[LineLegend@OptionValue@PlotLegends, Above],
+        injectedOptions]
+    ]
 
 End[] (* End Private Context *)
 

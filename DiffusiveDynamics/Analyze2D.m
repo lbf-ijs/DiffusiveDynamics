@@ -58,6 +58,10 @@ Returns a list of rules from the DiffX, DiffY, DAlpha functions for each stride.
 ClearAll[DiffusionNormalForm];
 DiffusionNormalForm::usage="DiffusionNormalForm[diffInfo] Makes the difusion tensor in a normal form: Dx>Dy and rotate Da 90 Deg. Da is always between 0 and 180"
 
+ClearAll[LoadDiffusions, SaveDiffusions];
+LoadDiffusions::usage="TODO";
+SaveDiffusions::usage="TODO";
+
 Begin["`Private`"]
 (* Implementation of the package *)
 $SignificanceLevel = 0.05;
@@ -305,7 +309,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
                     Drop[#,ds]-Drop[#,-ds]])&/@data;
             
             (*This is not supported in mma 8.
-            BUG IN Differences
+            BUG IN Differences??
             If[$VersionNumber>=9,
                 data = Differences[#,1,ds]&/@data;
             ,(*else*)
@@ -386,20 +390,22 @@ Returns a list of replacement rules for higher flexibility.
 Or add a test for normality in any other way*) 
 Attributes[GetDiffsFromSteps]={HoldFirst};
 GetDiffsFromSteps[data_,dt_,ds_] :=  Block[{$VerboseIndentLevel = $VerboseIndentLevel+1},
-    Module[ {ux,uy,sx,sy,rDx,rDy,rDa,pVal=Null,isNormal=Null},
+    Module[ {ux=Missing[],uy=Missing[],sx=Missing[],sy=Missing[],rDx=Missing[],rDy=Missing[],rDa=Missing[],pVal=Null,isNormal=Null,xMinWidth=Missing[],yMinWidth=Missing[]},
         Puts["***GetDiffsFromSteps***"];
-        If[ Length[data]==0, (*If no steps then*)
-            {ux,uy,rDx,rDy,rDa} = ConstantArray[Missing[],5];,(*else*)
+        If[ Length[data]!=0, (*If no steps then*)
             (*TODO: Perhaps add option to choose if we want the normality test and which test is wanted *)
             (*{ux,uy,rDx,rDy,rDa} = GetTensorFromMoments[data];*)
             {ux,uy,sx,sy,rDa,pVal,isNormal}=GetTensorFromMomentsWithNormalityTest[data];
             
             (*We fitted the principal sigmas... transform into diffusion and devide by StepsDelta*)
             {rDx,rDy} = ({sx,sy}^2)/(2*dt*ds);
+            (*99.7 steps are inside the bin. 3*sigma to each side*)
+            xMinWidth=Max@Abs@{6*sx*Cos[rDa*Degree],6*sy*Cos[(rDa+90)*Degree]};
+            yMinWidth=Max@Abs@{6*sy*Sin[rDa*Degree],6*sx*Sin[(rDa+90)*Degree]}    
         ];
         {"Dx"->rDx,"Dy"->rDy,"Da"->rDa,"ux"->ux,"uy"->uy,"sx"->sx,"sy"->sy,
-         "PValue"->pVal,"IsNormal"->isNormal,"xMinWidth"->Max@Abs@{6*sx*Cos[rDa*Degree],6*sy*Cos[(rDa+90)*Degree]},
-                                             "yMinWidth"->Max@Abs@{6*sy*Sin[rDa*Degree],6*sx*Sin[(rDa+90)*Degree]} (*99.7 steps are inside the bin*)}
+         "PValue"->pVal,"IsNormal"->isNormal,"xMinWidth"->xMinWidth,
+                                             "yMinWidth"->yMinWidth}
     ]
 ];
 
@@ -455,7 +461,7 @@ GetTensorFromMomentsWithNormalityTest[data_] :=
 		isNormal=hypothesis["ShortTestConclusion"] == "Do not reject";
 		(*Retrive the parameters*)
 		params=hypothesis["FittedDistributionParameters"];
-		{ux,uy,a,b,c}={ux,uy,a,b,c}/.params;
+		{ux,uy,a,b,c}={uy,ux,a,b,c}/.params;
 		{a,b,c}={a,b,c}/.params;
 		
 		(*The tensor is symmetric*)
@@ -748,8 +754,11 @@ DiffusionNormalForm[{Dx_?NumericOrSymbolQ, Dy_?NumericOrSymbolQ, Da_?NumericOrSy
 (*Accept a list of rules*)
 DiffusionNormalForm[diffInfo:{__Rule}]:=
 Block[{dx,dy,da},
-    (*Get sorted values*)
-    {dx,dy,da}=DiffusionNormalForm@GetValue[{"Dx","Dy","Da"},diffInfo];
+    {dx,dy,da}=GetValue[{"Dx","Dy","Da"},diffInfo];
+    (*If any of the values are missing just return the non-modified*)
+    If[MemberQ[{dx,dy,da},Missing[___]],Return[diffInfo]];
+    (*Get sorted values*)    
+    {dx,dy,da}=DiffusionNormalForm@{dx,dy,da};
     
 
 	(*Modify the original lis*)
@@ -766,6 +775,84 @@ DiffusionNormalForm[diffInfosWithStrides:{{{__Rule}..}..}]:=
 
 DiffusionNormalForm::wrongargs="Wrong arguments for DiffusionNormalForm `1` ";  
 DiffusionNormalForm[args___]:=(Message[DiffusionNormalForm::wrongargs,Shallow@args];$Failed);  
+
+
+
+Options[SaveDiffusions] = {"Metadata" -> Automatic, 
+   "Description" -> "", "RawSteps" -> None, "OverrideExisting" -> True,
+                        "DiffusionsFileName" -> "diffusions.mx.gz",
+                        "MetadataFileName" -> "metadata.m",
+                        "RawStepsFileName" -> "rawSteps.h5.gz",
+                        "Title"->"",
+                        "Description" -> ""};
+SaveDiffusions[name_, diffs_, opts : OptionsPattern[]] :=
+    Block[ {dir, metadataTMP, diffusionsFN, metadataFN, rawStepsFN, 
+      existingFileNames},
+        Puts["***SaveDiffusions****"];
+        PutsOptions[SaveDiffusions, {opts}, LogLevel -> 2];
+        Quiet[dir = CreateDirectory@name;];
+        (*So that we dont get diffrent files out of sync *)
+        existingFileNames = FileNames@FileNameJoin@{dir, "*"};
+        PutsE[existingFileNames, LogLevel -> 1];
+        If[ And[OptionValue@"OverrideExisting", 
+         Length[existingFileNames] > 0],
+            DeleteFile@existingFileNames,(*else*)
+            Throw["Files allready exist in " <> name]
+        ];
+        If[ dir === $Failed,
+            Throw["Directory " <> name <> " could not be created"]
+        ];
+        diffusionsFN = FileNameJoin@{dir, OptionValue@"DiffusionsFileName"};
+        metadataFN   = FileNameJoin@{dir, OptionValue@"MetadataFileName"};
+        rawStepsFN   = FileNameJoin@{dir, OptionValue@"RawStepsFileName"};
+        
+        (*Retrive the metadata if set to automatic*)
+        metadataTMP = (If[ # === Automatic,
+                           ReturnDiffsMetaData[OptionValue@"Title",OptionValue@"Description"],
+                           #
+                       ]) &@
+         OptionValue@"Metadata";
+        {"Metadata" -> Export[metadataFN, metadataTMP],
+            "Diffusions" -> 
+         Export[diffusionsFN, diffs, "CompressionLevel" -> .3],
+            "RawSteps" -> (If[ Length[#] < 1,
+                               None,
+                               Export[rawStepsFN, #, "CompressionLevel" -> .1]
+                           ] &@
+           OptionValue["RawSteps"])}
+    ];
+
+
+
+ 
+
+Options[LoadDiffusions] = {"LoadMetadata" -> True, 
+   "LoadDiffusions" -> True, "LoadRawSteps" -> False,
+                        "DiffusionsFileName" -> "diffusions.mx.gz",
+                        "MetadataFileName" ->   "metadata.m",
+                        "RawStepsFileName" ->   "rawSteps.h5.gz"};
+LoadDiffusions[name_, opts : OptionsPattern[]] :=
+  Block[{metadata = None, diffs = None, rawSteps = None, diffusionsFN,
+     metadataFN, rawStepsFN},
+       Puts["***LoadDiffusions****"];
+       PutsOptions[LoadDiffusions, {opts}, LogLevel -> 2];  
+    If[Not@FileExistsQ@name, 
+    Throw["Diffusions directory with name " <> name <> 
+      " does not exists!"]];
+   
+    diffusionsFN = FileNameJoin@{name, OptionValue@"DiffusionsFileName"};
+    metadataFN   = FileNameJoin@{name, OptionValue@"MetadataFileName"};
+    rawStepsFN   = FileNameJoin@{name, OptionValue@"RawStepsFileName"};
+    
+    (*Todo check that the files exist?*)
+    metadata = If[OptionValue@"LoadMetadata",   Puts["Loading: ",metadataFN];  Import[metadataFN]];
+    diffs    = If[OptionValue@"LoadDiffusions", Puts["Loading: ",diffusionsFN];Import[diffusionsFN]];
+    rawSteps = If[OptionValue@"LoadRawSteps",   Puts["Loading: ",rawStepsFN];  Import[rawStepsFN]];
+      {"Metadata" -> metadata,
+        "Diffusions" -> diffs,
+        "RawSteps" -> rawSteps}
+    
+   ];
 
 End[]
 

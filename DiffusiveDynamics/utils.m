@@ -162,7 +162,17 @@ GetValues[values_,list_] :=
 SetAttributes[GetValue,HoldAll];
 GetValue[value_,list_] :=
     First@GetValues[value,{list}];
+    
+ClearAll@RulesToList;
+RulesToList[rules_] :=
+  Flatten[rules //. Rule[a__, b__] :> List[a, b]];    
 
+ClearAll[GetSubValue]
+GetSubValue::usage =  "GetSubValue[r_Rule,list_List]\n given a a list of rules a->b->c returns the first  a->b->c element";
+GetSubValue[r_Rule, list_List] := Block[{tmplist = list},
+   Do[tmplist = GetValue[Evaluate@val, tmplist];, {val, RulesToList[r]}];
+   tmplist
+];
 
 On[Assert];
 $AssertFunction = Throw[{##}]&;

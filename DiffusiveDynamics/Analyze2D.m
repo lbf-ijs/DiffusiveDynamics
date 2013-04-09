@@ -62,6 +62,9 @@ ClearAll[LoadDiffusions, SaveDiffusions];
 LoadDiffusions::usage="TODO";
 SaveDiffusions::usage="TODO";
 
+ClearAll[EstimateDiffusionError];
+EstimateDiffusionError::usage;
+
 Begin["`Private`"]
 (* Implementation of the package *)
 $SignificanceLevel = 0.05;
@@ -699,7 +702,10 @@ With[{Dx=DiffX[x,y],Dy=DiffY[x,y],Da=DiffA[x,y]},
 	 {"Dx"->Dx,"Dy"->Dy,"Da"->Da, "sx"->Sqrt[2*Dx*stride*timestep], "sy"->Sqrt[2*Dy*stride*timestep],
 	  "x"->x,"y"->y,"xWidth"->dx,"yWidth"->dy, "ux"->0,"uy"->0, "dt"->timestep,
 	  "StepsHistogram"->If[ReturnHistograms, GetStepsHistogramDiffusion[{DiffX[x,y], DiffY[x,y], DiffA[x,y]}, stride]],  
-	  "StepsInBin"->Null,"Stride"->stride, "PValue"->1, "IsNormal"->True,"xMinWidth"->dx,"yMinWidth"->dy}
+	  "StepsInBin"->Null,"Stride"->stride, "PValue"->1, "IsNormal"->True,"xMinWidth"->dx,"yMinWidth"->dy,
+	  
+	  "DxError"->0,"DyError"->0,"DaErorr"->0, "sxError"->0, "syError"->0,
+      "xMinWidthError"->0,"yMinWidthError"->0, "uxError"->0,"uyError"->0,"PValueError"->0}
 ];
 (*TODO: Perhaps I could fill a Gaussian StepsHistogram. StepDelta could be passed in as an option.  *)
 
@@ -853,6 +859,11 @@ LoadDiffusions[name_, opts : OptionsPattern[]] :=
         "RawSteps" -> rawSteps}
     
    ];
+   
+ClearAll@EstimateDiffusionError   
+EstimateDiffusionError::usage="EstimateDiffusionError[listOfDiffs, quantities] take a list of diffusions (must have same bins) and 
+calculates the averages and standard deviations for the given list of quantities (for example Dx, Dy...). 
+Returns a diffusions list, where Dx->Avg[{Dx...}] and DxError->StDev[{Dx...}]"
 
 End[]
 

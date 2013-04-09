@@ -544,6 +544,7 @@ Options@RowLegend = {PlotStyle -> Automatic,
                      TextStyle -> Bold,
                      Tooltip->None, (*Array of tooltips to be displayed*)
                      PopupWindow->None (*Array of   data to be displayed in popupwindows*)};
+
 RowLegend[legends_, opts : OptionsPattern[]] :=
 Block[ {plotStyles,i,l,tooltips, metadata},
         plotStyles = 
@@ -563,6 +564,7 @@ Block[ {plotStyles,i,l,tooltips, metadata},
             l=Table[ Tooltip[l[[i]],tooltips[[i]] ] ,{i,Length@legends}];
         ];
         If[OptionValue@PopupWindow =!= None, 
+            (*TODO Make popupwindow na dvojni click in resizable*)
             metadata=OptionValue@PopupWindow;
             Assert[Length[legends] === Length[metadata], "legends and metadata must be of the same length"];
             l=Table[ PopupWindow[l[[i]], metadata[[i]],WindowTitle->legends[[i]] ] ,{i,Length@legends}];

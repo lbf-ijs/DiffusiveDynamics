@@ -37,7 +37,8 @@ See GenerateDiffusionTrajectory2D for further info.
 
 OPTIONS:
 \"ProcessCount\"-> 2$ProcessorCount -- Number of independent difussion processe that get started in seperate threads
-\"InitialPositions\"->Automatic        -- takes a list of points or the default, Automatic, which generates uniformly randommly distributed points in the cell
+\"InitialPositions\"->Automatic     -- takes a list of points or the default, Automatic, which generates uniformly randommly distributed points in the cell
+\"RandomSeeds\"->Automatic          -- takes a list of random seeds used to generate each trajectory.
 "; 
 
 
@@ -46,7 +47,8 @@ Begin["`Private`"]
 
 
 
-Options[GenerateDiffusionTrajectory2D] = {"InitialPosition"->{0.,0.} (*The starting point for the trajectory*),
+Options[GenerateDiffusionTrajectory2D] = {"RandomSeed"->Automatic,
+                                          "InitialPosition"->{0.,0.} (*The starting point for the trajectory*),
 	                                      "Verbose":>$VerbosePrint, (*Log output*)
 	                                      "VerboseLevel":>$VerboseLevel  (*Verbosity of the output. Automatic is $VerboseLevel*)
 	                                      };
@@ -63,12 +65,15 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
     	     gradF (*gradient of the free energy*), 
     	     stepfunctionexp(*the step function expression*),
     	     stepfunction (*the compiled step function*),
-    	     x,y,g1,g2 (*tParallelGenerateDiffusionTrajectory2Demporary variables used in compilation of the step function*)},
+    	     x,y,g1,g2, (*tParallelGenerateDiffusionTrajectory2Demporary variables used in compilation of the step function*)
+    	     randomSeed},
      
         Puts["***GenerateDiffusionTrajectory2D***"];
         PutsOptions[GenerateDiffusionTrajectory2D,{opt}];
+        randomSeed=If[#===Automatic,RandomInteger[1000000],#]&@OptionValue@"RandomSeed";
         
-        width = (max-min);
+
+        width = (max-min); 
         halfwidth = width/2;
         Quiet[(*The message CompiledFunction::cfsa is generated, because we put  
                symbolic arguuments into compile, when inlining.
@@ -125,7 +130,12 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
 	   ,{CompiledFunction::cfsa}];
 		
 		(*generate an stepsx2 list of normally distributed random values*)
-		g = RandomVariate[NormalDistribution[0,1],{steps,2}];        
+        BlockRandom[
+	       
+	        SeedRandom[randomSeed,Method -> "MersenneTwister"];    	        
+			g = RandomVariate[NormalDistribution[0,1],{steps,2}]; 
+			Puts["Random Seed:", randomSeed, "(FirstStep ",First@g, ")"];   
+		];(*BlockRandom*)     
 		(*Calculate the actual diffusive process. 
 		 FoldList as #1 passes the previous point and as #2 the correct value from the list of random numbers *)
         data = FoldList[(stepfunction[#1,#2])&, N@OptionValue["InitialPosition"], g];
@@ -134,17 +144,19 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
         (*TODO: Perhaps make this optional?*)                 
         Transpose[Prepend[Transpose[data],N@Range[Length[data]] ]]
         (*The last expression is automatically returned -- notice no ; at the end*)
+
     ](*Module*)
 ](*Block*);
 
 ClearAll[ParallelGenerateDiffusionTrajectory2D];
 Options[ParallelGenerateDiffusionTrajectory2D] = {"ProcessCount":> 2$ProcessorCount, (*Number of independent difussion processe that get started*)
-                                                  "InitialPositions"->Automatic  (*takes a list of points or the default, Random, which generates uniformly randommly distributed points*)
+                                                  "InitialPositions"->Automatic,  (*takes a list of points or the default, Random, which generates uniformly randommly distributed points*)
+                                                  "RandomSeeds"->Automatic (*A list of random seeds for each trajectory*)
                                                   }~Join~Options[GenerateDiffusionTrajectory2D] ;
 
 ParallelGenerateDiffusionTrajectory2D[steps_Integer,DiffX_,DiffY_,DiffA_,F_,kT_?NumberQ,dt_?NumberQ,{min_,max_},opt:OptionsPattern[]] :=
 Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseLevel"],$VerboseIndentLevel=$VerboseIndentLevel+1},   
-    Module[ {initialPoints,numPoints,stepsPerPoint},
+    Module[ {initialPoints,numPoints,stepsPerPoint,randomSeeds},
         Puts["***ParallelGenerateDiffusionTrajectory2D***"];
         PutsOptions[ParallelGenerateDiffusionTrajectory2D,{opt}];
         
@@ -167,16 +179,22 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
                initialPoints = initialPoints[[;;numPoints]]
            ];
        ];
+       
         PutsE["InitialPoints (recalc):\n",initialPoints,LogLevel->2];
-
-
+        randomSeeds=If[#===Automatic,
+                        RandomInteger[10000000,Length@initialPoints]
+                    ,(*else*)    
+                        #]&
+                    @OptionValue@"RandomSeeds";
+        PutsE["randomSeeds:\n",randomSeeds,LogLevel->2];                    
+        Assert[Length@randomSeeds==Length@initialPoints,"Initial points and random seeds must be of the same length"];
 		(*Inject the values into ParallelMap using With, so they don't have to be distribuated*)
 		With[ {istepsPerPoint = stepsPerPoint, iDiffX = DiffX, iDiffY = DiffY ,iDiffA = DiffA, iF = F,
 		       ikT = kT,idt = dt,imin = min, imax = max, iOptions=FilterRules[{opt},Options@GenerateDiffusionTrajectory2D]},
             ParallelMap[
               GenerateDiffusionTrajectory2D[istepsPerPoint,iDiffX,iDiffY,iDiffA,iF,ikT,idt,{imin,imax}, 
-                                         "InitialPosition"->#,iOptions]&,
-            initialPoints]]
+                                         "InitialPosition"->#[[1]],"RandomSeed"->#[[2]],iOptions]&,
+            Transpose@{initialPoints,randomSeeds}]]
     ] 
 ];
 Clear[RotMatrix2D];

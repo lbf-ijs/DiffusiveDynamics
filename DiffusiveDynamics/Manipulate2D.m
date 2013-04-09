@@ -403,9 +403,9 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
          diffs=GetValue["Diffusions",diffsData];
          PutsE[diffs,LogLevel->0];
          (*GetSubValue["Metadata"->"Title",#]&/@diffsData*)
-         DynamicModule[{idiffs=diffs}, 
+         DynamicModule[{idiffs=diffs},  
          (*ViewDiffsWithStridePlots has hold first, so when the block goes out of scope, 
-         we would get an undefined diffs without this Dynamic module*)
+         we would get an undefined diffs without this Dynamic module. TODO: is this a memory leak? Works much faster than With*)
          ViewDiffsWithStridePlots[idiffs,title,
              "LegendCaptions"->GetValue["Title",metadata],
              Tooltip->         GetValue["Description",metadata],

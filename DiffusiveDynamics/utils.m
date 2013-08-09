@@ -53,6 +53,7 @@ ClearAll[LetL];
 LetL::usage="LetL[const, body] implements nested With blocks for each constant. 
 So it is possible to use previous constants in the definition of next constants."
 
+valueQ::usage="Check if the symbol has a defined value.";
 (**)
 withoutIndeterminate /: (f : Min | Max)[withoutIndeterminate[args___]] :=
   Block[{Indeterminate = f[]}, f[args]];
@@ -61,6 +62,32 @@ Clear[LoadData, LoadHeader, TakeData];
 LoadData::usage="TODO";
 LoadHeader::usage="TODO";
 TakeData::usafe="TakeData[data,header,take] given a table and a header, extracts the coresponfing columns in in take-";
+
+PermanentSet::usage="PermanentSet[symb, expr] saves the expr in the tagging rules";
+PermanentSetCell::usage="PermanentSet[symb, expr] saves the symb in a seperate cell";
+
+(*Taken from http://mathematica.stackexchange.com/questions/2886/transferring-a-large-amount-of-data-in-parallel-calculations*)
+withUnpackingMemberQ[expr_] :=
+ Module[{doneQ, unmatchable},
+  Internal`InheritedBlock[{MemberQ},
+   Unprotect[MemberQ];
+   (* Can uncomment this if we want to print out the MemberQ calls:
+   mq:MemberQ[args___]/;(Print@HoldForm[mq];True):=mq;
+   *)
+   MemberQ[list_, patt_Symbol, args___] /; !TrueQ[doneQ] :=
+    Block[{doneQ = True},
+     MemberQ[
+      Unevaluated[list] /. _List?Developer`PackedArrayQ -> {unmatchable},
+      Unevaluated[patt],
+      args
+     ]
+    ];
+   Protect[MemberQ];
+   expr
+  ]
+ ];
+SetAttributes[withUnpackingMemberQ, HoldAllComplete];
+
 Begin["`Private`"]
 (* Implementation of the package *)
 
@@ -208,6 +235,30 @@ SetKernelsDirectory[dir_] :=
     ParallelEvaluate[SetDirectory[dir]];
 
 
+(*From here: http://mathematica.stackexchange.com/questions/5959/saving-data-inside-a-notebook-so-that-i-dont-have-to-run-it-again*)
+SetAttributes[PermanentSetCell, HoldAll];
+PermanentSetCell[var_Symbol, 
+  value_] := (If[OwnValues[var] === {}, 
+   Module[{nb = EvaluationNotebook[]}, 
+    SelectionMove[nb, Before, EvaluationCell];
+    NotebookWrite[nb, 
+     Cell[ToString[Unevaluated[var]] <> " = Uncompress[\"" <> 
+       Compress[var = value] <> "\"]", "Input", Editable -> False]]]];
+  var)
+  
+SetAttributes[PermanentSet,HoldAll];
+PermanentSet[var_Symbol, value_] :=
+  Module[{nb=EvaluationNotebook[],
+          name=ToString[Unevaluated[var]],
+          expr=Compress[Unevaluated[value]]},
+    If[TrueQ[CurrentValue[nb, {TaggingRules, "Storage",
+                               name <> "expression"}] == expr],
+      var = Uncompress@CurrentValue[nb, {TaggingRules, "Storage", name<>"value"}],
+      CurrentValue[nb, {TaggingRules, "Storage", name<>"expression"}] = expr;
+      CurrentValue[nb,{TaggingRules, "Storage", name<>"value"}] =
+        Compress[var=value]];
+    var];  
+  
 
 SetAttributes[LetL, HoldAll];
 SyntaxInformation[LetL] = {
@@ -223,6 +274,36 @@ LetL[{head_, tail__}, expr_] :=
   Block[{With}, Attributes[With] = {HoldAll};
     With[{head}, Evaluate[LetL[{tail}, expr]]]];
 
+
+ClearAll[symbolicHead];
+SetAttributes[symbolicHead, HoldAllComplete];
+symbolicHead[f_Symbol[___]] := f;
+symbolicHead[f_[___]] := symbolicHead[f];
+symbolicHead[f_] := Head[Unevaluated[f]];
+
+ClearAll[valueQ];
+SetAttributes[valueQ, HoldAllComplete];
+valueQ[a_Symbol] /; OwnValues[a] =!= {} := 
+  With[{result = (# =!= (# /. OwnValues[a])) &[HoldComplete[a]]}, 
+   result /; result];
+
+valueQ[a : f_Symbol[___]] /; DownValues[f] =!= {} := 
+  With[{result = (# =!= (# /. DownValues[f])) &@HoldComplete[a]}, 
+   result /; result];
+
+valueQ[a_] := 
+  With[{sub = SubValues[Evaluate[symbolicHead[a]]]}, 
+   With[{result = (# =!= (# /. sub)) &[HoldComplete[a]]}, 
+     result /; result] /; sub =!= {}];
+
+valueQ[a_] := 
+  With[{upsyms = 
+     Flatten@Cases[Unevaluated[a], s_Symbol :> UpValues[s], 1, 
+       Heads -> True]}, 
+   With[{result = (# =!= (# /. upsyms)) &[HoldComplete[a]]}, 
+     result /; result] /; upsyms =!= {}];
+
+valueQ[_] := False;
 
 LoadData::nofile="Filename `1` does not exist";
 
@@ -259,9 +340,13 @@ LoadData[afilename_,opt:OptionsPattern[]] :=
                 data = Partition[data,Length[OptionValue@"DataHeader"]]
             ];
          ,(*else*)
-            data = N[Import[filename,OptionValue@"Type","IgnoreEmptyLines"->True,"Numeric"->True]];
+            
+            data = N@Import[filename,OptionValue@"Type", "IgnoreEmptyLines"->True, "Numeric"->True];
+            
             (*Take everything that has a numeric first part*)
+            
             data = Select[data,NumericQ[#[[1]]]&];
+            
             
         ];
         
@@ -270,7 +355,9 @@ LoadData[afilename_,opt:OptionsPattern[]] :=
           ];
         (*Print["First ", OptionValue[FirstElement]," Last ", OptionValue[LastElement]," Stride ", OptionValue[Stride]];*)
         If[ OptionValue@"AutoStrideIfMoreThan"===Null, (*then*)
-            data = data[[OptionValue@"FirstElement" ;; OptionValue@"LastElement" ;; OptionValue@"Stride"]];
+            (*If there are default firt,last,stride, do nothing*)
+            If[!(OptionValue@"FirstElement"==1 && OptionValue@"LastElement"==-1 && OptionValue@"Stride"==1),
+                data = data[[OptionValue@"FirstElement" ;; OptionValue@"LastElement" ;; OptionValue@"Stride"]];];
         ,(*else*)        
         (*Make sure we return approx AutoStrideIfMoreThan points*)
             data = data[[OptionValue@"FirstElement"  ;; OptionValue@"LastElement"]];
@@ -323,7 +410,6 @@ TakeData[data_,header_,take_List,opt:OptionsPattern[]] :=
 End[]
 
 EndPackage[]
-
 
 
 

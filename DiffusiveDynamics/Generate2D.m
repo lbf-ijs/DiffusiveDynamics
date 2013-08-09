@@ -104,7 +104,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
 		Puts["gradient of free energy at {0,0}: ",gradF[0.,0.],LogLevel->4];
   
         (*This is the main equation used to generate the trajectory for the diffusive process*)
-        (*Refrence: http://iopscience.iop.org/1367-2630/7/1/034 page 7. I did the generalization to 2D myself*)
+        (*Refrence: http://iopscience.iop.org/1367-2630/7/1/034 page 7 and the original refrence by McCannon. I did the generalization to 2D myself*)
         stepfunctionexp = 
            ({x,y} + (gradD[x,y]-RotatedDD[x,y].gradF[x,y]/kT) dt +
               RM[x,y].Sqrt[2 DD[x,y] dt].Transpose[RM[x,y]].{g1,g2});
@@ -134,10 +134,51 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
 	       
 	        SeedRandom[randomSeed,Method -> "MersenneTwister"];    	        
 			g = RandomVariate[NormalDistribution[0,1],{steps,2}]; 
+			
 			Puts["Random Seed:", randomSeed, "(FirstStep ",First@g, ")"];   
-		];(*BlockRandom*)     
+		];(*BlockRandom*)
+		
+		(*generate an stepsx2 list of normally distributed random values*)
+       (* BlockRandom[
+           
+            SeedRandom[randomSeed,Method -> "MersenneTwister"];             
+            coreLen=10;
+     
+            g = RandomVariate[NormalDistribution[0,1],{Round[steps/coreLen]+1,2}];
+            g = Table[g[[Round[i/coreLen]+1]],{i,steps}]; 
+            
+            Puts["Random Seed:", randomSeed, "(FirstStep ",First@g, ")"];   
+        ];(*BlockRandom*)*)
+        
+		(*(*generate an stepsx2 list of normally distributed random values*)
+        BlockRandom[
+           
+            SeedRandom[randomSeed,Method -> "MersenneTwister"];             
+            coreLen=3;
+            oscilations=3;
+            g=ConstantArray[{0.,0.},steps];
+            g[[1]] = RandomVariate[NormalDistribution[0,1], 2];
+            rots= RandomVariate[NormalDistribution[0,90], steps]*°;
+            Do[g[[i]]=RotationMatrix[rots[[i]]].g[[i-1]] ,{i,2,steps}]; 
+            
+            Puts["Random Seed:", randomSeed, "(FirstStep ",First@g, ")"];   
+        ];(*BlockRandom*)*)
+        
+	   (*    BlockRandom[
+           
+            SeedRandom[randomSeed,Method -> "MersenneTwister"];             
+            coreLen=10;
+     
+            g = RandomVariate[NormalDistribution[0,1],{Round[steps/coreLen]+1,2}];
+           (* g = Table[Sign[Sin[2. i Pi/coreLen]]*g[[Round[i/coreLen]+1]],{i,steps}];*)
+            
+            g = Table[RotationMatrix[Sin[2. i Pi/coreLen]].g[[Round[i/coreLen]+1]],{i,steps}];  
+            
+            Puts["Random Seed:", randomSeed, "(FirstStep ",First@g, ")"];   
+        ];(*BlockRandom*)	  *)   
+		
 		(*Calculate the actual diffusive process. 
-		 FoldList as #1 passes the previous point and as #2 the correct value from the list of random numbers *)
+		 FoldList as #1 passes the previous point and as #2 the value from the list of random numbers *)
         data = FoldList[(stepfunction[#1,#2])&, N@OptionValue["InitialPosition"], g];
 
         (*Add steps number. So the final form will be {{1.,x1,y1}, {2.,x1,y1}, ...}*)

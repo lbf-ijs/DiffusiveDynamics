@@ -1,6 +1,6 @@
 (* Mathematica Package *)
 
-BeginPackage["DiffusiveDynamics`Manipulate2D`",{"DiffusiveDynamics`Utils`","DiffusiveDynamics`Visualize2D`","DiffusiveDynamics`Analyze2D`","Developer`"}]
+BeginPackage["DiffusiveDynamics`Manipulate2D`",{"DiffusiveDynamics`Utils`","DiffusiveDynamics`Visualize2D`","DiffusiveDynamics`Analyze2D`","Developer`","ErrorBarPlots`"}]
 (* Exported symbols added here with SymbolName::usage *)  
 
 ClearAll[DrawStridePlotsFromBinInfo, ViewDiffsWithStridePlots];
@@ -11,6 +11,9 @@ ViewDiffsWithStridePlots::usage="TODO";
 DrawDiffsWithStridePlots::usage="TODO";
 ClearAll[ViewDiffsWithStridePlotsFromFiles];
 ViewDiffsWithStridePlotsFromFiles::usage="TODO";
+ViewDiffsWithStridePlotsWithMetadata::usage="TODO";
+DrawErrorStridePlots::usage="";
+DrawDiffsWithErrorStridePlots::usage="";
 
 Begin["`Private`"] (* Begin Private Context *) 
 
@@ -185,7 +188,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
     ]
    ];
 
-DrawStridePlotsFromBinInfo[diffInfos:listOfDiffInfosWithStide,binIndex_,strideIndex_,opts:OptionsPattern[]] := 
+DrawStridePlotsFromBinInfo[diffInfos:listOfDiffInfosWithStride,binIndex_,strideIndex_,opts:OptionsPattern[]] := 
 Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseLevel"],$VerboseIndentLevel=$VerboseIndentLevel+1,i}, 
     Module[{plotStyles,plots,stridexPlot,strideyPlot,strideAPlot,strideNPlot,strides,histograms},
         Puts["***DrawStridePlotsFromBinInfo (multiple lists)****"];
@@ -233,6 +236,9 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
 ]
 
 
+
+
+
 ClearAll[DrawDiffsWithStridePlots];
 
 (*binindex_,strideIndex_ can be passed by value, that is why HoldRest is needed *)
@@ -257,19 +263,20 @@ Options[DrawDiffsWithStridePlots] = {
 
 DrawDiffsWithStridePlots[diffs_,binIndex_,strideIndex_,opts:OptionsPattern[]] :=
 Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1},
-    Module[ {diffsDim,bins,cellRange,tensors, binfo,tensorRepOpts,stridePlotOpts, selectedStr, legendRow,legendRowOpts},
+    Module[ {diffsDim,bins,tensors, binfo,tensorRepOpts,stridePlotOpts, selectedStr, legendRow,legendRowOpts,isListOfDiffInfosWithStride,isDiffInfosWithStride},
         Puts["****DrawDiffsWithStridePlots****"];
         PutsOptions[DrawDiffsWithStridePlots,{opts},LogLevel->2];
-        diffsDim = Dimensions@diffs;
-        Assert[(Length@diffsDim==3) || (Length@diffsDim==4),"diffs must be either a list of {bins, stride, rules} or {diff, bins, stride, rules}"];
+        isListOfDiffInfosWithStride=MatchQ[diffs,listOfDiffInfosWithStride];
+        isDiffInfosWithStride=MatchQ[diffs,diffInfosWithStride];
+        If[Not@Or[isListOfDiffInfosWithStride,isDiffInfosWithStride],Throw["Diffs must be either  diff infos (with stride) a list of  diff infos (with stride) in DrawDiffsWithStridePlots"]];
         bins=GetValues[{{"x", "y"}, {"xWidth", "yWidth"}}, diffs[[All, 1]]];
-        cellRange = If[ #===Automatic,GetCellRangeFromBins@bins,#]&@OptionValue@"CellRange";
+        (*cellRange = If[ #===Automatic,GetCellRangeFromBins@bins,#]&@OptionValue@"CellRange";*)
         
         tensorRepOpts=FilterRules[{opts}~Join~Options[DrawDiffsWithStridePlots],Options@DrawDiffusionTensorRepresentations];
         
-        If[ Length@diffsDim==3, (*One set of diffusions*)
+        If[ isDiffInfosWithStride, (*One set of diffusions*)
             tensors = DrawDiffusionTensorRepresentations[diffs[[All,strideIndex]],binIndex, Evaluate@tensorRepOpts];
-            (*else multiple sets of diffusion*),
+            ,(*else multiple sets of diffusion*)
             tensors = DrawDiffusionTensorRepresentations[diffs[[All,All,strideIndex]],binIndex, Evaluate@tensorRepOpts];
         ];
         
@@ -313,13 +320,16 @@ Options[ViewDiffsWithStridePlots] = {
 ViewDiffsWithStridePlots[diffs_,title_,opts:OptionsPattern[]] :=
 Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1,
         binIndex,scale, strideIndex,histogramPresentation,markNonNormal,showPlotMarkers,showNormalizedDiff,showMinBins(*These are just for syntax higlighting inside WB*)},
-     Module[ {man,nb,diffsDim,histogramButtons, stepdeltaLength,drawDiffsOpts,strideFactor},
+     Module[ {man,nb,histogramButtons, stepdeltaLength,drawDiffsOpts,strideFactor,isListOfDiffInfosWithStride, isDiffInfosWithStride},
          Puts["****ViewDiffsWithStridePlots****"];
          PutsOptions[ViewDiffsWithStridePlots,{opts},LogLevel->2];
-         diffsDim=Dimensions@diffs;
-         Assert[(Length@diffsDim==3) || (Length@diffsDim==4),"diffs must be either a list of {bins, stride, rules} or {diff, bins, stride, rules}"];
+         isListOfDiffInfosWithStride=MatchQ[diffs,listOfDiffInfosWithStride];
+         isDiffInfosWithStride=MatchQ[diffs,diffInfosWithStride];
+         If[Not@Or[isListOfDiffInfosWithStride,isDiffInfosWithStride],
+             Throw["Diffs must be either  diff infos (with stride) a list of  diff infos (with stride) in ViewDiffsWithStridePlots"]];
+
          (*Not all histogram presentations work well when presenting multiple data sets*)
-         If[Length@diffsDim==3,
+         If[isDiffInfosWithStride,
              histogramButtons = {Draw2DHistogram->"2D Histogram",DrawSmooth3DHistogram->"Smooth 3D Histogram", (*Draw3DHistogram->"3D Histogram",*)Null->"None"};
              stepdeltaLength = Length@First@diffs; (*All the bines have the same strides*)
          ,(*else*)
@@ -337,7 +347,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
                           If[ showNormalizedDiff, (*then*)
                               strideFactor = 1,
                           (*else get the curernt stride*)
-                              If[ Length@diffsDim==3,
+                              If[ isDiffInfosWithStride,
                                   strideFactor = ("Stride"/.diffs[[binIndex,strideIndex]]),(*else*)
                                   strideFactor = ("Stride"/.diffs[[1,binIndex,strideIndex]])
                               ];
@@ -387,31 +397,55 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
     ];
 
 
+ClearAll@ViewDiffsWithStridePlotsWithMetadata;
+Options[ViewDiffsWithStridePlotsWithMetadata] = {
+                      }~Join~
+                      Options[ViewDiffsWithStridePlots];
+ViewDiffsWithStridePlotsWithMetadata[diffWithMetadata_,title_,opts:OptionsPattern[]] :=
+Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1,
+        injectedOptions, metadata},
+         Puts["****ViewDiffsWithStridePlotsWithMetadata****"];
+         PutsOptions[ViewDiffsWithStridePlotsWithMetadata,{opts},LogLevel->2];
+         injectedOptions=FilterRules[{opts}~Join~Options@ViewDiffsWithStridePlots,Options@ViewDiffsWithStridePlots];
+         metadata=GetValue["Metadata",diffWithMetadata];
+         (*GetSubValue["Metadata"->"Title",#]&/@diffsData*)
+           
+         (*ViewDiffsWithStridePlots has hold first, so when the block goes out of scope, 
+         we would get an undefined diffs without this Dynamic module. TODO: is this a memory leak? Works much faster than With*)
+         ViewDiffsWithStridePlots[GetValue["Diffusions",diffWithMetadata],title,
+             "LegendCaptions"->GetValue["Title",metadata],
+             Tooltip->         GetValue["Description",metadata],
+             PopupWindow ->    metadata,
+             injectedOptions]
+              
+    ]; 
+
+
 
 Options[ViewDiffsWithStridePlotsFromFiles] = {
                       }~Join~
                       Options[ViewDiffsWithStridePlots];
 ViewDiffsWithStridePlotsFromFiles[fileList_,title_,opts:OptionsPattern[]] :=
 Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1,
-        injectedOptions,diffsData,diffs, metadata},
+        injectedOptions,diffsData, metadata,diffs},
          Puts["****ViewDiffsWithStridePlotsFromFiles****"];
          PutsOptions[ViewDiffsWithStridePlotsFromFiles,{opts},LogLevel->2];
-         injectedOptions=injectedOptions=FilterRules[{opts}~Join~Options@ViewDiffsWithStridePlots,Options@ViewDiffsWithStridePlots];
+         injectedOptions=FilterRules[{opts}~Join~Options@ViewDiffsWithStridePlots,Options@ViewDiffsWithStridePlots];
          diffsData=LoadDiffusions[#]&/@fileList;
          PutsE[diffsData,LogLevel->5];
          metadata=GetValue["Metadata",diffsData];
          diffs=GetValue["Diffusions",diffsData];
-         PutsE[diffs,LogLevel->0];
+         PutsE[diffs,LogLevel->5];
          (*GetSubValue["Metadata"->"Title",#]&/@diffsData*)
-         DynamicModule[{idiffs=diffs},  
+           
          (*ViewDiffsWithStridePlots has hold first, so when the block goes out of scope, 
          we would get an undefined diffs without this Dynamic module. TODO: is this a memory leak? Works much faster than With*)
-         ViewDiffsWithStridePlots[idiffs,title,
+         ViewDiffsWithStridePlots[diffs,title,
              "LegendCaptions"->GetValue["Title",metadata],
              Tooltip->         GetValue["Description",metadata],
              PopupWindow ->    metadata,
              injectedOptions]
-         ]     
+              
     ]; 
 
 
@@ -419,6 +453,181 @@ ClearAll[ExportDiffs];
 ExportDiffs[title_,datafile_,dir_:"finished"] :=
     ViewDiffs[title,datafile, "ShowNotebook"->False,"SaveDefinitions"->True,"FileName"->FileNameJoin[{dir,title<>".cdf"}]];
 
+
+ClearAll@DrawErrorStridePlots;
+Attributes[DrawErrorStridePlots]={HoldRest};
+(*Hold all emulates pass-by-refrence schematics, so the value of stride and bin can be changed from inside here. 
+binIndex ,strideIndex must be symbols *)
+Options[DrawErrorStridePlots] = { "Verbose":>$VerbosePrint,  (*Log output*)
+                                        "VerboseLevel":>$VerboseLevel, (*The amount of details to log. Higher number means more details*)
+                                        "HistogramPresentation"->Draw2DHistogram,
+                                        "MarkNonNormal" -> True,(*Should non normal distributions be marked?*)
+                                        "Clickable" -> True,(*Wrap the plots in an EventHandler so that stride can be changed*)
+                                        PlotStyle -> Automatic,
+                                        PlotMarkers->{Graphics@{Disk[]},0.03},
+                                        ImageSize -> Medium,
+                                        "Quantities"->{"Dx","Dy","Da"},
+                                        "XScaleFunction"->Identity, (*scale the x axis*)
+                                        "XOffsetFunction"->None, (*move each consecutive dataset by i. Takes two arguments. The x an the i*)
+                                        Axes->False,Frame->True,
+                                        GridLinesStyle->Directive[Dashed,Gray]
+                                      }~Join~Options[ErrorListPlot];
+
+
+
+
+DrawErrorStridePlots::usage="DrawErrorStridePlots[diffs:listOfDiffInfosWithStride, binIndex_, strideIndex_, opts] draws  stride plots with errors for Optionvalue@\"Quantities\"
+
+Options
+  \"XScaleFunction\"-> With LOG turns the x axis into a Log axis.
+
+The following options can take an All[__] wrapper that will applie to all the graphs. Otherwise a list of options (one for each graph is neede=: 
+  PlotRange
+";
+
+
+DrawErrorStridePlots[diffs:listOfDiffInfosWithStride,binIndex_,strideIndex_,opts:OptionsPattern[]] := 
+Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseLevel"],$VerboseIndentLevel=$VerboseIndentLevel+1,
+      i,q, s, quantites, diffIndex, strides, vals, errors,injectedOptions,data,plotRanges, frameTicks, plots, offstrides}, 
+    
+    Puts["***DrawErrorStridePlots****"];
+    PutsOptions[DrawErrorStridePlots, {opts}, LogLevel->2];
+    
+    quantites=OptionValue@"Quantities";
+    
+ 
+    plotRanges=OptionValue[PlotRange];
+    (*If options wrapped in All, copy them the rigth number of times*)
+    plotRanges = If[ MatchQ[#,All[__]], ConstantArray[First@#,Length@quantites] ,#]&@plotRanges;
+    (*Some simple special caes*)
+    plotRanges = If[ MemberQ[{All,Automatic},#], ConstantArray[#,Length@quantites] ,#]&@plotRanges;
+    PutsE[plotRanges,LogLevel->2];    
+    If[Length@quantites=!=Length@plotRanges, Throw["PlotStyle must have the same length as the  in DrawErrorStridePlots"]];
+
+    (*Add the rest of options as neede*)
+    frameTicks=OptionValue@FrameTicks;
+    
+    (*all the stides must be the same. It would be possible to get rid of this assumption*)
+    (*TODO at least some error checking?*)
+    strides=GetValues["Stride", diffs[[1,1]] ];
+    If[OptionValue@"XScaleFunction"=!=Identity, 
+      strides=OptionValue["XScaleFunction"]/@strides;
+      If[frameTicks===Automatic, With[{inv=InverseFunction[OptionValue["XScaleFunction"]]},
+          frameTicks={Table[{s, inv@s}, {s, strides}], Automatic}; 
+      ]];
+    ];
+    
+ 
+      
+    
+    
+    
+    (*get the data*)
+    data=Table[    
+        vals=GetValues[Evaluate@q, diffs[[diffIndex, binIndex]] ];
+        errors=GetValues[Evaluate[ToString@q<>"Error"], diffs[[diffIndex, binIndex]] ];
+        (*Replace non numerc entries with 0*)
+        errors=If[NumericQ@#, #, 0]& /@ errors;
+        
+        offstrides=strides;
+        If[OptionValue@"XOffsetFunction"=!=None, With[{offF=OptionValue@"XOffsetFunction"},
+           offstrides=offF[#,diffIndex]&/@offstrides
+        ]]; 
+                
+        Transpose@{offstrides, vals, errors}
+       , {q, quantites},{diffIndex, Length@diffs}];  
+    (*Draw the plots*)
+    injectedOptions=FilterRules[{opts}~Join~Options@DrawErrorStridePlots,Options@ErrorListPlot];
+    
+    
+    plots=Table[ErrorListPlot[data[[i]], PlotRange->plotRanges[[i]], 
+                        FrameTicks->frameTicks,
+                        FrameLabel->{"Stride",quantites[[i]] }, AxesLabel->{"Stride",quantites[[i]] },  
+                        GridLines->{strides[[Flatten@{strideIndex}]],None}
+                        ,injectedOptions]
+         ,{i,Length@quantites}];
+
+    If[OptionValue@"Clickable", (*then*)
+        plots=WrapStrideClickEventHandler[strideIndex,strides,#]&/@plots;             
+    ];        
+    (*Todo implement mark non normals *)
+    plots 
+         
+             
+];
+
+
+(*binindex_,strideIndex_ can be passed by value, that is why HoldAll is needed *)
+SetAttributes[DrawDiffsWithErrorStridePlots,HoldAll];
+
+DefaultErrDiffLayout=Function[{l},
+    Column[{
+           Row[GetValue["Legend",l],"  "],
+           GetValue["TensorRepresentation",l],     
+           Grid[
+               Partition[GetValue["StridePlots",l],2,2,{1,1},""]
+               ] 
+   
+        },Center]
+];
+
+Options[DrawDiffsWithErrorStridePlots] = {
+                      "CellRange"->Automatic,
+                      "Verbose":>$VerbosePrint,  (*Log output*)
+                      "VerboseLevel":>$VerboseLevel,
+                      "MarkNonNormal" -> True,(*Should non normal distributions be marked?*)
+                      PlotStyle->Automatic,
+                      Frame->True, Axes->False,
+                      "Clickable"->False,
+                      "Scale"->3,
+                      (*"HistogramPresentation" -> DrawSmooth3DHistogram,*)
+                      "MarkSelectedBin" -> True,
+                      "ShowLegend"->True,
+                      "LegendCaptions"->None,
+                      "StridePlotOptions"->{},
+                      "LegendOptions"->{},
+                      "LayoutFunction"->DefaultErrDiffLayout,
+                      "TogglerList"->None(*A held list of visible diffusions*)
+                      }~Join~
+                      Options[DrawDiffusionTensorRepresentations]~Join~
+                      Options[DrawErrorStridePlots]~Join~
+                      Options[RowLegend];
+
+
+DrawDiffsWithErrorStridePlots[diffs_,binIndex_,strideIndex_,opts:OptionsPattern[]] :=
+Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1},
+    Block[ {isListOfDiffInfosWithStride, isDiffInfosWithStride, bins, tensorRepOpts, tensorsRep, stridePlotOpts,stridePlots,legend,legendOpts},
+        Puts["****DrawDiffsWithErrorStridePlots****"];
+        PutsOptions[DrawDiffsWithErrorStridePlots,{opts},LogLevel->2];
+        
+        
+        
+        isListOfDiffInfosWithStride=MatchQ[diffs,listOfDiffInfosWithStride];
+        isDiffInfosWithStride=MatchQ[diffs,diffInfosWithStride];
+        If[Not@Or[isListOfDiffInfosWithStride,isDiffInfosWithStride],Throw["Diffs must be either  diff infos (with stride) a list of  diff infos (with stride) in DrawDiffsWithStridePlots"]];
+        bins=GetValues[{{"x", "y"}, {"xWidth", "yWidth"}}, diffs[[All, 1]]];
+        
+         
+        
+        tensorRepOpts=FilterRules[{opts}~Join~Options[DrawDiffsWithErrorStridePlots],Options@DrawDiffusionTensorRepresentations];
+        If[ isDiffInfosWithStride, (*One set of diffusions*)
+            tensorsRep = DrawDiffusionTensorRepresentations[diffs[[All,strideIndex]],binIndex, Evaluate@tensorRepOpts];
+            ,(*else multiple sets of diffusion*)
+            tensorsRep = DrawDiffusionTensorRepresentations[diffs[[All,All,strideIndex]],binIndex, Evaluate@tensorRepOpts];
+        ];
+        Print@OptionValue["StridePlotOptions"];
+        stridePlotOpts=OptionValue["StridePlotOptions"];
+        
+        stridePlots=DrawErrorStridePlots[diffs,binIndex,strideIndex,Evaluate@stridePlotOpts];
+        
+        legend=Style["",0];
+        If[OptionValue@"ShowLegend" && (Length@OptionValue@"LegendCaptions">0),
+          legendOpts=OptionValue["LegendOptions"];
+          legend=RowLegend[OptionValue@"LegendCaptions",legendOpts]
+        ];
+        DefaultErrDiffLayout@{"TensorRepresentation"->tensorsRep, "StridePlots"->stridePlots, "Legend"->legend}  
+    ]
+];        
 
 End[] (* End Private Context *)
 

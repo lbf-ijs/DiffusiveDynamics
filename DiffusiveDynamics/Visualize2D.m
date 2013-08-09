@@ -16,7 +16,7 @@ DrawSmooth3DHistogram::usage="TODO";
 ClearAll[GetHistogramListFrom2DPDF, GetStepsHistogramDiffusion];
 GetHistogramListFrom2DPDF::usage="GetHistogramListFrom2DPDF[dist,{xmin,xmax,xn},{ymin,ymax,yn}]
 Returns the data in the same format as HistogramList, when given a PDF and the ranges to plot";
-GetStepsHistogramDiffusion::usage=="
+GetStepsHistogramDiffusion::usage="
 Get the theoretical steps histogram form the diffusion. Returns same format as HistogramList"
 
 ClearAll[GetBinCenters, GetBinCentersAndWidths, GetBinsAsRectangles, DrawBinsAsRectangles,GetBinsFromBinsOrSpec,GetBinCentersAndWidthsFromDiffusionInfo];
@@ -34,21 +34,28 @@ ClearAll[GetDiffFrom2DTensor,Get2DTensorFromDiff, Get2DCovarianceFromDiff, Get2D
 GetDiffFrom2DTensor::usage="GetDiffFrom2DTensor[D2tensor] returns {Dx,Dy,Dalpha} from the 2D tensor."
 Get2DTensorFromDiff::uasge="Get2DTensorFromDiff[Dx, Dy, Da] returns a 2D tensor that represents the sigma matrix of the bivariate normal Gaussian distribution."
 Get2DCovarianceFromDiff::usage="Get2DCovarianceFromDiff[Dx, Dy, Da] returns a 2D covariance matrix representing the diffusion. Can be plugged in directly into the bivariate normal Gaussian distribution"
-Get2DTensorRepresentation::usage="Draws a represnetation of the diffusion tensor from the tensor or the diffusion points Dx, Dy, Da."; 
+Get2DTensorRepresentation::usage="Get2DTensorRepresentation[Dx,Dy,alpha,opts] \nDraws a represnetation of the diffusion tensor from the tensor or the diffusion points Dx, Dy, Da."; 
 
-DrawDiffusionTensorRepresentations::usage="DrawDiffusionTensorRepresentations[diffInfos, cellRange] 
+DrawDiffusionTensorRepresentations::usage="DrawDiffusionTensorRepresentations[diffInfo,binIndex_,opts] 
 takes a list of diffusion info rules and plots the tensor represntation in each bin."
 
 ClearAll[GetFreeEnergy];
 GetFreeEnergy::usage="Get a list of free energy points";
 
 (*For patteren matching lists of diffusion info*)
-listOfRules = {{__Rule} ..};
+listOfRules = {{__Rule}..}; 
 listOfListOfRules = {{{__Rule} ..} ..};
 listOfListOfListOfRules ={{{{__Rule} ..} ..}..};
 diffInfoOneBin = {__Rule};
+
+(*Definitions of list depth: {bins,  diffs}*)
+diffInfos = {diffInfoOneBin..};
+(*Definitions of list depth: {bins, stride, diffs}*)
 diffInfosWithStride = listOfListOfRules;
-listOfDiffInfosWithStide = listOfListOfListOfRules;
+(*Definitions of list depth: {set, bins, stride, diffs}*)
+listOfdiffInfosWithStride = {diffInfosWithStride..}; (*Spelling miste fix*)
+listOfDiffInfosWithStride = {diffInfosWithStride..};
+
 NumericOrSymbolQ=(NumericQ[#] ||Head[#]===Symbol)&;
 
 RowLegend::usage=="Gives a row line legend";
@@ -254,7 +261,7 @@ DiffusionParameters2DPlots[Dx_,Dy_,Da_,Energy_,CellRange_] :=
         ImageSize -> Small, PlotLabel -> "ALPHA"], 
         Plot3D[Energy[x, y], {x, CellRange[[1]], -CellRange[[1]]}, {y, 
         CellRange[[2]], -CellRange[[2]]}, BoxRatios -> br, 
-        ImageSize -> Small, PlotLabel -> "ENERGY"]}
+        ImageSize -> Small, PlotLabel -> "ENERGY",PlotRange->All]}
     ];
 
 
@@ -350,11 +357,17 @@ GetDiffFrom2DTensor[tensor_] :=
     ];
 
 Get2DTensorFromDiff[Dx_,Dy_,Da_]:=
-	RotationMatrix[Da*Degree].{{1/Dx^2, 0}, {0, 1/Dy^2}}.RotationMatrix[-Da*Degree]; (*TODO: Ali je to narobe! manjka 2*)
+	RotationMatrix[Da*Degree].{{1/Dx^2, 0}, {0, 1/Dy^2}}.RotationMatrix[-Da*Degree];
+Get2DTensorFromDiff[{Dx_,Dy_,Da_}]:=Get2DTensorFromDiff[Dx,Dy,Da];
+Get2DTensorFromDiff[all___]:=Throw["Wrong arguments Get2DTensorFromDiff: ",all];
+
 Get2DCovarianceFromDiff[Dx_,Dy_,Da_]:=
     Chop[RotationMatrix[Da*Degree].{{2*Dx, 0}, {0, 2*Dy}}.RotationMatrix[-Da*Degree],10^-8];	
+Get2DCovarianceFromDiff[{Dx_,Dy_,Da_}]:=Get2DCovarianceFromDiff[Dx,Dy,Da];
+Get2DCovarianceFromDiff[all___]:=Throw["Wrong arguments for Get2DCovarianceFromDiff: ",all];
+    
 
-Options[Get2DTensorRepresentation] = {"Center"->{0,0},"ShapeType"->"Circle","Scale"->1,"Verbose"->False};
+Options[Get2DTensorRepresentation] = {"Center"->{0,0},"ShapeType"->"Circle","Scale"->1,"Verbose":>$VerbosePrint};
 Get2DTensorRepresentation[Dx_,Dy_,alpha_,opts:OptionsPattern[]] :=
 Block[ {$VerbosePrint = OptionValue@"Verbose"},
     Module[ {e1,e2,RM,s,c},
@@ -427,6 +440,7 @@ Options[DrawDiffusionTensorRepresentations] := {
 						            "Clickable" -> False,
 						            "MarkSelectedBin" -> False,
 						            "MarkedBinDynamic" -> Automatic,
+                                    "TransposeDiffusions"->False,
 						            "MarkedBinFillStyle" -> None,
 						            "MarkedBinOutlineStyle" -> Directive[Thick, Black, Opacity@.5],
 						            "ShowMinBins" -> False,
@@ -452,13 +466,18 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
         Puts["plotStyle: ",plotStyle];
         Puts["fillStyle: ",fillStyle];
         values=GetValues[{"x","y","Dx","Dy","Da"},diffInfos];
-		PutsE["DiffValues:\n",values,LogLevel->3];
+		
+
+		Puts["Length of values: "Length@values,LogLevel->3];
+		PutsE["DiffValues:\n",values,LogLevel->5];
+		
 		     
 		nonNormals=GetValues["IsNormal",diffInfos];
 		PutsE["nonNormals:\n",nonNormals,LogLevel->3];
 		reps=Get2DTensorRepresentation[#[[3]],#[[4]],#[[5]],Center->#[[1;;2]],"ShapeType"->OptionValue["ShapeType"],Scale->OptionValue["Scale"]]&/@values;
+		
 		PutsE["reps:\n",reps,LogLevel->3]; 
-        
+        (*TODO:_Tale pick je problematièen*)
         nonNormalReps=If[OptionValue@"MarkNonNormal"
             ,(*then*)
             Get2DTensorRepresentation[#[[3]],#[[4]],#[[5]],Center->#[[1;;2]],"ShapeType"->OptionValue["ShapeType"],Scale->OptionValue["Scale"]]&/@Pick[values,nonNormals,False]
@@ -466,6 +485,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
             (*Todo: should perhaps delete the normal reps?*)
             
         bins=GetValues[{{"x", "y"}, {"xWidth", "yWidth"}},diffInfos];
+        
         cellRange=If[#===Automatic, GetCellRangeFromBins@bins,#]&@OptionValue@"CellRange";
         plotRange=If[#===Automatic, Transpose@cellRange,#]&@OptionValue@PlotRange;
         aspectRatio=If[#===Automatic,((plotRange[[2,2]]-plotRange[[2,1]])/(plotRange[[1,2]]-plotRange[[1,1]])),#]&@OptionValue@"AspectRatio";
@@ -543,7 +563,8 @@ ClearAll@RowLegend;
 Options@RowLegend = {PlotStyle -> Automatic,
                      TextStyle -> Bold,
                      Tooltip->None, (*Array of tooltips to be displayed*)
-                     PopupWindow->None (*Array of   data to be displayed in popupwindows*)};
+                     PopupWindow->None,(*Array of data to be displayed in popupwindows*)
+                     "VisibilityList"->None(*If given it must be a held list with 1,1,1.. Will change to refelct visibility of each diff*) };
 
 RowLegend[legends_, opts : OptionsPattern[]] :=
 Block[ {plotStyles,i,l,tooltips, metadata},
@@ -552,12 +573,14 @@ Block[ {plotStyles,i,l,tooltips, metadata},
              Table[Directive[Thick, Opacity@1, ColorData[1][i]], {i, Length@legends}],#
            ] &@OptionValue[PlotStyle];
         Assert[Length@legends === Length@plotStyles, "PlotStyles and legends must be of the same length"];
+
         l=Table[
             Column[{
 	            Style[ legends[[i]], OptionValue[TextStyle],plotStyles[[i]]],
 	            Graphics[{plotStyles[[i]],Line[{{0,0},{1,0}}]},AspectRatio->1/10]
             }, Center, Spacings->0],
         {i,Length@legends}];
+        
         If[OptionValue@Tooltip =!= None, 
             tooltips=OptionValue@Tooltip;
             Assert[Length[legends] === Length[tooltips], "legends and tooltips must be of the same length"];

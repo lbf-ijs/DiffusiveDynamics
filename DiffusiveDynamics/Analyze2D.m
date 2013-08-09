@@ -58,12 +58,24 @@ Returns a list of rules from the DiffX, DiffY, DAlpha functions for each stride.
 ClearAll[DiffusionNormalForm];
 DiffusionNormalForm::usage="DiffusionNormalForm[diffInfo] Makes the difusion tensor in a normal form: Dx>Dy and rotate Da 90 Deg. Da is always between 0 and 180"
 
+TransposeDiffusion::usage="DiffusionNormalForm[diffInfo] changes the x and y variables. The angle is also adjusted, as well as all the bin statistics.";
+
 ClearAll[LoadDiffusions, SaveDiffusions];
-LoadDiffusions::usage="TODO";
-SaveDiffusions::usage="TODO";
+LoadDiffusions::usage="LoadDiffusions[name, opts]
+Loads the diffusions from the directory name. Returns a list of:
+
+  {\"Metadata\" -> metadata,
+   \"Diffusions\" -> diffs,
+   \"RawSteps\" -> rawSteps}
+";
+
+
+SaveDiffusions::usage="SaveDiffusions[name, diffs, opts]. \n Saves the diffusions diffs to a directory specified by name. Metadata can be given as na option.";
 
 ClearAll[EstimateDiffusionError];
-EstimateDiffusionError::usage;
+EstimateDiffusionError::usage="";
+
+GetDiffusionsRMSD::usage="";
 
 Begin["`Private`"]
 (* Implementation of the package *)
@@ -119,7 +131,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
             
             t = AbsoluteTiming[   
                    data = Map[(If[Length[#] != 0, 
-                                   Interval@@compiledGetContigIntervals[#],
+                                   Interval@@compiledGetContigIntervals[#], (*UNPACKING here*)
                                    Interval[]]
                                )&,data];
              ];
@@ -188,7 +200,9 @@ compiledGetContigIntervalsUncompiled[]:=Block[{ind},   (*This block is just for 
 	       (*return the intervals*) 
 	       Partition[Internal`BagPart[result, All], 2]
 	    ]  
-	];
+	,CompilationTarget->$Analyze2DCompilationTarget, 
+   CompilationOptions->{"ExpressionOptimization"->True,"InlineExternalDefinitions"->True},
+   "RuntimeOptions"->{"Speed","CompareWithTolerance"->False}];
 ];
 ClearAll[GetDiffsFromBinnedPoints];
 Attributes[GetDiffsFromBinnedPoints]={HoldAll};
@@ -264,7 +278,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
             If[ OptionValue["PadSteps"], (*then*)
                 (*Expand the intervals. Unions are automagically preformed*)
                 
-                If[ OptionValue@"PadOnlyShort",
+                If[ OptionValue@"PadOnlyShort", (*Hmm, mogoèe bi lahko tukaj paddal samo toliko, da bi bila dolžina 2ds namesto last+2ds*)
                     indpaths=If[(Last@# - First@#) <= ds, {First@# - ds, Last@# + ds}, #] & /@indpaths;
                      Puts["PaddingOnlyShort",LogLevel->5];
                 ,(*else*)
@@ -287,10 +301,10 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
             
             Puts["Before getting data",LogLevel->5];
             (*get the contigs x,y*)
-            data = rwData[[First@#;;Last@#,{2,3}]]&/@(List@@indpaths);
+            data = rwData[[First@#;;Last@#,{2,3}]]&/@(List@@indpaths);(*UNPACKING here? *)
             Puts["After getting data",LogLevel->5];
             PutsE["All data:\n",data,LogLevel->5];
-            
+            Puts["After getting data is it packed? ",Developer`PackedArrayQ@data,LogLevel->5];
             Puts["data is packed: ", And@@(Developer`PackedArrayQ[#]&/@data),LogLevel->2];
             Puts[
              Module[ {dp},
@@ -309,7 +323,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
            
                        
             data = (If[Length[#]<=ds,{},(*If less than ds steps, then return empty list*)
-                    Drop[#,ds]-Drop[#,-ds]])&/@data;
+                    Drop[#,ds]-Drop[#,-ds]])&/@data; (*UNPACKING here? *)
             
             (*This is not supported in mma 8.
             BUG IN Differences??
@@ -325,7 +339,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
             
 
             
-            data = Developer`ToPackedArray[Flatten[data,1]];
+            data = Developer`ToPackedArray[Flatten[data,1]]; (*UNPACKING here! *)
 
             If[ Length[data]===0,(*then*)
                 Message[GetStepsFromBinnedPoints::zerodata,min,max];
@@ -393,22 +407,35 @@ Returns a list of replacement rules for higher flexibility.
 Or add a test for normality in any other way*) 
 Attributes[GetDiffsFromSteps]={HoldFirst};
 GetDiffsFromSteps[data_,dt_,ds_] :=  Block[{$VerboseIndentLevel = $VerboseIndentLevel+1},
-    Module[ {ux=Missing[],uy=Missing[],sx=Missing[],sy=Missing[],rDx=Missing[],rDy=Missing[],rDa=Missing[],pVal=Null,isNormal=Null,xMinWidth=Missing[],yMinWidth=Missing[]},
+    Module[ {ux,uy,sx,sy,rDx,rDy,rDa,pVal,isNormal,
+             xMinWidth,yMinWidth,allMissing,result},
+        allMissing={"Dx"->Missing[],"Dy"->Missing[],"Da"->Missing[],"ux"->Missing[],"uy"->Missing[]y,"sx"->Missing[],"sy"->Missing[],
+                    "PValue"->Null,"IsNormal"->Null (*Must be null here, otherwise it breaks a Pick later on*),
+                    "xMinWidth"->Missing[],"yMinWidth"->Missing[]};
         Puts["***GetDiffsFromSteps***"];
-        If[ Length[data]!=0, (*If no steps then*)
+        If[ Length[data]>10, (*If enough steps then*)
             (*TODO: Perhaps add option to choose if we want the normality test and which test is wanted *)
             (*{ux,uy,rDx,rDy,rDa} = GetTensorFromMoments[data];*)
             {ux,uy,sx,sy,rDa,pVal,isNormal}=GetTensorFromMomentsWithNormalityTest[data];
-            
+            If[Not[NumericQ@ux && NumericQ@uy && NumericQ@sx && NumericQ@sy && NumericQ@rDa], 
+                Print["Some of the returned values are not numeric: ",{ux,uy,sx,sy,rDa}]; 
+                result=allMissing;
+                ];
+             
             (*We fitted the principal sigmas... transform into diffusion and devide by StepsDelta*)
             {rDx,rDy} = ({sx,sy}^2)/(2*dt*ds);
             (*99.7 steps are inside the bin. 3*sigma to each side*)
             xMinWidth=Max@Abs@{6*sx*Cos[rDa*Degree],6*sy*Cos[(rDa+90)*Degree]};
-            yMinWidth=Max@Abs@{6*sy*Sin[rDa*Degree],6*sx*Sin[(rDa+90)*Degree]}    
+            yMinWidth=Max@Abs@{6*sy*Sin[rDa*Degree],6*sx*Sin[(rDa+90)*Degree]};
+            
+            result= {"Dx"->rDx,"Dy"->rDy,"Da"->rDa,"ux"->ux,"uy"->uy,"sx"->sx,"sy"->sy,
+                     "PValue"->pVal,"IsNormal"->isNormal,"xMinWidth"->xMinWidth,
+                     "yMinWidth"->yMinWidth};
+        ,(*else*)
+        result=allMissing;        
         ];
-        {"Dx"->rDx,"Dy"->rDy,"Da"->rDa,"ux"->ux,"uy"->uy,"sx"->sx,"sy"->sy,
-         "PValue"->pVal,"IsNormal"->isNormal,"xMinWidth"->xMinWidth,
-                                             "yMinWidth"->yMinWidth}
+        result
+
     ]
 ];
 
@@ -464,6 +491,10 @@ GetTensorFromMomentsWithNormalityTest[data_] :=
 		isNormal=hypothesis["ShortTestConclusion"] == "Do not reject";
 		(*Retrive the parameters*)
 		params=hypothesis["FittedDistributionParameters"];
+		If[params===Indeterminate, 
+		    Print["Could not fit distribution parameters",data];
+		    Return@ConstantArray[Missing[],7];
+		  ];
 		{ux,uy,a,b,c}={uy,ux,a,b,c}/.params;
 		{a,b,c}={a,b,c}/.params;
 		
@@ -704,7 +735,7 @@ With[{Dx=DiffX[x,y],Dy=DiffY[x,y],Da=DiffA[x,y]},
 	  "StepsHistogram"->If[ReturnHistograms, GetStepsHistogramDiffusion[{DiffX[x,y], DiffY[x,y], DiffA[x,y]}, stride]],  
 	  "StepsInBin"->Null,"Stride"->stride, "PValue"->1, "IsNormal"->True,"xMinWidth"->dx,"yMinWidth"->dy,
 	  
-	  "DxError"->0,"DyError"->0,"DaErorr"->0, "sxError"->0, "syError"->0,
+	  "DxError"->0,"DyError"->0,"DaErorr"->0, "sxError"->0, "syError"->0, "StepsInBinError"->0,
       "xMinWidthError"->0,"yMinWidthError"->0, "uxError"->0,"uyError"->0,"PValueError"->0}
 ];
 (*TODO: Perhaps I could fill a Gaussian StepsHistogram. StepDelta could be passed in as an option.  *)
@@ -773,14 +804,46 @@ Block[{dx,dy,da},
 			       Rule["Da", _] -> Rule["Da", da]}
 ]
 
-DiffusionNormalForm[diffInfos:{{__Rule}..}]:=
-  DiffusionNormalForm/@diffInfos;
+DiffusionNormalForm[diffInfos:{{__Rule}..}]:= DiffusionNormalForm/@diffInfos;
 
-DiffusionNormalForm[diffInfosWithStrides:{{{__Rule}..}..}]:=
-  DiffusionNormalForm/@diffInfosWithStrides;
+DiffusionNormalForm[diffInfosWithStrides:{{{__Rule}..}..}]:= DiffusionNormalForm/@diffInfosWithStrides;
 
 DiffusionNormalForm::wrongargs="Wrong arguments for DiffusionNormalForm `1` ";  
 DiffusionNormalForm[args___]:=(Message[DiffusionNormalForm::wrongargs,Shallow@args];$Failed);  
+
+ClearAll@SwitchValueRule;
+SwitchValueRule[listOfRules_, key1_, key2_] :=
+ With[{val1 = key1 /. listOfRules, val2 = key2 /. listOfRules},
+  {
+   Rule[key1, _] -> Rule[key1, val2],
+   Rule[key2, _] -> Rule[key2, val1]
+   } 
+  ];
+
+ClearAll@TransposeDiffusion;
+
+TransposeDiffusion[diffInfo : {__Rule}] :=
+  Block[{dx, dy, da},
+   da = GetValue["Da", diffInfo];
+   (*If any of the values are missing just return the non-modified*)
+   If[MatchQ[da,Missing[___]], Return[diffInfo]];
+   diffInfo /.Flatten@{
+      Rule["Da", _] -> Rule["Da", Mod[90-da,180]],
+      SwitchValueRule[diffInfo, "x", "y"],
+      SwitchValueRule[diffInfo, "ux", "uy"],
+      SwitchValueRule[diffInfo, "sx", "sy"],
+      SwitchValueRule[diffInfo, "xWidth", "yWidth"],
+      SwitchValueRule[diffInfo, "yMinWidth", "xMinWidth"]
+      
+      }
+      ];
+
+
+TransposeDiffusion[diffInfos:{{__Rule}..}]:= TransposeDiffusion/@diffInfos;
+TransposeDiffusion[diffInfosWithStrides:{{{__Rule}..}..}]:= TransposeDiffusion/@diffInfosWithStrides;
+
+TransposeDiffusion::wrongargs="Wrong arguments for TransposeDiffusion `1` ";  
+TransposeDiffusion[args___]:=(Message[TransposeDiffusion::wrongargs,Shallow@args];$Failed);  
 
 
 
@@ -788,7 +851,7 @@ Options[SaveDiffusions] = {"Metadata" -> Automatic,
    "Description" -> "", "RawSteps" -> None, "OverrideExisting" -> True,
                         "DiffusionsFileName" -> "diffusions.mx.gz",
                         "MetadataFileName" -> "metadata.m",
-                        "RawStepsFileName" -> "rawSteps.h5.gz",
+                        "RawStepsFileName" -> "rawSteps.mx.gz",
                         "Title"->"",
                         "Description" -> ""};
 SaveDiffusions[name_, diffs_, opts : OptionsPattern[]] :=
@@ -800,10 +863,10 @@ SaveDiffusions[name_, diffs_, opts : OptionsPattern[]] :=
         (*So that we dont get diffrent files out of sync *)
         existingFileNames = FileNames@FileNameJoin@{dir, "*"};
         PutsE[existingFileNames, LogLevel -> 1];
-        If[ And[OptionValue@"OverrideExisting", 
-         Length[existingFileNames] > 0],
-            DeleteFile@existingFileNames,(*else*)
-            Throw["Files allready exist in " <> name]
+        If[ OptionValue@"OverrideExisting",          
+            DeleteFile@existingFileNames
+        ,(*else*)
+            If[Length[existingFileNames] > 0,Throw["Files allready exist in " <> name]];
         ];
         If[ dir === $Failed,
             Throw["Directory " <> name <> " could not be created"]
@@ -814,7 +877,7 @@ SaveDiffusions[name_, diffs_, opts : OptionsPattern[]] :=
         
         (*Retrive the metadata if set to automatic*)
         metadataTMP = (If[ # === Automatic,
-                           ReturnDiffsMetaData[OptionValue@"Title",OptionValue@"Description"],
+                           Throw["Metadata must be specified manually"],
                            #
                        ]) &@
          OptionValue@"Metadata";
@@ -836,7 +899,7 @@ Options[LoadDiffusions] = {"LoadMetadata" -> True,
    "LoadDiffusions" -> True, "LoadRawSteps" -> False,
                         "DiffusionsFileName" -> "diffusions.mx.gz",
                         "MetadataFileName" ->   "metadata.m",
-                        "RawStepsFileName" ->   "rawSteps.h5.gz"};
+                        "RawStepsFileName" ->   "rawSteps.mx.gz"};
 LoadDiffusions[name_, opts : OptionsPattern[]] :=
   Block[{metadata = None, diffs = None, rawSteps = None, diffusionsFN,
      metadataFN, rawStepsFN},
@@ -860,11 +923,129 @@ LoadDiffusions[name_, opts : OptionsPattern[]] :=
     
    ];
    
+
+ClearAll@AverageOneDiffBin;
+(*Given a list of diff bins, returns the averages and std errors of Quantities*)
+
+AverageOneDiffBin[listOfDiffBins_,Quantities_]:=
+Block[{result, quantity, quantityErr, tmpvals, mean, stderr,i},
+   (*result=First@listOfDiffBins;*)
+   result=DeleteDuplicates[Flatten[listOfDiffBins],First[#1] === First[#2]&];
+   Table[
+      quantityErr=quantity<>"Error";
+      tmpvals=GetValues[Evaluate@quantity,listOfDiffBins];
+      (*Take only numeric values*)
+      tmpvals=Cases[tmpvals, _?NumericQ]; 
+      If[Length@tmpvals<=1
+      ,(*then*)
+          mean=stderr=Missing["To few points in bin"];
+      ,(*else*)
+          mean=Mean@tmpvals; stderr=StandardDeviation@tmpvals;
+      ];
+
+      result=result/.(Rule[quantity,_]->Rule[quantity,mean]);
+      (*delete it just in case, because not all diffs allready have a diff error*)
+      result=DeleteCases[result, Rule[quantityErr,_]];
+      AppendTo[result,  Rule[quantityErr,stderr]];
+      
+        ,{quantity,Quantities}];
+         
+    (*If we request Dx, Dy, and Da then add the components of the tensor and their errors*)
+	If[And @@ (MemberQ[Quantities, #] & /@ {"Dx", "Dy", "Da"}),
+	 tmpvals = GetValues[{"Dx", "Dy", "Da"}, listOfDiffBins];
+	 (*Get the diff tensors componets Dxx, Dxy and Dyy*)
+	 tmpvals = 
+	  Flatten[Get2DCovarianceFromDiff[#]][[{1, 2, 4}]] & /@ tmpvals;
+	 (*Take only numeric values*)
+	 tmpvals = Select[tmpvals, VectorQ[#, NumberQ] &];
+	 
+	 If[Length@tmpvals <= 1,(*then*)
+	  mean = stderr = ConstantArray[Missing["To few points in bin"], 3];
+	  ,(*else*)
+	  mean = Mean@tmpvals; stderr = StandardDeviation@tmpvals;];
+	 
+	 Table[
+	  AppendTo[result, Rule[{"Dxx", "Dxy", "Dyy"}[[i]], mean[[i]] ] ];
+	  AppendTo[result, Rule[{"DxxError", "DxyError", "DyyError"}[[i]], stderr[[i]] ] ];
+	  , {i, 3}];
+	];
+   result
+];
+
 ClearAll@EstimateDiffusionError   
-EstimateDiffusionError::usage="EstimateDiffusionError[listOfDiffs, quantities] take a list of diffusions (must have same bins) and 
+Options@EstimateDiffusionError={
+            "Quantities"->{"Dx","Dy","Da"} 
+            };
+
+EstimateDiffusionError::usage="EstimateDiffusionError[listOfDiffs] take a list of diffusions (must have same bins) and 
 calculates the averages and standard deviations for the given list of quantities (for example Dx, Dy...). 
 Returns a diffusions list, where Dx->Avg[{Dx...}] and DxError->StDev[{Dx...}]"
 
+
+EstimateDiffusionError[diffs:listOfdiffInfosWithStride,opts:OptionsPattern[]]:=
+Block[ {$VerboseIndentLevel = $VerboseIndentLevel+1, binIndex, q, strideIndex,
+        binNum (*Number of bins in one diffusion set*),strideNum (*number of strides*),
+        quan, 
+        result (*Diff set for results*)},
+    Puts["***EstimateDiffusionError****"];
+    PutsOptions[EstimateDiffusionError, {opts}, LogLevel -> 2];   
+    
+    quan = OptionValue@"Quantities";
+    
+    
+    (*the dimensions describe : {set, bins, stride, diffRules}. diffRules is given only if all diff sets have the same umber of rules "Dy"->_ etc...*)
+    binNum=Dimensions[diffs][[2]];
+    strideNum=Dimensions[diffs][[3]];
+
+    Table[AverageOneDiffBin[diffs[[All,binIndex,strideIndex]],quan],{binIndex,binNum},{strideIndex,strideNum}]
+   
+];
+
+
+ClearAll@GetDiffusionsRMSD   
+Options@GetDiffusionsRMSD={
+                DistanceFunction->EuclideanDistance,
+                "ReturnErrors"->False
+            };
+
+GetDiffusionsRMSD::usage="GetDiffusionsRMSD[diffs1, diffs2] takew two sets of diffusions (must have same bins) and 
+calculates the RMSD between all the bins. The distance function used on the covariance tensors can be given as an option. Defaults to EuclidianDistance . 
+
+Returns the RMSD."
+
+GetDiffusionsRMSD[diffs1:diffInfos,diffs2:diffInfos,opts:OptionsPattern[]]:=
+Block[ {$VerboseIndentLevel = $VerboseIndentLevel+1,i,covars1,covars2,rmsdList,df=OptionValue@DistanceFunction},
+    Puts["***GetDiffusionsRMSD****"];
+    PutsOptions[GetDiffusionsRMSD, {opts}, LogLevel -> 2];       
+    If[Length@diffs1=!=Length@diffs2,
+       Throw@StringForm["Number of bins in first and second diffusion set must be the same ``=!=``",Length@diffs1,Length@diffs2]
+      ];
+    
+     
+     (*devided by two since it has 2*sigma in the definition of the CovarianceTensor. devided by 3 to get per component deviation*)
+     covars1=(Get2DCovarianceFromDiff/@GetValues[{"Dx","Dy","Da"},diffs1])/2;
+     covars2=(Get2DCovarianceFromDiff/@GetValues[{"Dx","Dy","Da"},diffs2])/2;
+     
+        
+     (*Handle missing casses*)
+     (*For now just replace with 0
+     covars1=covars1/.Missing[___]->0;
+     covars2=covars2/.Missing[___]->0;*)
+     rmsdList=Transpose@{covars1,covars2};        
+     
+     (*Filter missing*)
+     (*Select only tensors that both have only numeric values*)
+     rmsdList=Select[rmsdList,ArrayQ[#, _, NumericQ]&];
+     If[Length@rmsdList===0, Return[Missing["To little points with valid diffusions"]]];
+     rmsdList=df[#[[1]] , #[[2]] ]&/@rmsdList; 
+     If[OptionValue["ReturnErrors"],
+            {Mean@rmsdList, (* Percentiles corresponding to +-sigma*)
+                {Mean@rmsdList-Quantile[rmsdList, 25/100, {{1/2, 0}, {0, 1}}], Mean@rmsdList-Quantile[rmsdList, 75/100, {{1/2, 0}, {0, 1}}]}}
+        
+     ,(*else*)        
+        Mean@rmsdList
+     ]
+];
 End[]
 
 EndPackage[]

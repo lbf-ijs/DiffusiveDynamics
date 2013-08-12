@@ -8,6 +8,7 @@ Get["DiffusiveDynamics`Visualize2D`"];
 Get["DiffusiveDynamics`Manipulate2D`"];
 
 Get["DiffusiveDynamics`Generate1D`"];
+Get["DiffusiveDynamics`Analyze1D`"];
 Print@"Reloaded DiffusiveDynamics`!";
 If[ ($KernelID==0) && ($KernelCount>0), (*if this is the master kernel and some subkernels have been lauched*)
 ParallelEvaluate[    
@@ -18,6 +19,7 @@ ParallelEvaluate[
     Get["DiffusiveDynamics`Manipulate2D`"];
     
     Get["DiffusiveDynamics`Generate1D`"];
+    Get["DiffusiveDynamics`Analyze1D`"];    
     Print["Reloaded DiffusiveDynamics`! on kernel"<>ToString@$KernelID];
 ]];  
 

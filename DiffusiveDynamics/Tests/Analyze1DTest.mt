@@ -57,3 +57,22 @@ Test[
 ]
 
 
+Test[
+    GetDiffusionInfoFromParameters1D[{-1000, 1000, 1000}, 1, 1, Sin]
+    ,
+    {{"Dx" -> -Sin[500], "sx" -> Sqrt[-2 Sin[500]], "x" -> -500, 
+  "xWidth" -> 1000, "ux" -> 0, "dt" -> 1, "StepsHistogram" -> Null, 
+  "StepsInBin" -> Null, "Stride" -> 1, "PValue" -> 1, 
+  "IsNormal" -> True, "xMinWidth" -> 1000, "DxError" -> 0, 
+  "sxError" -> 0, "StepsInBinError" -> 0, "xMinWidthError" -> 0, 
+  "uxError" -> 0, "PValueError" -> 0}, {"Dx" -> Sin[500], 
+  "sx" -> Sqrt[2 Sin[500]], "x" -> 500, "xWidth" -> 1000, "ux" -> 0, 
+  "dt" -> 1, "StepsHistogram" -> Null, "StepsInBin" -> Null, 
+  "Stride" -> 1, "PValue" -> 1, "IsNormal" -> True, 
+  "xMinWidth" -> 1000, "DxError" -> 0, "sxError" -> 0, 
+  "StepsInBinError" -> 0, "xMinWidthError" -> 0, "uxError" -> 0, 
+  "PValueError" -> 0}}
+    ,
+    TestID->"Analyze2D->GetDiffusionInfoFromParameters1D Simple two bin test"
+]
+

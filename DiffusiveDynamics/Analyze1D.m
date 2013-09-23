@@ -47,11 +47,9 @@ ClearAll[GetDiffusionInBinsBySelect1D];
 GetDiffusionInBinsBySelect1D::usage="TODO";
 
 ClearAll[GetDiffusionInfoFromParameters1D, GetDiffusionInfoFromParametersWithStride1D];
-GetDiffusionInfoFromParameters1D::usage="GetDiffusionInfoFromParameters1D[binsOrBinspec, DiffX,DiffY,DiffA] 
-Returns a list of rules from the DiffX, DiffY, DAlpha functions."
+GetDiffusionInfoFromParameters1D::usage="GetDiffusionInfoFromParameters1D[binsOrBinspec, stride|strides,DiffX] 
+Returns a list of rules about diffusion from the DiffX functions."
 
-GetDiffusionInfoFromParametersWithStride1D::usage="GetDiffusionInfoFromParametersWithStride1D[binsOrBinspec, strides, DiffX,DiffY,DiffA] 
-Returns a list of rules from the DiffX, DiffY, DAlpha functions for each stride."
 
 
 ClearAll[LoadDiffusions1D, SaveDiffusions1D];
@@ -434,39 +432,11 @@ GetDiffsFromSteps[data_,dt_,ds_] :=  Block[{$VerboseIndentLevel = $VerboseIndent
     ]
 ];
 
-Clear[GetTensorFromMoments];
-(*Takes a list of steps {{dx,dy}, ...} and calculates the principal central second moment (standard deviation)
-Principal here means that the tensor is diagonal. The central second moment is the Sum[(x-ux)^2]/N
 
-Returns {ux,uy,sx,sy,alpha}
-mx, my -- first moment
-sx, sy -- standard deviation Sqtr[Sum[(x-ux)^2]/N] 
-
-alpha is in Degrees from 0 to 180*)
-Options[GetTensorFromMoments]={HoldFirst};
-GetTensorFromMoments[data_] :=
-    Module[ {ux,uy,a,b,c,eval,evec,sx,sy,alpha},
-        ux = N[Mean[data[[All,1]]]];
-        uy = N[Mean[data[[All,2]]]];
-        (*Sum[(x-ux)^2]/N as a dot product, becasue it's faster*)
-        a = 1/Length[data]*(data[[All,1]]-ux).(data[[All,1]]-ux);
-        b = 1/Length[data]*(data[[All,2]]-uy).(data[[All,2]]-uy);
-        c = 1/Length[data]*(data[[All,1]]-ux).(data[[All,2]]-uy);
-		(*The tensor is symmetric*)
-        {eval,evec} = Eigensystem[{{a,c},{c,b}}];
-        (*return standard deviation of principle components*)
-        {sx,sy} = Sqrt[eval];
-        (*alpha is in Degrees*)
-        alpha = ArcCos[ evec[[1,1]] ]/Degree*Sign[ArcSin[ evec[[1,2]] ]];
-        (*Interval from 0 to 180*)
-        alpha = Mod[alpha,180];
-        Return[{ux,uy,sx,sy,alpha}]
-    ];
-
-(*Takes a list of steps {{dx,dy}, ...} and calculates the  second moment (standard deviation)
+(*Takes a list of steps {dx, ...} and calculates the  second moment (standard deviation)
 The central second moment is the Sum[(x-ux)^2]/N
 
-Returns {ux,uy,sx,sy,alpha, pVal,isNormal}
+Returns {ux,sx,alpha, pVal,isNormal}
 mx -- first moment
 sx -- standard deviation Sqtr[Sum[(x-ux)^2]/N] 
 pVal -- PValue from AndersonDarlingTest
@@ -520,7 +490,7 @@ MakeInPeriodicCell = Compile[{{x,_Real},{cellwidth,_Real}},
  "RuntimeOptions"->"Speed"];
 ];
 
-
+(*
 ClearAll[AppendLeftRight,AppendLeftRightUncompiled];
 AppendLeftRightUncompiled[] := Block[{l,ds,max}, (*This block is just for syntax coloring in WB*)
 (*Takes a list of indexes and tries to append ds consecutive numbers to the beginning and end 
@@ -543,7 +513,7 @@ AppendLeftRight = Compile[{{l,_Real, 1},{ds,_Real,0},{max,_Real,0}},
  CompilationTarget->$AnalyzeCompilationTarget1D,
    CompilationOptions->{"ExpressionOptimization"->True,"InlineExternalDefinitions"->True},
    "RuntimeOptions"->{"Speed","CompareWithTolerance"->True}];
-];  
+];  *)
  
    
 $HaveFunctionsBeenCompiled=False;
@@ -673,18 +643,37 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
 GetDiffusionInBins1D::wrongargs="Wrong arguments for GetDiffusionInBins1D `1` ";  
 GetDiffusionInBins1D[args___]:=(Message[DiffusionNormalForm::wrongargs,Shallow@args];$Failed);  
 
-ClearAll@GetDiffusionInfoForBinFromParameters;
-GetDiffusionInfoForBinFromParameters[{{x_,y_},{dx_,dy_}}, timestep_,stride_,DiffX_,DiffY_,DiffA_,ReturnHistograms_:False]:=
-With[{Dx=DiffX[x,y],Dy=DiffY[x,y],Da=DiffA[x,y]},
-	 {"Dx"->Dx,"Dy"->Dy,"Da"->Da, "sx"->Sqrt[2*Dx*stride*timestep], "sy"->Sqrt[2*Dy*stride*timestep],
-	  "x"->x,"y"->y,"xWidth"->dx,"yWidth"->dy, "ux"->0,"uy"->0, "dt"->timestep,
-	  "StepsHistogram"->If[ReturnHistograms, GetStepsHistogramDiffusion[{DiffX[x,y], DiffY[x,y], DiffA[x,y]}, stride]],  
-	  "StepsInBin"->Null,"Stride"->stride, "PValue"->1, "IsNormal"->True,"xMinWidth"->dx,"yMinWidth"->dy,
+ClearAll[GetStepsHistogramDiffusion1D];
+Options@GetStepsHistogramDiffusion1D={"binNum"->30};
+
+GetStepsHistogramDiffusion1D[Dx_,dt_:1,ds_:1,opts:OptionsPattern[]]:=
+Block[{sx, pdf, binN, points,max, $VerboseIndentLevel=$VerboseIndentLevel+1},
+    Puts["***GetStepsHistogramDiffusion***"];
+    PutsF["Dx: ``; stride: ``",Dx,ds,LogLevel->2];
+    PutsOptions[GetStepsHistogramDiffusion1D,{opts}];
+    
+    binN=OptionValue@"binNum";
+    sx=Sqrt[2*Dx*dt*ds];
+    pdf=PDF@NormalDistribution[0,sx];
+    (*3 sigma is 99.7% of area*)
+    max=3*sx;
+    points=Range[-max,max,2*max/binN];
+    N[{#,pdf@#}&/@points]
+]
+
+
+ClearAll@GetDiffusionInfoForBinFromParameters1D;
+GetDiffusionInfoForBinFromParameters1D[{x_,dx_}, timestep_,stride_,DiffX_,ReturnHistograms_:False]:=
+With[{Dx=DiffX[x]},
+	 {"Dx"->Dx, "sx"->Sqrt[2*Dx*stride*timestep],
+	  "x"->x,"xWidth"->dx,"ux"->0, "dt"->timestep,
+	  "StepsHistogram"->If[ReturnHistograms, GetStepsHistogramDiffusion1D[DiffX[x],timestep, stride]],  
+	  "StepsInBin"->Null,"Stride"->stride, "PValue"->1, "IsNormal"->True,"xMinWidth"->dx,
 	  
-	  "DxError"->0,"DyError"->0,"DaErorr"->0, "sxError"->0, "syError"->0, "StepsInBinError"->0,
-      "xMinWidthError"->0,"yMinWidthError"->0, "uxError"->0,"uyError"->0,"PValueError"->0}
+	  "DxError"->0, "sxError"->0, "StepsInBinError"->0,
+      "xMinWidthError"->0, "uxError"->0, "PValueError"->0}
 ];
-(*TODO: Perhaps I could fill a Gaussian StepsHistogram. StepDelta could be passed in as an option.  *)
+
 
 Options@GetDiffusionInfoFromParameters1D = {
                "Verbose":>$VerbosePrint,  (*Log output*)
@@ -693,182 +682,31 @@ Options@GetDiffusionInfoFromParameters1D = {
                "Parallel" -> True
 }
 
-GetDiffusionInfoFromParameters1D[binsOrBinspec_, timestep_?NumericQ, stride_?NumericQ, DiffX_,DiffY_,DiffA_,opts:OptionsPattern[]]:=
+GetDiffusionInfoFromParameters1D[binsOrBinspec_, timestep_?NumericQ, stride_?NumericQ, DiffX_,opts:OptionsPattern[]]:=
 Block[{$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"], $VerboseIndentLevel = $VerboseIndentLevel+1}, 
     Module[{bins},
         Puts["********GetDiffusionInfoFromParameters1D********"];
         (*PutsOptions[GetDiffusionInfoFromParameters1D,{opts},LogLevel->2];  *)      
-        bins=GetBinsFromBinsOrSpec@binsOrBinspec;
-        GetDiffusionInfoForBinFromParameters[#, timestep, stride,DiffX,DiffY,DiffA,OptionValue@"ReturnStepsHistogram"]&/@bins     
+        bins=GetBinsFromBinsOrSpec1D@binsOrBinspec;
+        GetDiffusionInfoForBinFromParameters1D[#, timestep, stride,DiffX,OptionValue@"ReturnStepsHistogram"]&/@bins     
     ]
 ]     
 
 
-GetDiffusionInfoFromParameters1D[binsOrBinspec_,timestep_?NumericQ, strides_List, DiffX_,DiffY_,DiffA_,opts:OptionsPattern[]]:=
+GetDiffusionInfoFromParameters1D[binsOrBinspec_,timestep_?NumericQ, strides_List, DiffX_,opts:OptionsPattern[]]:=
 Block[{$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],  $VerboseIndentLevel=$VerboseIndentLevel+1}, 
     Block[{bins, bin, stride (*just for syntax higlighting in WB*), tabelF = If[OptionValue@"Parallel", ParallelTable, Table]},
-        Puts["********GetDiffusionInfoFromParameters1D********"];
+        Puts["********GetDiffusionInfoFromParametersWithStride1D********"];
         (*PutsOptions[GetDiffusionInfoFromParameters1D,{opts},LogLevel->2];  *)
-        bins=GetBinsFromBinsOrSpec@binsOrBinspec;
-        With[{iDiffX=DiffX,iDiffY=DiffY,iDiffA=DiffA,returnHistograms=OptionValue@"ReturnStepsHistogram"},
+        bins=GetBinsFromBinsOrSpec1D@binsOrBinspec;
+        With[{iDiffX=DiffX,returnHistograms=OptionValue@"ReturnStepsHistogram"},
         tabelF[
-            GetDiffusionInfoForBinFromParameters[bin, timestep, stride,iDiffX,iDiffY,iDiffA,returnHistograms],
+            GetDiffusionInfoForBinFromParameters1D[bin, timestep, stride,iDiffX,returnHistograms],
         {bin,bins},{stride,strides}]
         ]      
     ]
 ]  
 
-
-
-DiffusionNormalForm[Dx_?NumericOrSymbolQ, Dy_?NumericOrSymbolQ, Da_?NumericOrSymbolQ]:=
-Block[{dx,dy,da},
-    If[Dy>Dx,(*then*)
-        (*If we switch x and y then we get the same if we turn the tensor 90 deg *)
-        dx=Dy;dy=Dx;da=Da+90;
-    ,(*else*)
-        dx=Dx;dy=Dy;da=Da;
-    ];
-    da=Mod[da,180];
-    {dx,dy,da}
-]
-
-DiffusionNormalForm[{Dx_?NumericOrSymbolQ, Dy_?NumericOrSymbolQ, Da_?NumericOrSymbolQ}]:=DiffusionNormalForm[Dx, Dy, Da];
-
-(*Accept a list of rules*)
-DiffusionNormalForm[diffInfo:{__Rule}]:=
-Block[{dx,dy,da},
-    {dx,dy,da}=GetValue[{"Dx","Dy","Da"},diffInfo];
-    (*If any of the values are missing just return the non-modified*)
-    If[MemberQ[{dx,dy,da},Missing[___]],Return[diffInfo]];
-    (*Get sorted values*)    
-    {dx,dy,da}=DiffusionNormalForm@{dx,dy,da};
-    
-
-	(*Modify the original lis*)
-	diffInfo /.   {Rule["Dx", _] -> Rule["Dx", dx],
-			       Rule["Dy", _] -> Rule["Dy", dy],
-			       Rule["Da", _] -> Rule["Da", da]}
-]
-
-DiffusionNormalForm[diffInfos:{{__Rule}..}]:= DiffusionNormalForm/@diffInfos;
-
-DiffusionNormalForm[diffInfosWithStrides:{{{__Rule}..}..}]:= DiffusionNormalForm/@diffInfosWithStrides;
-
-DiffusionNormalForm::wrongargs="Wrong arguments for DiffusionNormalForm `1` ";  
-DiffusionNormalForm[args___]:=(Message[DiffusionNormalForm::wrongargs,Shallow@args];$Failed);  
-
-ClearAll@SwitchValueRule;
-SwitchValueRule[listOfRules_, key1_, key2_] :=
- With[{val1 = key1 /. listOfRules, val2 = key2 /. listOfRules},
-  {
-   Rule[key1, _] -> Rule[key1, val2],
-   Rule[key2, _] -> Rule[key2, val1]
-   } 
-  ];
-
-ClearAll@TransposeDiffusion;
-
-TransposeDiffusion[diffInfo : {__Rule}] :=
-  Block[{dx, dy, da},
-   da = GetValue["Da", diffInfo];
-   (*If any of the values are missing just return the non-modified*)
-   If[MatchQ[da,Missing[___]], Return[diffInfo]];
-   diffInfo /.Flatten@{
-      Rule["Da", _] -> Rule["Da", Mod[90-da,180]],
-      SwitchValueRule[diffInfo, "x", "y"],
-      SwitchValueRule[diffInfo, "ux", "uy"],
-      SwitchValueRule[diffInfo, "sx", "sy"],
-      SwitchValueRule[diffInfo, "xWidth", "yWidth"],
-      SwitchValueRule[diffInfo, "yMinWidth", "xMinWidth"]
-      
-      }
-      ];
-
-
-TransposeDiffusion[diffInfos:{{__Rule}..}]:= TransposeDiffusion/@diffInfos;
-TransposeDiffusion[diffInfosWithStrides:{{{__Rule}..}..}]:= TransposeDiffusion/@diffInfosWithStrides;
-
-TransposeDiffusion::wrongargs="Wrong arguments for TransposeDiffusion `1` ";  
-TransposeDiffusion[args___]:=(Message[TransposeDiffusion::wrongargs,Shallow@args];$Failed);  
-
-
-
-Options[SaveDiffusions1D] = {"Metadata" -> Automatic, 
-   "Description" -> "", "RawSteps" -> None, "OverrideExisting" -> True,
-                        "DiffusionsFileName" -> "diffusions.mx.gz",
-                        "MetadataFileName" -> "metadata.m",
-                        "RawStepsFileName" -> "rawSteps.mx.gz",
-                        "Title"->"",
-                        "Description" -> ""};
-SaveDiffusions1D[name_, diffs_, opts : OptionsPattern[]] :=
-    Block[ {dir, metadataTMP, diffusionsFN, metadataFN, rawStepsFN, 
-      existingFileNames},
-        Puts["***SaveDiffusions1D****"];
-        PutsOptions[SaveDiffusions1D, {opts}, LogLevel -> 2];
-        Quiet[dir = CreateDirectory@name;];
-        (*So that we dont get diffrent files out of sync *)
-        existingFileNames = FileNames@FileNameJoin@{dir, "*"};
-        PutsE[existingFileNames, LogLevel -> 1];
-        If[ OptionValue@"OverrideExisting",          
-            DeleteFile@existingFileNames
-        ,(*else*)
-            If[Length[existingFileNames] > 0,Throw["Files allready exist in " <> name]];
-        ];
-        If[ dir === $Failed,
-            Throw["Directory " <> name <> " could not be created"]
-        ];
-        diffusionsFN = FileNameJoin@{dir, OptionValue@"DiffusionsFileName"};
-        metadataFN   = FileNameJoin@{dir, OptionValue@"MetadataFileName"};
-        rawStepsFN   = FileNameJoin@{dir, OptionValue@"RawStepsFileName"};
-        
-        (*Retrive the metadata if set to automatic*)
-        metadataTMP = (If[ # === Automatic,
-                           Throw["Metadata must be specified manually"],
-                           #
-                       ]) &@
-         OptionValue@"Metadata";
-        {"Metadata" -> Export[metadataFN, metadataTMP],
-            "Diffusions" -> 
-         Export[diffusionsFN, diffs, "CompressionLevel" -> .3],
-            "RawSteps" -> (If[ Length[#] < 1,
-                               None,
-                               Export[rawStepsFN, #, "CompressionLevel" -> .1]
-                           ] &@
-           OptionValue["RawSteps"])}
-    ];
-
-
-
- 
-
-Options[LoadDiffusions1D] = {"LoadMetadata" -> True, 
-   "LoadDiffusions1D" -> True, "LoadRawSteps" -> False,
-                        "DiffusionsFileName" -> "diffusions.mx.gz",
-                        "MetadataFileName" ->   "metadata.m",
-                        "RawStepsFileName" ->   "rawSteps.mx.gz"};
-LoadDiffusions1D[name_, opts : OptionsPattern[]] :=
-  Block[{metadata = None, diffs = None, rawSteps = None, diffusionsFN,
-     metadataFN, rawStepsFN},
-       Puts["***LoadDiffusions1D****"];
-       PutsOptions[LoadDiffusions1D, {opts}, LogLevel -> 2];  
-    If[Not@FileExistsQ@name, 
-    Throw["Diffusions directory with name " <> name <> 
-      " does not exists!"]];
-   
-    diffusionsFN = FileNameJoin@{name, OptionValue@"DiffusionsFileName"};
-    metadataFN   = FileNameJoin@{name, OptionValue@"MetadataFileName"};
-    rawStepsFN   = FileNameJoin@{name, OptionValue@"RawStepsFileName"};
-    
-    (*Todo check that the files exist?*)
-    metadata = If[OptionValue@"LoadMetadata",   Puts["Loading: ",metadataFN];  Import[metadataFN]];
-    diffs    = If[OptionValue@"LoadDiffusions1D", Puts["Loading: ",diffusionsFN];Import[diffusionsFN]];
-    rawSteps = If[OptionValue@"LoadRawSteps",   Puts["Loading: ",rawStepsFN];  Import[rawStepsFN]];
-      {"Metadata" -> metadata,
-        "Diffusions" -> diffs,
-        "RawSteps" -> rawSteps}
-    
-   ];
-   
 
 ClearAll@AverageOneDiffBin;
 (*Given a list of diff bins, returns the averages and std errors of Quantities*)

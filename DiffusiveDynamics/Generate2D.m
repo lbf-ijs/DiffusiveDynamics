@@ -20,10 +20,8 @@ dt         -- the time size of one step
 min        -- the minimum sizes of the periodic cell {minX, minY}
 max        -- the maximum sizes of the periodic cell {maxX, maxY}
  
-The equation used is: TODO
-
 OPTIONS:
-\"InitialPosition\"->{0.,0.}  -- The starting point for the trajectory,
+\"InitialPosition\"->{0.,0.} \t-- The starting point for the trajectory,
 \"Verbose\"->False            -- Log output
 \"VerboseLevel\"->3           -- Verbosity of the output  
 ";
@@ -33,12 +31,25 @@ ParallelGenerateDiffusionTrajectory2D::usage="ParallelGenerateDiffusionTrajector
 Generates a 2D diffusive process where the difusion tensor and energy optionally depend on the location of the particle. 
 Uses \"ProcessCount\" threads to generate  \"ProcessCount\" independent trajectories.
 
-See GenerateDiffusionTrajectory2D for further info.
+steps      -- number of steps to perform
+DiffX[x,y] -- a Function or CompiledFunction giving the difusion in the X and Y principal direction
+DiffY[x,y] -- as above for the Y direction
+DiffA[x,y] -- a Function or CompiledFunction giving the rotation of the principal direction
+F[x,y]     -- Free Energy as a function of position (must be either a Function or CompiledFunction)
+kT         -- set the temparature in units of kT (thermal energy = boltzman konstant* temperature
+dt         -- the time size of one step
+min        -- the minimum sizes of the periodic cell {minX, minY}
+max        -- the maximum sizes of the periodic cell {maxX, maxY}
+
 
 OPTIONS:
 \"ProcessCount\"-> 2$ProcessorCount -- Number of independent difussion processe that get started in seperate threads
 \"InitialPositions\"->Automatic     -- takes a list of points or the default, Automatic, which generates uniformly randommly distributed points in the cell
 \"RandomSeeds\"->Automatic          -- takes a list of random seeds used to generate each trajectory.
+\"Verbose\"->False            -- Log output
+\"VerboseLevel\"->3           -- Verbosity of the output  
+
+See also GenerateDiffusionTrajectory2D for further info.
 "; 
 
 
@@ -189,7 +200,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
     ](*Module*)
 ](*Block*);
 
-ClearAll[ParallelGenerateDiffusionTrajectory2D];
+
 Options[ParallelGenerateDiffusionTrajectory2D] = {"ProcessCount":> 2$ProcessorCount, (*Number of independent difussion processe that get started*)
                                                   "InitialPositions"->Automatic,  (*takes a list of points or the default, Random, which generates uniformly randommly distributed points*)
                                                   "RandomSeeds"->Automatic (*A list of random seeds for each trajectory*)

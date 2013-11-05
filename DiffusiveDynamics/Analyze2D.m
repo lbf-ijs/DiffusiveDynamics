@@ -2,10 +2,14 @@
 
 (* Created by the Wolfram Workbench 14.1.2013 *)
 
-BeginPackage["DiffusiveDynamics`Analyze2D`",{"DiffusiveDynamics`Utils`","DiffusiveDynamics`Visualize2D`"}]
+BeginPackage["DiffusiveDynamics`Analyze2D`",{"DiffusiveDynamics`Utils`","DiffusiveDynamics`Visualize2D`","CCompilerDriver`"}]
 (* Exported symbols added here with SymbolName::usage *) 
 
-$Analyze2DCompilationTarget="C";
+(*Fallback gracefully if no C compiler is present*)
+If[Length@CCompilers[]>0,
+    $Analyze2DCompilationTarget="C"
+,(*else*)    
+    $Analyze2DCompilationTarget="WVM"];
 
 ClearAll[GetDiffusionInBin];
 GetDiffusionInBin::usage="GetDiffusionInBin

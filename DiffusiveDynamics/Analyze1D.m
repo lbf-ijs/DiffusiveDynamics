@@ -2,10 +2,14 @@
 
 (* Created by the Wolfram Workbench 14.1.2013 *)
 
-BeginPackage["DiffusiveDynamics`Analyze1D`",{"DiffusiveDynamics`Utils`"(*,"DiffusiveDynamics`Visualize1D`"*)}]
+BeginPackage["DiffusiveDynamics`Analyze1D`",{"DiffusiveDynamics`Utils`","CCompilerDriver`"(*,"DiffusiveDynamics`Visualize1D`"*)}]
 (* Exported symbols added here with SymbolName::usage *) 
 
-$AnalyzeCompilationTarget1D="C";
+(*Fallback gracefully if no C compiler is present*)
+If[Length@CCompilers[]>0,
+    $Analyze1DCompilationTarget="C"
+,(*else*)    
+    $Analyze1DCompilationTarget="WVM"];
 
 ClearAll[GetDiffusionInBin1D];
 GetDiffusionInBin1D::usage="GetDiffusionInBin1D
@@ -40,7 +44,7 @@ Result:
    {{1, 3}, {6,8}}";
 
 ClearAll[CompileFunctions1D,CompileFunctionsIfNecessary1D];
-CompileFunctions1D::usage="CompileFunctions1D[] recompiles all CompiledFunctions in package. Use $AnalyzeCompilationTarget1D to set the compilation target to \"C\" or \"VWM\"";
+CompileFunctions1D::usage="CompileFunctions1D[] recompiles all CompiledFunctions in package. Use $Analyze1DCompilationTarget to set the compilation target to \"C\" or \"VWM\"";
 CompileFunctionsIfNecessary1D::usage="CompileFunctionsIfNecessary1D[] only compiles functions if they have not been compiled yet";
 
 ClearAll[GetDiffusionInBinsBySelect1D];
@@ -155,7 +159,7 @@ ClearAll[compiledSelectBinUncompiled];
 compiledSelectBinUncompiled[]:= Block[{points,min,max},   (*This block is just for syntax coloring in WB*) 
 compiledSelectBin1D = Compile[{{points,_Real, 2},{min,_Real, 0},{max,_Real, 0}},
   Select[points,compiledSelectBinFunc1D[#,min,max]&]
-,  CompilationTarget->$AnalyzeCompilationTarget1D,
+,  CompilationTarget->$Analyze1DCompilationTarget,
    CompilationOptions->{"ExpressionOptimization"->True,"InlineCompiledFunctions"->True,"InlineExternalDefinitions"->True},
    "RuntimeOptions"->"Speed"];
 ] 
@@ -192,7 +196,7 @@ compiledGetContigIntervalsUncompiled[]:=Block[{ind},   (*This block is just for 
 	       (*return the intervals*) 
 	       Partition[Internal`BagPart[result, All], 2]
 	    ]  
-	,CompilationTarget->$AnalyzeCompilationTarget1D, 
+	,CompilationTarget->$Analyze1DCompilationTarget, 
    CompilationOptions->{"ExpressionOptimization"->True,"InlineExternalDefinitions"->True},
    "RuntimeOptions"->{"Speed","CompareWithTolerance"->False}];
 ];
@@ -383,7 +387,7 @@ GetDifferences = Compile[{{l,_Real, 2},{ds,_Integer,0}},
       ];
       lr
   ],
- CompilationTarget->$AnalyzeCompilationTarget1D, 
+ CompilationTarget->$Analyze1DCompilationTarget, 
    CompilationOptions->{"ExpressionOptimization"->True,"InlineExternalDefinitions"->True},
    "RuntimeOptions"->{"Speed","CompareWithTolerance"->True}];
 ];
@@ -486,7 +490,7 @@ MakeInPeriodicCell = Compile[{{x,_Real},{cellwidth,_Real}},
   ]
 ,CompilationOptions->{"ExpressionOptimization"->True,"InlineCompiledFunctions"->True,"InlineExternalDefinitions"->True},
  RuntimeAttributes->{Listable},
- CompilationTarget->$AnalyzeCompilationTarget1D,
+ CompilationTarget->$Analyze1DCompilationTarget,
  "RuntimeOptions"->"Speed"];
 ];
 
@@ -510,7 +514,7 @@ AppendLeftRight = Compile[{{l,_Real, 1},{ds,_Real,0},{max,_Real,0}},
       ];
       Return[lr]
   ],
- CompilationTarget->$AnalyzeCompilationTarget1D,
+ CompilationTarget->$Analyze1DCompilationTarget,
    CompilationOptions->{"ExpressionOptimization"->True,"InlineExternalDefinitions"->True},
    "RuntimeOptions"->{"Speed","CompareWithTolerance"->True}];
 ];  *)
@@ -519,7 +523,7 @@ AppendLeftRight = Compile[{{l,_Real, 1},{ds,_Real,0},{max,_Real,0}},
 $HaveFunctionsBeenCompiled=False;
 (*recompiles teh functions by calling the set delayed definitions*)
 CompileFunctions1D[] :=
-    (Puts["Compiling functions in Anayze1D.m to ", $AnalyzeCompilationTarget1D,LogLevel->2];
+    (Puts["Compiling functions in Anayze1D.m to ", $Analyze1DCompilationTarget,LogLevel->2];
      AppendLeftRightUncompiled[];
      compiledSelectBinUncompiled[];
      GetDifferencesUncompiled[];

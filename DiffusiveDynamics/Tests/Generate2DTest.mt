@@ -16,8 +16,10 @@ Test[ (*Checks if GenerateDiffusionTrajectory2D result change. TODO: This is a v
                 rw = GenerateDiffusionTrajectory2D[STEPS, DIFFX, DIFFY, ALPHA, ENERGY, KT, STEP, 
                                   {-CELLRANGE, CELLRANGE}, InitialPosition -> {0., 0.}]
     ];
-    target = {{1., 0., 0.}, {2., 2.18773, 1.86114}, {3., 3.37662, 4.74361}, {4., 10.3169, 7.82425}, {5., 10.9218, 12.8288}, {6., 9.05783, 6.94991}, {7., 9.00656, -0.983006}, {8., 9.11527, 4.90628}, {9., 9.5713, 4.07522}, {10., 8.02057, 3.27114}};
-(*    Print[rw];
+    (*target = {{1., 0., 0.}, {2., 2.18773, 1.86114}, {3., 3.37662, 4.74361}, {4., 10.3169, 7.82425}, {5., 10.9218, 12.8288}, {6., 9.05783, 6.94991}, {7., 9.00656, -0.983006}, {8., 9.11527, 4.90628}, {9., 9.5713, 4.07522}, {10., 8.02057, 3.27114}};*)
+     target={{1.,0.,0.},{2.,-4.69635,-2.68286},{3.,-6.1222,-0.37686},{4.,-11.1117,1.84641},{5.,-9.61719,-5.44074},{6.,-7.31684,-13.6857},{7.,-10.7295,-16.1392},{8.,-3.44012,-21.8715},{9.,-2.96321,-26.374},{10.,-7.35223,-33.3529}};
+(*  
+    Print[rw];
     Print[target];
     Print[Chop[rw-target,0.0001]];*)
     result = Total@Total@Chop[rw-target,0.0001]==0;
@@ -41,7 +43,7 @@ Test[ (**)
                 rw = ParallelGenerateDiffusionTrajectory2D[STEPS, DIFFX, DIFFY, ALPHA, ENERGY, KT, STEP, 
                                   {-CELLRANGE, CELLRANGE}, "InitialPositions" -> ips,"ProcessCount" -> 2]
     ];
-	rw[[All,1]]
+	rw[[All,1,{2,3}]]
     ,
     N@ips
     ,

@@ -57,8 +57,6 @@ Tuturials are available in the `Tutorials` folder. For the courious here is a qu
 ### Generate the trajectory
 	(*Uses all available cores and by default generates 
       2*number of cores of segements. The total length off all segments is equal to STEPS. *)
-	
-	
 	rw = ParallelGenerateDiffusionTrajectory2D[STEPS, DIFFX, DIFFY, ALPHA,
 	    ENERGY, KT, STEP, {-CELLRANGE, CELLRANGE}];
 
@@ -79,6 +77,7 @@ Tuturials are available in the `Tutorials` folder. For the courious here is a qu
 ### Visualize the result
 
 	(*We see almost perfect aligment at stride 1*)
+	s=1;	
 	DrawDiffusionTensorRepresentations[{diffs[[All, s]], modelDiffs[[All, s]]}, 1(*this 1 is the selected bin*)
 	 , Scale -> 3.5, ImageSize -> Large
 	 , PlotLabel -> 

@@ -3,18 +3,20 @@
 A set of packages to calculate position-dependent diffusion coefficients in one and two dimensions from collective variables trajectories written in *[Mathematica](http://www.wolfram.com/mathematica/)&#174;*. 
 
 ## Installation
-Download the zip file of the repository (link in the lower right corner). Extract the file to any location and evaluate `Install.nb` file (from *Mathematica*), which will install the package automatically. 
+### Automatic installation
+Download the zip file of the repository (link in the lower right corner). Extract the file to any location, open `Install.m` with *Mathematica* and click on the `Run Package` botton in the upper right corner of the notebook. This will install and load the `DiffusiveDynamics` package automatically. 
 
+### Manual installation 
 The package can also be installed manually. Copy the `DiffusiveDynamics` subdirectory to the `$UserBaseDirectory/Applications` directory. The full path to the directory can be obtained (and copied to the clipboard)  by running this *Mathematica* commands:
 
 	userdir = FileNameJoin[{$UserBaseDirectory, "Applications"}]
 	CopyToClipboard[userdir]
 
-
+### Installing a C compiler (optional)
 If perfomance is paramount a C compiler can be installed to speed up crucial parts of the package. More information about installing a compiler for *Mathematica* can be found [here](http://reference.wolfram.com/mathematica/CCompilerDriver/tutorial/SpecificCompilers.html) (and [here](http://mathematica.stackexchange.com/questions/6897/what-compilers-are-suitable-for-compilationtarget-c) and [here](http://mathematica.stackexchange.com/questions/6897/what-compilers-are-suitable-for-compilationtarget-c)).
  
 
-## Quick Start
+## 2D Quick Start
 Tuturials are available in the `Tutorials` folder. For the courious here is a quick start (this is a shortened version of `Tutorials/01-QuickStart2D.nb`):
 
 

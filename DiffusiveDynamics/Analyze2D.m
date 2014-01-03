@@ -124,7 +124,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
             If[OptionValue@"WarnIfEmpty",On[GetStepsFromBinnedPoints::zerodata],
                                          Off[GetStepsFromBinnedPoints::zerodata]];
                         
-            (*select the steps in the bin*)
+            (*select the points that have the origin in the bin*)
             (*Take just the step's indexes*)
             t = AbsoluteTiming[   
                    data = Map[Part[compiledSelectBin[#,min,max],All,1]&,rwData];

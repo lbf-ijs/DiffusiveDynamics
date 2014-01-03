@@ -25,7 +25,8 @@ StepsInBin     -- how many steps in are in this bin
 StepsHistogram -- draw the histogram of steps
 PValue,IsNormal-- The PValue and the outcome of the normality test.
 " 
-
+ClearAll[GetDiffusionInBinByMiddlePoint];
+GetDiffusionInBinByMiddlePoint::usage="See implementation section"
 
 ClearAll[GetDiffusionInBins]
 GetDiffusionInBins::usage="TODO"
@@ -155,12 +156,69 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
         ]
 ]; 
 
+Options[GetDiffusionInBinByMiddlePoint] := {"Verbose":>$VerbosePrint,  (*Log output*)
+                           "VerboseLevel":>$VerboseLevel,(*The amount of details to log. Higher number means more details*)
+                           "Strides"->1.,     (*How many points between what is considered to be a step- 1 means consecutive points in the raw list*)
+                           "ReturnRules"->True,  (*Return the results as a list of rules*)
+                           "ReturnStepsHistogram"->False, (*Returns the density histogram of steps. Slows down the calcualtion considerably. Useful for debuging and visualization.*)
+                           "WarnIfEmpty"->False, (*Prints a warning if too litle points in bin*)
+                           "NormalitySignificanceLevel"-> .05 (*Significance level for the normality test*)
+           }~Join~Options[GetDiffsFromBinnedPoints];
+GetDiffusionInBinByMiddlePoint::usage="
+Gets diffusion in bin given by {min_,max_}.
+
+rwData --- a list of list of points {t,x,y}
+dt --- the step
+min --- min values of the bin (lower left corner)
+max --- max values of the bin
+" 
+GetDiffusionInBinByMiddlePoint[rwData_,dt_,{min_,max_},{cellMin_,cellMax_},opts:OptionsPattern[]] :=
+Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseLevel"],$VerboseIndentLevel=$VerboseIndentLevel+1,
+       $SignificanceLevel=OptionValue@"NormalitySignificanceLevel"}, 
+    Module[ {data,t,diffs,bincenter,binwidth,sd},
+            Puts["***GetDiffusionInBin****"];
+            Assert[Last@Dimensions@rwData==3,"Must be a list of triplets in the form {t,x,y}"];
+            Assert[Length@Dimensions@rwData==3,"rwData must be a list of lists of triplets!"];
+            Puts[Row@{"\ndt: ",dt,"\nmin: ",min,"\nmax: ",max,"\ncellMin: ",cellMin,"\ncellMax: ",cellMax},LogLevel->2];
+            PutsOptions[GetDiffusionInBin, {opts}, LogLevel->2];
+            CompileFunctionsIfNecessary[];
+            PutsE["original data:\n",rwData,LogLevel->5];
+            Puts["Is packed original data? ",And@@Developer`PackedArrayQ[#]&/@rwData, LogLevel->5];
+    ]
+]
+
+
 ClearAll[compiledSelectBinFunc];
 compiledSelectBinFunc = Compile[{{point,_Real, 1},{min,_Real, 1},{max,_Real, 1}},
   ((point[[2]]>=min[[1]] )&&(point[[2]]<=max[[1]])&&(point[[3]]>=min[[2]] )&&(point[[3]]<=max[[2]]))
 ,  
    CompilationOptions->{"ExpressionOptimization"->True,"InlineExternalDefinitions"->True},
    "RuntimeOptions"->"Speed"];
+
+
+ClearAll[compiledSelectByMiddlePoint];
+compiledSelectByMiddlePoint::usage="Selects steps whose middle point lies in the bin given by min/max. data is given as a list of points {t,x,y}";
+
+Block[{points,min,max,result,i}, (*These are just for WB syntax highlighting*)
+    compiledSelectByMiddlePoint=Compile[{{points,_Real, 2},{min,_Real, 1},{max,_Real, 1}},
+        Module[{resultBag=Internal`Bag[](*Empty real bag *), middlePoint={0.,0.}, len=0},
+        (*loop over points*)
+        Do[
+          middlePoint=(points[[i]]+points[[i+1]])/2.;          
+          If[compiledSelectBinFunc[middlePoint,min,max],
+             Internal`StuffBag[resultBag, Internal`Bag[ points[[i+1,{2,3}]]-points[[i,{2,3}]] ]];
+             len=len+1;(*Internal`BagLength is not compilable. Must track manually*)         
+            ]   
+        ,{i,Length@points-1}];
+        
+        (*Return stuffed vectors*)
+        Table[Internal`BagPart[Internal`BagPart[resultBag, i], All], {i, 1, len}]
+        ](*Module*)
+        ,   CompilationTarget->$Analyze2DCompilationTarget,
+            CompilationOptions->{"ExpressionOptimization"->True,"InlineCompiledFunctions"->True,"InlineExternalDefinitions"->True},
+            "RuntimeOptions"->"Speed"] (*Compile*)
+];
+
   
 (*The delayed definition := is just a trick to compile functions on first use. makes packages load quicker*)	
 ClearAll[compiledSelectBinUncompiled];
@@ -351,7 +409,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
             ];
 
             (*Pick the shortest of the steps. This is needed if the step was over the periodic boundary limit. 
-            Used for each ccordinate seperatly.
+            Used for each coordinate seperatly.
             MakeInPeriodicCell is listable.*)
             Puts["Before Calling MakeInPeriodicCell",LogLevel->4];
             data[[All,1]] = MakeInPeriodicCell[data[[All,1]], cellWidth[[1]]];
@@ -500,7 +558,7 @@ GetTensorFromMomentsWithNormalityTest[data_] :=
 		    Return@ConstantArray[Missing[],7];
 		  ];
 		{ux,uy,a,b,c}={uy,ux,a,b,c}/.params;
-		{a,b,c}={a,b,c}/.params;
+		
 		
 		(*The tensor is symmetric*)
         {eval,evec} = Eigensystem[{{a,c},{c,b}}];
@@ -584,7 +642,7 @@ CompileFunctionsIfNecessary[]:= If[! $HaveFunctionsBeenCompiled, CompileFunction
    
 (*GetDiffusionInBinsBySelect*)
 (*Calculates the diffusion coeficients in all bins of the cell. Bining is re-done for each bin by select.  
- rwData --  Data of the diffusion process. A list of points {{t,x,y},...}
+ rwData --  Data of the diffusion process. A list of lists of points {{t,x,y},...}
  dt     --  the timstep between two points in the units of time 
  binSpec -- specfication of the bins {min,max,dstep}
  cellMinMax The periodic cell limits {{minx,minY},{maxX, maxY}. If Null then taken form binSpec}*)
@@ -627,6 +685,38 @@ GetDiffusionInBinsBySelect[rwData_,dt_,binsOrBinSpec_,opts:OptionsPattern[]] :=
 
         ]
     ];
+
+(*GetDiffusionInBinsByMiddlePoint*)
+GetDiffusionInBinsByMiddlePoint::usage="
+NOT YET IMPLEMENTED
+Calculates the diffusion by assigning steps (vectors) to bins by the steps's middle point.
+ rwData --  Data of the diffusion process. A list of lists of points {{t,x,y},...}
+ dt     --  the timstep between two points in the units of time 
+ binSpec -- specfication of the bins {min,max,dstep}
+ cellMinMax The periodic cell limits {{minx,minY},{maxX, maxY}. If Null then taken form binSpec}
+";
+Options[GetDiffusionInBinsByMiddlePoint] := {"Parallel"->True,(*Use parallel functions*)
+                                       "CellRange"->Automatic (*cell range in {{MinX,MinY},{MaxX,MaxY}}. If automatic, then calculated from binsOrBinSpec*)
+                                      }~Join~Options[GetDiffusionInBin];
+Attributes[GetDiffusionInBinsByMiddlePoint]={HoldFirst};
+GetDiffusionInBinsByMiddlePoint[rwData_,dt_,binsOrBinSpec_,opts:OptionsPattern[]] :=
+    Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1},
+        Module[ {bins, cellMin,cellMax},
+            Puts["********GetDiffusionInBinsByMiddlePoint********"];
+            PutsE["rwData: ",rwData, LogLevel->2];
+            PutsE["binsOrBinSpec: ",binsOrBinSpec, LogLevel->2];
+            Puts[$VerboseIndentString,"dimensions: ",Dimensions@binsOrBinSpec];
+            PutsOptions[GetDiffusionInBinsBySelect, {opts}, LogLevel->2];
+             
+            bins=GetBinsFromBinsOrSpec@binsOrBinSpec;
+            (*get cellMin/max from the bins if the option for cellRange is automatic*)
+            {cellMin,cellMax}=If[#===Automatic,GetCellRangeFromBins@bins,#]&@OptionValue@"CellRange";
+            PutsE["used cellRange: ",{cellMin,cellMax}, LogLevel->2];
+            
+            
+        ];
+    ];
+
 
 Options[GetDiffusionInBinsByGatherBy] = {"Parallel"->True}~Join~Options[GetStepsFromBinnedPoints];
 Attributes[GetDiffusionInBinsByGatherBy]={HoldFirst};
@@ -701,6 +791,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
             Return[data];
         ]
     ];
+
 
 
 (*GetDiffusionInBins*)

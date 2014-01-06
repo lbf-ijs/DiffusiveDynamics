@@ -175,7 +175,7 @@ max --- max values of the bin
 GetDiffusionInBinByMiddlePoint[rwData_,dt_,{min_,max_},{cellMin_,cellMax_},opts:OptionsPattern[]] :=
 Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseLevel"],$VerboseIndentLevel=$VerboseIndentLevel+1,
        $SignificanceLevel=OptionValue@"NormalitySignificanceLevel"}, 
-    Module[ {steps,t,m,mm,bincenter,binwidth,stride},
+    Module[ {steps,t,m,mm,bincenter,binwidth,stride,cellwidth},
             Puts["***GetDiffusionInBin****"];
             Assert[Last@Dimensions@rwData==3,"Must be a list of triplets in the form {t,x,y}"];
             Assert[Length@Dimensions@rwData==3,"rwData must be a list of lists of triplets!"];
@@ -183,18 +183,18 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
             PutsOptions[GetDiffusionInBin, {opts}, LogLevel->2];
             PutsE["original data:\n",rwData,LogLevel->5];
             Puts["Is packed original data? ",And@@Developer`PackedArrayQ[#]&/@rwData, LogLevel->5];
-            (*CompileFunctionsIfNecessary[];*)
+            CompileFunctionsIfNecessary[];
             bincenter=(min+max)*0.5;
             binwidth=N@(min-max);
-            
+            cellwidth=cellMax-cellMin;
             Table[
 	            (*Get the vectors in bin*)
 	            m = MemoryInUse[]; mm=MaxMemoryUsed[];
 	            t = AbsoluteTiming[   
-	                   steps = Map[compiledSelectByMiddlePoint[#,min,max,stride]&,rwData];
+	                   steps = Map[compiledSelectByMiddlePoint[#,min,max,cellwidth,stride]&,rwData];
 	                   steps = Join@@steps; (*Flatten[steps,1] unpacks the array!*)
 	             ];
-	            TMP`$steps[stride]=steps;
+	            (*TMP`$steps[stride]=steps;*)
 	            Puts["select steps took: ", First@t, " s and ", (MemoryInUse[]-m)/1048576. ," MB (MAX: ",(MaxMemoryUsed[]-mm)/1048576., " MB)",LogLevel->2];
 	            Puts["Data dimensions: ", Dimensions@steps,LogLevel->2];
 	            Puts["Data packed? ", Developer`PackedArrayQ@steps,LogLevel->2];
@@ -213,41 +213,86 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
 ]
 
 
+$DebugCompiledFunctions=False; 
+stripPrint = If[Not@$DebugCompiledFunctions, 
+     HoldPattern[h_[pre___, __Print, post___]] :> h[pre, post],
+   (*ekse*)   
+     HoldPattern[h_[pre___, Print[diags___], post___]] :> h[pre, Print[diags], post]];
+   
+ClearAll[MakeInPeriodicCell,MakeInPeriodicCellUncompiled];
+MakeInPeriodicCellUncompiled[]:=Block[{x,cellwidth},  (*This block is just for syntax coloring in WB*)
+(*
+Steps through the whole cell are very improbable, so large steps are due to periodic conditions.
+Takes a coordinate and chooses the smallest of the three options due to periodic conditions.
+Hmmm, whats the rigth answer for MakeInPeriodicCell[2,3]
+*)
+MakeInPeriodicCell = Compile[{{x,_Real,0},{cellwidth,_Real,0}},
+  If[ x<-(cellwidth/2.),(*then*)
+      x+cellwidth,
+   (*else*)
+      If[ x>cellwidth/2., (*then*)
+          x-cellwidth,
+        (*else*)
+          x
+      ]
+  ]
+  
+,CompilationOptions->{"ExpressionOptimization"->True,"InlineCompiledFunctions"->True,"InlineExternalDefinitions"->True},
+ RuntimeAttributes->{Listable},
+ CompilationTarget->$Analyze2DCompilationTarget,
+ "RuntimeOptions"->"Speed"];
+];
+
+
 ClearAll[compiledSelectBinFunc];
 compiledSelectBinFunc = Compile[{{point,_Real, 1},{min,_Real, 1},{max,_Real, 1}},
-  ((point[[2]]>=min[[1]] )&&(point[[2]]<=max[[1]])&&(point[[3]]>=min[[2]] )&&(point[[3]]<=max[[2]]))
+  ((point[[2]]>=min[[1]])&&(point[[2]]<=max[[1]])&&(point[[3]]>=min[[2]] )&&(point[[3]]<=max[[2]]))
 ,  
    CompilationOptions->{"ExpressionOptimization"->True,"InlineExternalDefinitions"->True},
    "RuntimeOptions"->"Speed"];
 
-
-ClearAll[compiledSelectByMiddlePoint];
+   
+ClearAll[compiledSelectByMiddlePoint, compiledSelectByMiddlePointUncompiled];
 compiledSelectByMiddlePoint::usage="Selects steps whose middle point lies in the bin given by min/max. data is given as a list of points {t,x,y}";
-
-Block[{points,min,max,result,i,stride}, (*These are just for WB syntax highlighting*)
-    compiledSelectByMiddlePoint=Compile[{{points,_Real, 2},{min,_Real, 1},{max,_Real, 1}, {stride,_Integer, 0}},
-        Module[{resultBag=Internal`Bag[](*Empty real bag *), middlePoint={0.,0.}, len=0},
+(*This is a bit of a mess, because all the other functions expect {t,x,y}, but here the t (point index) is redundant. 
+For compatibility with other functions (both upstream and downstram) it is however kept and accepts a list of {t,x,y}*)
+compiledSelectByMiddlePointUncompiled[]:=Block[{points,min,max,result,i,stride,cellWidth}, (*These are just for WB syntax highlighting*)
+    compiledSelectByMiddlePoint=Compile@@(Hold[{{points,_Real, 2},{min,_Real, 1},{max,_Real, 1}, {cellWidth,_Real, 1} ,{stride,_Integer, 0}},
+        Module[{resultBag=Internal`Bag[](*Empty real bag *), middlePoint={0.,0.}, step={0.,0.}, len=0},
+        Print["cellWidth: ", cellWidth];
         (*loop over points*)  
-        Do[
-          middlePoint=(points[[i]]+points[[i+stride]])/2.;          
+        Do[          
+          Print["iteration: ", i];
+          step=points[[i+stride]]-points[[i]]; Print["Step: ", step];   
+          (*Take care of steps that went over periodic conditions (out of the unit cell)*)
+          
+          step[[2]]=MakeInPeriodicCell[step[[2]], cellWidth[[1]]];
+          step[[3]]=MakeInPeriodicCell[step[[3]], cellWidth[[2]]];  
+          Print["Step after periodic:", step];  
+          
+          middlePoint=points[[i]]+0.5*step; Print["middlePoint: ",middlePoint];      
+
           If[compiledSelectBinFunc[middlePoint,min,max],
-             Internal`StuffBag[resultBag, Internal`Bag[ points[[i+stride,{2,3}]]-points[[i,{2,3}]] ]];
-             len=len+1;(*Internal`BagLength is not compilable. Must track manually*)         
-            ]   
+             Print["Is in!"];
+             Internal`StuffBag[resultBag, Internal`Bag[ step[[{2,3}]] ]];
+             len=len+1;(*Internal`BagLength is not compilable. Must track manually*)
+                      
+            ];   
         ,{i,Length@points-stride}];
         
         (*Return stuffed vectors*)
         Table[Internal`BagPart[Internal`BagPart[resultBag, i], All], {i, 1, len}]
-        ](*Module*)
+        ]
         ,   CompilationTarget->$Analyze2DCompilationTarget,
             CompilationOptions->{"ExpressionOptimization"->True,"InlineCompiledFunctions"->True,"InlineExternalDefinitions"->True},
-            "RuntimeOptions"->"Speed"] (*Compile*)
+            "RuntimeOptions"->"Speed"] //.stripPrint(*Compile*))
 ];
 
   
 (*The delayed definition := is just a trick to compile functions on first use. makes packages load quicker*)	
 ClearAll[compiledSelectBinUncompiled];
 compiledSelectBinUncompiled[]:= Block[{points,min,max},   (*This block is just for syntax coloring in WB*) 
+
 compiledSelectBin = Compile[{{points,_Real, 2},{min,_Real, 1},{max,_Real, 1}},
   Select[points,compiledSelectBinFunc[#,min,max]&]
 ,  CompilationTarget->$Analyze2DCompilationTarget,
@@ -601,27 +646,7 @@ ClearAll[MinAbs];
 MinAbs[L_] :=
     First@Sort[L,Abs[#1]<Abs[#2]&];
 
-ClearAll[MakeInPeriodicCell,MakeInPeriodicCellUncompiled];
-MakeInPeriodicCellUncompiled[]:=Block[{x,cellwidth},  (*This block is just for syntax coloring in WB*)
-(*
-Steps through the whole cell are very improbable, so large steps are due to periodic conditions.
-Takes a coordinate and chooses the smallest of the three options due to periodic conditions.
-*)
-MakeInPeriodicCell = Compile[{{x,_Real},{cellwidth,_Real}},
-  If[ x<-(cellwidth/2.),(*then*)
-      x+cellwidth,
-   (*else*)
-      If[ x>cellwidth/2., (*then*)
-          x-cellwidth,
-        (*else*)
-          x
-      ]
-  ]
-,CompilationOptions->{"ExpressionOptimization"->True,"InlineCompiledFunctions"->True,"InlineExternalDefinitions"->True},
- RuntimeAttributes->{Listable},
- CompilationTarget->$Analyze2DCompilationTarget,
- "RuntimeOptions"->"Speed"];
-];
+
 
 
 ClearAll[AppendLeftRight,AppendLeftRightUncompiled];
@@ -654,10 +679,11 @@ $HaveFunctionsBeenCompiled=False;
 CompileFunctions[] :=
     (Puts["Compiling functions in Anayze2D.m to ", $Analyze2DCompilationTarget,LogLevel->2];
      AppendLeftRightUncompiled[];
-     compiledSelectBinUncompiled[];
-     GetDifferencesUncompiled[];
      MakeInPeriodicCellUncompiled[];
+     compiledSelectBinUncompiled[];
+     GetDifferencesUncompiled[];     
      compiledGetContigIntervalsUncompiled[];
+     compiledSelectByMiddlePointUncompiled[];
      $HaveFunctionsBeenCompiled = True; 
     );
 

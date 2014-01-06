@@ -175,15 +175,40 @@ max --- max values of the bin
 GetDiffusionInBinByMiddlePoint[rwData_,dt_,{min_,max_},{cellMin_,cellMax_},opts:OptionsPattern[]] :=
 Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseLevel"],$VerboseIndentLevel=$VerboseIndentLevel+1,
        $SignificanceLevel=OptionValue@"NormalitySignificanceLevel"}, 
-    Module[ {data,t,diffs,bincenter,binwidth,sd},
+    Module[ {steps,t,m,mm,bincenter,binwidth,stride},
             Puts["***GetDiffusionInBin****"];
             Assert[Last@Dimensions@rwData==3,"Must be a list of triplets in the form {t,x,y}"];
             Assert[Length@Dimensions@rwData==3,"rwData must be a list of lists of triplets!"];
             Puts[Row@{"\ndt: ",dt,"\nmin: ",min,"\nmax: ",max,"\ncellMin: ",cellMin,"\ncellMax: ",cellMax},LogLevel->2];
             PutsOptions[GetDiffusionInBin, {opts}, LogLevel->2];
-            CompileFunctionsIfNecessary[];
             PutsE["original data:\n",rwData,LogLevel->5];
             Puts["Is packed original data? ",And@@Developer`PackedArrayQ[#]&/@rwData, LogLevel->5];
+            (*CompileFunctionsIfNecessary[];*)
+            bincenter=(min+max)*0.5;
+            binwidth=N@(min-max);
+            
+            Table[
+	            (*Get the vectors in bin*)
+	            m = MemoryInUse[]; mm=MaxMemoryUsed[];
+	            t = AbsoluteTiming[   
+	                   steps = Map[compiledSelectByMiddlePoint[#,min,max,stride]&,rwData];
+	                   steps = Join@@steps; (*Flatten[steps,1] unpacks the array!*)
+	             ];
+	            TMP`$steps[stride]=steps;
+	            Puts["select steps took: ", First@t, " s and ", (MemoryInUse[]-m)/1048576. ," MB (MAX: ",(MaxMemoryUsed[]-mm)/1048576., " MB)",LogLevel->2];
+	            Puts["Data dimensions: ", Dimensions@steps,LogLevel->2];
+	            Puts["Data packed? ", Developer`PackedArrayQ@steps,LogLevel->2];
+	            
+	            Puts["Histogram of sizes:", Histogram[Norm"Sturges"],LogLevel->5];
+	           
+	            GetDiffsFromSteps[steps, dt, stride]~Join~{"Stride"->stride, "x"->bincenter[[1]], "y"->bincenter[[2]],
+                      "xWidth"->binwidth[[1]], "yWidth"->binwidth[[2]], "StepsInBin"->Length[steps], "dt"->dt,
+                      "StepsHistogram"->If[ OptionValue["ReturnStepsHistogram"],
+                                            N@HistogramList[steps,"Sturges","PDF"]
+                                        ]}
+	            
+	            
+            ,{stride,OptionValue@"Strides"}]
     ]
 ]
 
@@ -199,17 +224,17 @@ compiledSelectBinFunc = Compile[{{point,_Real, 1},{min,_Real, 1},{max,_Real, 1}}
 ClearAll[compiledSelectByMiddlePoint];
 compiledSelectByMiddlePoint::usage="Selects steps whose middle point lies in the bin given by min/max. data is given as a list of points {t,x,y}";
 
-Block[{points,min,max,result,i}, (*These are just for WB syntax highlighting*)
-    compiledSelectByMiddlePoint=Compile[{{points,_Real, 2},{min,_Real, 1},{max,_Real, 1}},
+Block[{points,min,max,result,i,stride}, (*These are just for WB syntax highlighting*)
+    compiledSelectByMiddlePoint=Compile[{{points,_Real, 2},{min,_Real, 1},{max,_Real, 1}, {stride,_Integer, 0}},
         Module[{resultBag=Internal`Bag[](*Empty real bag *), middlePoint={0.,0.}, len=0},
-        (*loop over points*)
+        (*loop over points*)  
         Do[
-          middlePoint=(points[[i]]+points[[i+1]])/2.;          
+          middlePoint=(points[[i]]+points[[i+stride]])/2.;          
           If[compiledSelectBinFunc[middlePoint,min,max],
-             Internal`StuffBag[resultBag, Internal`Bag[ points[[i+1,{2,3}]]-points[[i,{2,3}]] ]];
+             Internal`StuffBag[resultBag, Internal`Bag[ points[[i+stride,{2,3}]]-points[[i,{2,3}]] ]];
              len=len+1;(*Internal`BagLength is not compilable. Must track manually*)         
             ]   
-        ,{i,Length@points-1}];
+        ,{i,Length@points-stride}];
         
         (*Return stuffed vectors*)
         Table[Internal`BagPart[Internal`BagPart[resultBag, i], All], {i, 1, len}]

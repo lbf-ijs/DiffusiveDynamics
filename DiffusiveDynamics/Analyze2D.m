@@ -28,6 +28,9 @@ PValue,IsNormal-- The PValue and the outcome of the normality test.
 ClearAll[GetDiffusionInBinByMiddlePoint];
 GetDiffusionInBinByMiddlePoint::usage="See implementation section"
 
+ClearAll[GetDiffusionInBinsByMiddlePoint];
+GetDiffusionInBinsByMiddlePoint::usage="See implementation section"
+
 ClearAll[GetDiffusionInBins]
 GetDiffusionInBins::usage="TODO"
 
@@ -216,7 +219,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
 $DebugCompiledFunctions=False; 
 stripPrint = If[Not@$DebugCompiledFunctions, 
      HoldPattern[h_[pre___, __Print, post___]] :> h[pre, post],
-   (*ekse*)   
+   (*else*)   
      HoldPattern[h_[pre___, Print[diags___], post___]] :> h[pre, Print[diags], post]];
    
 ClearAll[MakeInPeriodicCell,MakeInPeriodicCellUncompiled];
@@ -719,11 +722,11 @@ GetDiffusionInBinsBySelect[rwData_,dt_,binsOrBinSpec_,opts:OptionsPattern[]] :=
             
 			If[ OptionValue@"Parallel", (*then*)
             	(*I think distribute definitions also works. Actually it's more approapriate, but I'm not sure if it makes a copy or not...*)
-                SetSharedVariable@rwData;
-                With[ {IcellRange = {cellMin,cellMax},Idt = dt,injectedOptions = FilterRules[{opts},Options@GetDiffusionInBin]},
+                (*DistributeDefinitions@rwData;*)
+                With[ {IrwData=rwData,IcellRange = {cellMin,cellMax},Idt = dt,injectedOptions = FilterRules[{opts},Options@GetDiffusionInBin]},
                     PutsE["injectedOptions:\n",injectedOptions, LogLevel->1];
                     ParallelMap[
-                        GetDiffusionInBin[rwData, Idt, {#[[1]]-#[[2]]/2,#[[1]]+#[[2]]/2},IcellRange,injectedOptions]&
+                        GetDiffusionInBin[IrwData, Idt, {#[[1]]-#[[2]]/2,#[[1]]+#[[2]]/2},IcellRange,injectedOptions]&
                         ,bins]
                 ],(*else*)
                 With[ {injectedOptions = FilterRules[{opts},Options@GetDiffusionInBin]},
@@ -739,7 +742,6 @@ GetDiffusionInBinsBySelect[rwData_,dt_,binsOrBinSpec_,opts:OptionsPattern[]] :=
 
 (*GetDiffusionInBinsByMiddlePoint*)
 GetDiffusionInBinsByMiddlePoint::usage="
-NOT YET IMPLEMENTED
 Calculates the diffusion by assigning steps (vectors) to bins by the steps's middle point.
  rwData --  Data of the diffusion process. A list of lists of points {{t,x,y},...}
  dt     --  the timstep between two points in the units of time 
@@ -764,8 +766,23 @@ GetDiffusionInBinsByMiddlePoint[rwData_,dt_,binsOrBinSpec_,opts:OptionsPattern[]
             {cellMin,cellMax}=If[#===Automatic,GetCellRangeFromBins@bins,#]&@OptionValue@"CellRange";
             PutsE["used cellRange: ",{cellMin,cellMax}, LogLevel->2];
             
-            
-        ];
+            If[ OptionValue@"Parallel", (*then*)
+                (*DistributeDefinitions@rwData;*)
+                With[ {IrwData=rwData,IcellRange = {cellMin,cellMax},Idt = dt,injectedOptions = FilterRules[{opts},Options@GetDiffusionInBin]},
+                    PutsE["injectedOptions:\n",injectedOptions, LogLevel->1];
+                    ParallelMap[
+                        GetDiffusionInBinByMiddlePoint[IrwData, Idt, {#[[1]]-#[[2]]/2,#[[1]]+#[[2]]/2}, IcellRange, injectedOptions]&
+                        ,bins,DistributedContexts->None]
+                ],(*else*)
+                With[ {injectedOptions = FilterRules[{opts},Options@GetDiffusionInBin]},
+                    PutsE["injectedOptions:\n",{injectedOptions}, LogLevel->3];
+                    Map[
+                         GetDiffusionInBinByMiddlePoint[rwData, dt, {#[[1]]-#[[2]]/2,#[[1]]+#[[2]]/2}, {cellMin,cellMax}, injectedOptions]&
+                         ,bins]
+                ]
+            ] (*end if -- no semicolon here! as  the result of the Map / ParallelMap gets returned*)
+           
+        ]
     ];
 
 
@@ -853,7 +870,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
  cellRange The periodic cell limits {{minx,minY},{maxX, maxY}. If Null then taken form binSpec}*)
 
 Options[GetDiffusionInBins] := {"Parallel"->True,(*Use parallel functions*)
-							   "Method"->Select, (*The method of binning. For now select is redone for each bin. GatherBy would bin the data only once, but is not yet implemented*) 
+							   "Method"->"Select", (*The method of binning. For now select is redone for each bin. GatherBy would bin the data only once, but is not yet implemented*) 
 							   "CellRange"->Automatic (*cell range in {{MinX,MinY},{MaxX,MaxY}}. If automatic, then calculated from binsOrBinSpec*)
 							   }~Join~Options[GetDiffusionInBin];
 Attributes[GetDiffusionInBins]={HoldFirst};
@@ -863,9 +880,11 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
             Puts["********GetDiffusionInBins********"];
             PutsOptions[GetDiffusionInBins,{opts},LogLevel->2];
             Switch[OptionValue@"Method",
-            Select,(*then*)
+            "Select",(*then*)
             	GetDiffusionInBinsBySelect[rwData,dt,binSpec, FilterRules[{opts},Options@GetDiffusionInBinsBySelect]],
-            GatherBy, (*then*)
+            "MiddlePoint", (*then*)
+                GetDiffusionInBinsByMiddlePoint[rwData,dt,binSpec, FilterRules[{opts},Options@GetDiffusionInBinsBySelect]],
+            "GatherBy", (*then*)
             	Assert[False, "GatherBy not yet implemented as method in GetDiffusionInBins"],
             _,(*else*)
             	Assert[False,"Wrong method "<>ToString@OptionValue@"Method"<>"in GetDiffusionInBins"]

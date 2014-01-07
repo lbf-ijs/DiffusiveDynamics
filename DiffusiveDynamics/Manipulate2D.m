@@ -517,11 +517,6 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
       ]];
     ];
     
- 
-      
-    
-    
-    
     (*get the data*)
     data=Table[    
         vals=GetValues[Evaluate@q, diffs[[diffIndex, binIndex]] ];

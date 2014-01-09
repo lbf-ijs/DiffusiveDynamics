@@ -1174,7 +1174,7 @@ Options@GetDiffusionsRMSD={
             };
 
 GetDiffusionsRMSD::usage="GetDiffusionsRMSD[diffs1, diffs2] takew two sets of diffusions (must have same bins) and 
-calculates the RMSD between all the bins. The distance function used on the covariance tensors can be given as an option. Defaults to EuclidianDistance . 
+calculates the RMSD (Root mean square displacement) between all the bins. The distance function used on the covariance tensors can be given as an option. Defaults to EuclidianDistance . 
 
 Returns the RMSD."
 

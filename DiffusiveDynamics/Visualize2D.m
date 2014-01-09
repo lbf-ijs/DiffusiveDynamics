@@ -334,10 +334,11 @@ GetBinCentersAndWidthsFromDiffusionInfo[diffInfos_]:=
     GetValues[{{"x", "y"}, {"xWidth", "yWidth"}}, diffInfos[[All, 1]]]
 (*takes a list of bins {{{x,y},{dx,dy}},..} and returns cellRange {{minX,minY},{MaxX,MaxY}}*)
 (*Todo can be compiled if necessary*)
+(*One time got negative width/heights in some data, this is the reason for the Abs*)
 GetCellRangeFromBins[bins_]:= 
-	Block[{minPoints, maxPoints,minX,maxX,minY,maxY},
-	    minPoints = (#[[1]] - #[[2]]/2) & /@ bins;
-        maxPoints = (#[[1]] + #[[2]]/2) & /@ bins;
+	Module[{minPoints, maxPoints,minX,maxX,minY,maxY},
+	    minPoints = (#[[1]] - Abs[#[[2]]/2]) & /@ bins;
+        maxPoints = (#[[1]] + Abs[#[[2]]/2]) & /@ bins;
         minX=Min[minPoints[[All,1]]];
         minY=Min[minPoints[[All,2]]];
         maxX=Max[maxPoints[[All,1]]];

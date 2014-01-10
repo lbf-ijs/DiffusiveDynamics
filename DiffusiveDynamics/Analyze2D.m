@@ -188,7 +188,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
             Puts["Is packed original data? ",And@@Developer`PackedArrayQ[#]&/@rwData, LogLevel->5];
             CompileFunctionsIfNecessary[];
             bincenter=(min+max)*0.5;
-            binwidth=N@(min-max);
+            binwidth=N@(max-min);
             cellwidth=cellMax-cellMin;
             Table[
 	            (*Get the vectors in bin*)

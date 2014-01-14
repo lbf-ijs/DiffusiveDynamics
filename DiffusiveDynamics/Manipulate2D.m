@@ -439,12 +439,12 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
          (*GetSubValue["Metadata"->"Title",#]&/@diffsData*)
            
          (*ViewDiffsWithStridePlots has hold first, so when the block goes out of scope, 
-         we would get an undefined diffs without this Dynamic module. TODO: is this a memory leak? Works much faster than With*)
+         we would get an undefined diffs without this Dynamic module. TODO: is this a memory leak? Works much faster than With
          ViewDiffsWithStridePlots[diffs,title,
              "LegendCaptions"->GetValue["Title",metadata],
              Tooltip->         GetValue["Description",metadata],
              PopupWindow ->    metadata,
-             injectedOptions]
+             injectedOptions]*)
               
     ]; 
 

@@ -187,7 +187,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
             PutsE["original data:\n",rwData,LogLevel->5];
             Puts["Is packed original data? ",And@@Developer`PackedArrayQ[#]&/@rwData, LogLevel->5];
             CompileFunctionsIfNecessary[];
-            bincenter=(min+max)*0.5;
+            bincenter=(min+max)*0.5; 
             binwidth=N@(max-min);
             cellwidth=cellMax-cellMin;
             Table[
@@ -202,7 +202,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
 	            Puts["Data dimensions: ", Dimensions@steps,LogLevel->2];
 	            Puts["Data packed? ", Developer`PackedArrayQ@steps,LogLevel->2];
 	            
-	            Puts["Histogram of sizes:", Histogram[Norm"Sturges"],LogLevel->5];
+	            Puts["Histogram of sizes:", Histogram["Sturges"],LogLevel->5];
 	           
 	            GetDiffsFromSteps[steps, dt, stride]~Join~{"Stride"->stride, "x"->bincenter[[1]], "y"->bincenter[[2]],
                       "xWidth"->binwidth[[1]], "yWidth"->binwidth[[2]], "StepsInBin"->Length[steps], "dt"->dt,
@@ -1092,6 +1092,15 @@ LoadDiffusions[name_, opts : OptionsPattern[]] :=
 ClearAll@AverageOneDiffBin;
 (*Given a list of diff bins, returns the averages and std errors of Quantities*)
 
+ClearAll[meanAngle];
+meanAngle[data_List] := Arg[Mean[Exp[I N[data Degree]]]]/Degree;
+
+ClearAll[stdevAngle];
+stdevAngle[data_List] := 
+  With[{ddata = N@data, meanAngle = meanAngle@data},
+   Sqrt[Total[Mod[ddata - meanAngle, 360, -180]^2]/(Length[data] - 1)]
+   ];
+
 AverageOneDiffBin[listOfDiffBins_,Quantities_]:=
 Block[{result, quantity, quantityErr, tmpvals, mean, stderr,i},
    (*result=First@listOfDiffBins;*)
@@ -1105,7 +1114,9 @@ Block[{result, quantity, quantityErr, tmpvals, mean, stderr,i},
       ,(*then*)
           mean=stderr=Missing["To few points in bin"];
       ,(*else*)
-          mean=Mean@tmpvals; stderr=StandardDeviation@tmpvals;
+          Switch[quantity,
+              "Da",mean=meanAngle@tmpvals;stderr=stdevAngle@tmpvals;,
+              _,mean=N@Mean@tmpvals; stderr=N@StandardDeviation@tmpvals;];
       ];
 
       result=result/.(Rule[quantity,_]->Rule[quantity,mean]);
@@ -1139,7 +1150,9 @@ Block[{result, quantity, quantityErr, tmpvals, mean, stderr,i},
 
 ClearAll@EstimateDiffusionError   
 Options@EstimateDiffusionError={
-            "Quantities"->{"Dx","Dy","Da"} 
+            "Quantities"-> 
+            {"Dx", "Dy", "Da", "ux", "uy", "sx", "sy", "PValue",  
+             "xMinWidth", "yMinWidth", "StepsInBin"}
             };
 
 EstimateDiffusionError::usage="EstimateDiffusionError[listOfDiffs] take a list of diffusions (must have same bins) and 

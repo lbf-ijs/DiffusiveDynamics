@@ -30,8 +30,9 @@ GetBinsFromBinsOrSpec::usage="GetBinsFromBinsOrSpec[binsOrSpec] Gets the bins {{
 
 GetBinCentersAndWidthsFromDiffusionInfo::usage="GetBinCentersAndWidthsFromDiffusionInfo[diffinfo] Gets the bins from a list of diffusion info";
 
-ClearAll[GetDiffFrom2DTensor,Get2DTensorFromDiff, Get2DCovarianceFromDiff, Get2DTensorRepresentation, DrawDiffusionTensorRepresentations];
+ClearAll[GetDiffFrom2DTensor,Get2DTensorFromDiff, Get2DCovarianceFromDiff, Get2DTensorRepresentation, GetDiffFrom2DCovariance, DrawDiffusionTensorRepresentations];
 GetDiffFrom2DTensor::usage="GetDiffFrom2DTensor[D2tensor] returns {Dx,Dy,Dalpha} from the 2D tensor."
+GetDiffFrom2DCovariance::usage="GetDiffFrom2DTensor[2Dcovar] returns {Dx,Dy,Dalpha} from the 2D covariance matrix."
 Get2DTensorFromDiff::uasge="Get2DTensorFromDiff[Dx, Dy, Da] returns a 2D tensor that represents the sigma matrix of the bivariate normal Gaussian distribution."
 Get2DCovarianceFromDiff::usage="Get2DCovarianceFromDiff[Dx, Dy, Da] returns a 2D covariance matrix representing the diffusion. Can be plugged in directly into the bivariate normal Gaussian distribution"
 Get2DTensorRepresentation::usage="Get2DTensorRepresentation[Dx,Dy,alpha,opts] \nDraws a represnetation of the diffusion tensor from the tensor or the diffusion points Dx, Dy, Da."; 
@@ -354,16 +355,27 @@ GetDiffFrom2DTensor[tensor_] :=
         alpha = ArcCos[evec[[1,1]]]/Degree*Sign[ArcSin[evec[[1,2]]]];
         alpha = Mod[alpha,180];
         Puts["Dx: ",Dx," Dy: ",Dy," alpha: ",alpha,LogLevel->3];
-        Return[{Dx,Dy,alpha}]
+        Return[N@{Dx,Dy,alpha}]
+    ];
+
+GetDiffFrom2DCovariance[covar_] :=
+    Module[{evec,eval,Dx,Dy,alpha},
+        Puts["********GetDiffFrom2DTensor********",LogLevel->2];
+        {eval,evec} = Eigensystem[covar];
+        {Dx,Dy} = eval/2;
+        alpha = ArcCos[evec[[1,1]]]/Degree*Sign[ArcSin[evec[[1,2]]]];
+        alpha = Mod[alpha,180];
+        Puts["Dx: ",Dx," Dy: ",Dy," alpha: ",alpha,LogLevel->3];
+        Return[N@{Dx,Dy,alpha}]
     ];
 
 Get2DTensorFromDiff[Dx_,Dy_,Da_]:=
-	RotationMatrix[Da*Degree].{{1/Dx^2, 0}, {0, 1/Dy^2}}.RotationMatrix[-Da*Degree];
+	N@RotationMatrix[Da*Degree].{{1/Dx^2, 0}, {0, 1/Dy^2}}.RotationMatrix[-Da*Degree];
 Get2DTensorFromDiff[{Dx_,Dy_,Da_}]:=Get2DTensorFromDiff[Dx,Dy,Da];
 Get2DTensorFromDiff[all___]:=Throw["Wrong arguments Get2DTensorFromDiff: ",all];
 
 Get2DCovarianceFromDiff[Dx_,Dy_,Da_]:=
-    Chop[RotationMatrix[Da*Degree].{{2*Dx, 0}, {0, 2*Dy}}.RotationMatrix[-Da*Degree],10^-8];	
+    Chop[N@RotationMatrix[Da*Degree].{{2*Dx, 0}, {0, 2*Dy}}.RotationMatrix[-Da*Degree],10^-8];	
 Get2DCovarianceFromDiff[{Dx_,Dy_,Da_}]:=Get2DCovarianceFromDiff[Dx,Dy,Da];
 Get2DCovarianceFromDiff[all___]:=Throw["Wrong arguments for Get2DCovarianceFromDiff: ",all];
     

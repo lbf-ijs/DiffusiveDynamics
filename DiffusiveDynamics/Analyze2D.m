@@ -1102,10 +1102,10 @@ stdevAngle[data_List] :=
    ];
 
 AverageOneDiffBin[listOfDiffBins_,Quantities_]:=
-Block[{result, quantity, quantityErr, tmpvals, mean, stderr,i},
+Module[{result, quantity, quantityErr, tmpvals, mean, stderr,i, das},
    (*result=First@listOfDiffBins;*)
    result=DeleteDuplicates[Flatten[listOfDiffBins],First[#1] === First[#2]&];
-   Table[
+   Do[
       quantityErr=quantity<>"Error";
       tmpvals=GetValues[Evaluate@quantity,listOfDiffBins];
       (*Take only numeric values*)
@@ -1140,10 +1140,17 @@ Block[{result, quantity, quantityErr, tmpvals, mean, stderr,i},
 	  ,(*else*)
 	  mean = Mean@tmpvals; stderr = StandardDeviation@tmpvals;];
 	 
-	 Table[
+	 Do[
 	  AppendTo[result, Rule[{"Dxx", "Dxy", "Dyy"}[[i]], mean[[i]] ] ];
 	  AppendTo[result, Rule[{"DxxError", "DxyError", "DyyError"}[[i]], stderr[[i]] ] ];
 	  , {i, 3}];
+	  
+	 das=GetDiffFrom2DCovariance[{{mean[[1]],mean[[2]]},{mean[[2]],mean[[3]]}}];
+	 (*Put tensot back into Dx Dy Da -- This is a hack! What to do about errors.*)
+	 Do[
+      result=DeleteCases[result, Rule[{"Dx", "Dy", "Da"}[[i]],_]];
+      AppendTo[result, Rule[{"Dx", "Dy", "Da"}[[i]], das[[i]] ] ];
+     , {i, 3}];
 	];
    result
 ];
@@ -1152,7 +1159,7 @@ ClearAll@EstimateDiffusionError
 Options@EstimateDiffusionError={
             "Quantities"-> 
             {"Dx", "Dy", "Da", "ux", "uy", "sx", "sy", "PValue",  
-             "xMinWidth", "yMinWidth", "StepsInBin"}
+             "xMinWidth", "yMinWidth"}
             };
 
 EstimateDiffusionError::usage="EstimateDiffusionError[listOfDiffs] take a list of diffusions (must have same bins) and 

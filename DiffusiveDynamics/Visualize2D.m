@@ -349,23 +349,23 @@ GetCellRangeFromBins[bins_]:=
 
 GetDiffFrom2DTensor[tensor_] :=
     Module[{evec,eval,Dx,Dy,alpha},
-        Puts["********GetDiffFrom2DTensor********",LogLevel->2];
+        Puts["********GetDiffFrom2DTensor********",LogLevel->5];
         {eval,evec} = Eigensystem[tensor];
         {Dx,Dy} = Sqrt[1/eval];
         alpha = ArcCos[evec[[1,1]]]/Degree*Sign[ArcSin[evec[[1,2]]]];
         alpha = Mod[alpha,180];
-        Puts["Dx: ",Dx," Dy: ",Dy," alpha: ",alpha,LogLevel->3];
+        Puts["Dx: ",Dx," Dy: ",Dy," alpha: ",alpha,LogLevel->5];
         Return[N@{Dx,Dy,alpha}]
     ];
 
 GetDiffFrom2DCovariance[covar_] :=
     Module[{evec,eval,Dx,Dy,alpha},
-        Puts["********GetDiffFrom2DTensor********",LogLevel->2];
+        Puts["********GetDiffFrom2DTensor********",LogLevel->5];
         {eval,evec} = Eigensystem[covar];
         {Dx,Dy} = eval/2;
         alpha = ArcCos[evec[[1,1]]]/Degree*Sign[ArcSin[evec[[1,2]]]];
         alpha = Mod[alpha,180];
-        Puts["Dx: ",Dx," Dy: ",Dy," alpha: ",alpha,LogLevel->3];
+        Puts["Dx: ",Dx," Dy: ",Dy," alpha: ",alpha,LogLevel->5];
         Return[N@{Dx,Dy,alpha}]
     ];
 

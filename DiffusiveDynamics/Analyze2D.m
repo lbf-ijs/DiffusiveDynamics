@@ -621,16 +621,26 @@ GetTensorFromMomentsWithNormalityTest[data_] :=
 		dist = MultinormalDistribution[{ux, uy}, {{a, c}, {c, b}}];
 
 		hypothesis=AndersonDarlingTest[data, dist, "HypothesisTestData",SignificanceLevel->$SignificanceLevel]; 
+        (*hypothesis=CramerVonMisesTest[data, dist, "HypothesisTestData",SignificanceLevel->$SignificanceLevel];*)
+        params=hypothesis["FittedDistributionParameters"];
+        If[params===Indeterminate, 
+            Print["Could not fit distribution parameters",data];
+            Return@ConstantArray[Missing[],7];
+          ];
+        {ux,uy,a,b,c}={uy,ux,a,b,c}/.params;
+
+        (*hypothesis=JarqueBeraALMTest[data,  "HypothesisTestData",SignificanceLevel->$SignificanceLevel]; 
+        params=hypothesis["FittedDistributionParameters"];
+        If[params===Indeterminate, 
+            Print["Could not fit distribution parameters",data];
+            Return@ConstantArray[Missing[],7];
+          ];
+        {ux,uy,a,c,b}={\[FormalX][1],\[FormalX][2],\[FormalY][1, 1],\[FormalY][1, 2],\[FormalY][2, 2]}/.params;*)
+		Print@{ux,uy,a,b,c};
 		(*Is normal distribution?*)
 		pVal=hypothesis["PValue"];
 		isNormal=hypothesis["ShortTestConclusion"] == "Do not reject";
 		(*Retrive the parameters*)
-		params=hypothesis["FittedDistributionParameters"];
-		If[params===Indeterminate, 
-		    Print["Could not fit distribution parameters",data];
-		    Return@ConstantArray[Missing[],7];
-		  ];
-		{ux,uy,a,b,c}={uy,ux,a,b,c}/.params;
 		
 		
 		(*The tensor is symmetric*)

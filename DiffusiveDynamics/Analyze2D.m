@@ -292,6 +292,43 @@ compiledSelectByMiddlePointUncompiled[]:=Block[{points,min,max,result,i,stride,c
 ];
 
   
+(*ClearAll[compiledSelectByMiddlePoint, compiledSelectByMiddlePointUncompiled];
+compiledSelectByMiddlePoint::usage="Selects steps whose middle point lies in the bin given by min/max. data is given as a list of points {t,x,y}";
+(*This is a bit of a mess, because all the other functions expect {t,x,y}, but here the t (point index) is redundant. 
+For compatibility with other functions (both upstream and downstram) it is however kept and accepts a list of {t,x,y}*)
+compiledSelectByMiddlePointUncompiled[]:=Block[{points,min,max,result,i,stride,cellWidth}, (*These are just for WB syntax highlighting*)
+    compiledSelectByMiddlePoint=Compile@@(Hold[{{points,_Real, 2},{min,_Real, 1},{max,_Real, 1}, {cellWidth,_Real, 1} ,{stride,_Integer, 0}},
+        Module[{resultBag=Internal`Bag[](*Empty real bag *), middlePoint={0.,0.}, step={0.,0.}, len=0},
+        Print["cellWidth: ", cellWidth];
+        (*loop over points*)  
+        Do[          
+          Print["iteration: ", i];
+          step=points[[i+stride]]-points[[i]]; Print["Step: ", step];   
+          (*Take care of steps that went over periodic conditions (out of the unit cell)*)
+          
+          step[[2]]=MakeInPeriodicCell[step[[2]], cellWidth[[1]]];
+          step[[3]]=MakeInPeriodicCell[step[[3]], cellWidth[[2]]];  
+          Print["Step after periodic:", step];  
+          
+          middlePoint=points[[i]]+0.5*step; Print["middlePoint: ",middlePoint];      
+
+          If[compiledSelectBinFunc[middlePoint,min,max],
+             Print["Is in!"];
+             Internal`StuffBag[resultBag, Internal`Bag[ step[[{2,3}]] ]];
+             len=len+1;(*Internal`BagLength is not compilable. Must track manually*)
+                      
+            ];   
+        ,{i,1,Length@points-stride,stride}];
+        
+        (*Return stuffed vectors*)
+        Table[Internal`BagPart[Internal`BagPart[resultBag, i], All], {i, 1, len}]
+        ]
+        ,   CompilationTarget->$Analyze2DCompilationTarget,
+            CompilationOptions->{"ExpressionOptimization"->True,"InlineCompiledFunctions"->True,"InlineExternalDefinitions"->True},
+            "RuntimeOptions"->"Speed"] //.stripPrint(*Compile*))
+];*)
+  
+  
 (*The delayed definition := is just a trick to compile functions on first use. makes packages load quicker*)	
 ClearAll[compiledSelectBinUncompiled];
 compiledSelectBinUncompiled[]:= Block[{points,min,max},   (*This block is just for syntax coloring in WB*) 
@@ -550,7 +587,7 @@ GetDiffsFromSteps[data_,dt_,ds_] :=  Block[{$VerboseIndentLevel = $VerboseIndent
         Puts["***GetDiffsFromSteps***"];
         If[ Length[data]>10, (*If enough steps then*)
             (*TODO: Perhaps add option to choose if we want the normality test and which test is wanted *)
-            (*{ux,uy,rDx,rDy,rDa} = GetTensorFromMoments[data];*)
+            (*{ux,uy,sx,sy,rDa} = GetTensorFromMoments[data];*)
             {ux,uy,sx,sy,rDa,pVal,isNormal}=GetTensorFromMomentsWithNormalityTest[data];
             If[Not[NumericQ@ux && NumericQ@uy && NumericQ@sx && NumericQ@sy && NumericQ@rDa], 
                 Print["Some of the returned values are not numeric: ",{ux,uy,sx,sy,rDa}]; 
@@ -617,10 +654,10 @@ isNormal -- Is this a normal distribution according to AndersonDarlingTest
 Options[GetTensorFromMomentsWithNormalityTest]={HoldFirst};
 GetTensorFromMomentsWithNormalityTest[data_] :=
     Module[ {ux,uy,a,b,c,eval,evec,sx,sy,alpha,dist,hypothesis,params,pVal, isNormal},
-		
-		dist = MultinormalDistribution[{ux, uy}, {{a, c}, {c, b}}];
+        
+        dist = MultinormalDistribution[{ux, uy}, {{a, c}, {c, b}}];
 
-		hypothesis=AndersonDarlingTest[data, dist, "HypothesisTestData",SignificanceLevel->$SignificanceLevel]; 
+        hypothesis=AndersonDarlingTest[data, dist, "HypothesisTestData",SignificanceLevel->$SignificanceLevel]; 
         (*hypothesis=CramerVonMisesTest[data, dist, "HypothesisTestData",SignificanceLevel->$SignificanceLevel];*)
         params=hypothesis["FittedDistributionParameters"];
         If[params===Indeterminate, 
@@ -636,14 +673,14 @@ GetTensorFromMomentsWithNormalityTest[data_] :=
             Return@ConstantArray[Missing[],7];
           ];
         {ux,uy,a,c,b}={\[FormalX][1],\[FormalX][2],\[FormalY][1, 1],\[FormalY][1, 2],\[FormalY][2, 2]}/.params;*)
-		Print@{ux,uy,a,b,c};
-		(*Is normal distribution?*)
-		pVal=hypothesis["PValue"];
-		isNormal=hypothesis["ShortTestConclusion"] == "Do not reject";
-		(*Retrive the parameters*)
-		
-		
-		(*The tensor is symmetric*)
+        Print@{ux,uy,a,b,c};
+        (*Is normal distribution?*)
+        pVal=hypothesis["PValue"];
+        isNormal=hypothesis["ShortTestConclusion"] == "Do not reject";
+        (*Retrive the parameters*)
+        
+        
+        (*The tensor is symmetric*)
         {eval,evec} = Eigensystem[{{a,c},{c,b}}];
         (*return standard deviation of principle components*)
         {sx,sy} = Sqrt[eval];
@@ -653,6 +690,7 @@ GetTensorFromMomentsWithNormalityTest[data_] :=
         alpha = Mod[alpha,180];
         Return[{ux,uy,sx,sy,alpha,pVal,isNormal}]
     ];
+
 
 
 ClearAll[MinAbs];

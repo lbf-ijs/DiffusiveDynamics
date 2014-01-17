@@ -83,6 +83,7 @@ SaveDiffusions::usage="SaveDiffusions[name, diffs, opts]. \n Saves the diffusion
 ClearAll[EstimateDiffusionError];
 EstimateDiffusionError::usage="";
 
+EstimateDiffusionErrorAndSave::usage="";
 GetDiffusionsRMSD::usage="";
 
 Begin["`Private`"]
@@ -1113,7 +1114,7 @@ Module[ {diffdata,metadata, rawsteps,iopts=opts},
         metadata="Metadata"/.diffs;
         rawsteps="RawSteps"/.diffs;
         
-        SaveDiffusions[name,diffdata, {"Metadata"->metadata,"RawSteps"->rawsteps}~Join~iopts];
+        SaveDiffusions[name,diffdata, {"Metadata"->metadata,"RawSteps"->rawsteps}~Join~iopts]
   (*diffs must contain rule for metadata and for diffusions*)
 ]/; (And[MemberQ[#, "Metadata"], MemberQ[#, "Diffusions"]]&[diffs[[All,1]]]);
 
@@ -1276,7 +1277,7 @@ Module[{diffData, diffErrorsMeta, diffErrors},
 	     
    {"Diffusions"->diffErrors,"Metadata"->diffErrorsMeta}
   (*Test that all diffusions have metadata and diffusion rules*)
-]]/;And @@ (And[MemberQ[#, "Metadata"], MemberQ[#, "Diffusions"]] & /@ diffDataWithMeta[[All, All, 1]]);
+]]/; And @@ (And[MemberQ[#, "Metadata"], MemberQ[#, "Diffusions"]] & /@ diffDataWithMeta[[All, All, 1]]);
 
 EstimateDiffusionError[diffDirNames:{_String..},opts:OptionsPattern[]]:=
 Block[ {$VerboseIndentLevel = $VerboseIndentLevel+1},
@@ -1287,7 +1288,7 @@ Module[{},
     (*Ensure all dirs exist*)
     Assert[And@@(FileExistsQ/@diffDirNames)];
     
-    EstimateDiffusionError[LoadDiffusions/@diffDirNames,opts];
+    EstimateDiffusionError[LoadDiffusions/@diffDirNames,opts]
 ]]
 
 EstimateDiffusionError[parentDir_String,opts:OptionsPattern[]]:=
@@ -1297,7 +1298,7 @@ Module[{dirs},
     PutsOptions[EstimateDiffusionError, {opts}, LogLevel -> 3];   
     dirs=Select[FileNames@FileNameJoin@{parentDir,"*"},DirectoryQ];
     dirs=DeleteCases[dirs,OptionValue["DeleteCases"]];
-    EstimateDiffusionError[dirs,opts];
+    EstimateDiffusionError[dirs,opts]  
 ]]
 
 
@@ -1319,7 +1320,7 @@ Module[{diffFile},
    SaveDiffusions[targetDir,EstimateDiffusionError[parentDir]]    
 ];
 
-EstimateDiffusionErrorAndSave[parentDir_String]:=EstimateDiffusionErrorAndSave[parentDir,parentDir];
+EstimateDiffusionErrorAndSave[parentDir_String]:=EstimateDiffusionErrorAndSave[parentDir,parentDir]
 
 EstimateDiffusionErrorAndSave[else___]:=Throw["Wrong arguments for EstimateDiffusionErrorAndSave",ToString@Short@else];
 

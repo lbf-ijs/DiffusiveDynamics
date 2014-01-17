@@ -281,7 +281,7 @@ compiledSelectByMiddlePointUncompiled[]:=Block[{points,min,max,result,i,stride,c
              len=len+1;(*Internal`BagLength is not compilable. Must track manually*)
                       
             ];   
-        ,{i,Length@points-stride}];
+        ,{i,1,Length@points-stride,stride}];
         
         (*Return stuffed vectors*)
         Table[Internal`BagPart[Internal`BagPart[resultBag, i], All], {i, 1, len}]
@@ -673,7 +673,7 @@ GetTensorFromMomentsWithNormalityTest[data_] :=
             Return@ConstantArray[Missing[],7];
           ];
         {ux,uy,a,c,b}={\[FormalX][1],\[FormalX][2],\[FormalY][1, 1],\[FormalY][1, 2],\[FormalY][2, 2]}/.params;*)
-        Print@{ux,uy,a,b,c};
+        
         (*Is normal distribution?*)
         pVal=hypothesis["PValue"];
         isNormal=hypothesis["ShortTestConclusion"] == "Do not reject";
@@ -1061,13 +1061,13 @@ TransposeDiffusion[args___]:=(Message[TransposeDiffusion::wrongargs,Shallow@args
 
 
 Options[SaveDiffusions] = {"Metadata" -> Automatic, 
-   "Description" -> "", "RawSteps" -> None, "OverrideExisting" -> True,
+   "Description" -> "", "RawSteps" -> None, "OverrideExisting" -> False,
                         "DiffusionsFileName" -> "diffusions.mx.gz",
                         "MetadataFileName" -> "metadata.m",
                         "RawStepsFileName" -> "rawSteps.mx.gz",
                         "Title"->"",
                         "Description" -> ""};
-SaveDiffusions[name_, diffs_, opts : OptionsPattern[]] :=
+SaveDiffusions[name_String, diffs:diffInfosWithStride, opts : OptionsPattern[]] :=
     Block[ {dir, metadataTMP, diffusionsFN, metadataFN, rawStepsFN, 
       existingFileNames},
         Puts["***SaveDiffusions****"];
@@ -1075,11 +1075,11 @@ SaveDiffusions[name_, diffs_, opts : OptionsPattern[]] :=
         Quiet[dir = CreateDirectory@name;];
         (*So that we dont get diffrent files out of sync *)
         existingFileNames = FileNames@FileNameJoin@{dir, "*"};
-        PutsE[existingFileNames, LogLevel -> 1];
+        PutsE[existingFileNames, LogLevel -> 3];
         If[ OptionValue@"OverrideExisting",          
             DeleteFile@existingFileNames
         ,(*else*)
-            If[Length[existingFileNames] > 0,Throw["Files allready exist in " <> name]];
+            If[Length[existingFileNames] > 0,Print["Warning: Files allready exist in " <> name]];
         ];
         If[ dir === $Failed,
             Throw["Directory " <> name <> " could not be created"]
@@ -1104,8 +1104,20 @@ SaveDiffusions[name_, diffs_, opts : OptionsPattern[]] :=
            OptionValue["RawSteps"])}
     ];
 
+SaveDiffusions[name_String, diffs:{_Rule..}, opts : OptionsPattern[]] :=   
+Module[ {diffdata,metadata, rawsteps,iopts=opts},
+        Puts["***SaveDiffusions (in List)****"];
+        PutsOptions[SaveDiffusions, {opts}, LogLevel -> 2]; 
+        
+        diffdata="Diffusions"/.diffs;
+        metadata="Metadata"/.diffs;
+        rawsteps="RawSteps"/.diffs;
+        
+        SaveDiffusions[name,diffdata, {"Metadata"->metadata,"RawSteps"->rawsteps}~Join~iopts];
+  (*diffs must contain rule for metadata and for diffusions*)
+]/; (And[MemberQ[#, "Metadata"], MemberQ[#, "Diffusions"]]&[diffs[[All,1]]]);
 
-
+SaveDiffusions[else___]:=Throw["Wrong arguments for SaveDiffusions",ToString@Short@{else}];
  
 
 Options[LoadDiffusions] = {"LoadMetadata" -> True, 
@@ -1130,7 +1142,7 @@ LoadDiffusions[name_, opts : OptionsPattern[]] :=
     metadata = If[OptionValue@"LoadMetadata",   Puts["Loading: ",metadataFN];  Import[metadataFN]];
     diffs    = If[OptionValue@"LoadDiffusions", Puts["Loading: ",diffusionsFN];Import[diffusionsFN]];
     rawSteps = If[OptionValue@"LoadRawSteps",   Puts["Loading: ",rawStepsFN];  Import[rawStepsFN]];
-      {"Metadata" -> metadata,
+      { "Metadata" -> metadata,
         "Diffusions" -> diffs,
         "RawSteps" -> rawSteps}
     
@@ -1207,12 +1219,21 @@ ClearAll@EstimateDiffusionError
 Options@EstimateDiffusionError={
             "Quantities"-> 
             {"Dx", "Dy", "Da", "ux", "uy", "sx", "sy", "PValue",  
-             "xMinWidth", "yMinWidth"}
+             "xMinWidth", "yMinWidth"},
+             "DeleteCases"->"actual"
             };
 
 EstimateDiffusionError::usage="EstimateDiffusionError[listOfDiffs] take a list of diffusions (must have same bins) and 
 calculates the averages and standard deviations for the given list of quantities (for example Dx, Dy...). 
-Returns a diffusions list, where Dx->Avg[{Dx...}] and DxError->StDev[{Dx...}]"
+Returns a diffusions list, where Dx->Avg[{Dx...}] and DxError->StDev[{Dx...}]
+
+EstimateDiffusionError[listOfDiffsWithMetadata] returns diffusion errors with metadata.
+
+EstimateDiffusionError[listOfDirNames] Loads the files and returns diffusion errors with metadata.
+
+EstimateDiffusionError[parentDirName] Loads the files in the parent directory and returns diffusion errors with metadata.
+
+"
 
 
 EstimateDiffusionError[diffs:listOfdiffInfosWithStride,opts:OptionsPattern[]]:=
@@ -1233,6 +1254,74 @@ Block[ {$VerboseIndentLevel = $VerboseIndentLevel+1, binIndex, q, strideIndex,
     Table[AverageOneDiffBin[diffs[[All,binIndex,strideIndex]],quan],{binIndex,binNum},{strideIndex,strideNum}]
    
 ];
+
+
+EstimateDiffusionError[diffDataWithMeta_List,opts:OptionsPattern[]]:=
+Block[ {$VerboseIndentLevel = $VerboseIndentLevel+1},
+Module[{diffData, diffErrorsMeta, diffErrors},     
+    Puts["***EstimateDiffusionError (Diffs with metadata)****"];
+    PutsOptions[EstimateDiffusionError, {opts}, LogLevel -> 2];   
+    
+    diffData ="Diffusions"/.diffDataWithMeta;
+	
+	diffErrors=EstimateDiffusionError[diffData];
+	(*Get the metadata of the first diff. Just change the titles. *)
+	(*TODO: Should do some error testing to ensure all diffs are the compatible*)
+	diffErrorsMeta = ("Metadata"/.First[diffDataWithMeta])
+	      (*remove possible serial number at the end*)
+	      /. Rule["Title", t_] :> Rule["Title", StringReplace[ToString@t, RegularExpression["(_|\\s)\\d+$"] -> ""]]
+	      (*Append description*)
+	      /. Rule["Description", d_] :> Rule["Description", ToString@d <> " Generated from " <> ToString@Length@diffDataWithMeta <> " runs"];
+    diffErrorsMeta=diffErrorsMeta~Join~{"NumberOfRuns"->Length@diffDataWithMeta};      
+	     
+   {"Diffusions"->diffErrors,"Metadata"->diffErrorsMeta}
+  (*Test that all diffusions have metadata and diffusion rules*)
+]]/;And @@ (And[MemberQ[#, "Metadata"], MemberQ[#, "Diffusions"]] & /@ diffDataWithMeta[[All, All, 1]]);
+
+EstimateDiffusionError[diffDirNames:{_String..},opts:OptionsPattern[]]:=
+Block[ {$VerboseIndentLevel = $VerboseIndentLevel+1},
+Module[{},     
+    Puts["***EstimateDiffusionError (List of dir names)****"];
+    PutsOptions[EstimateDiffusionError, {opts}, LogLevel -> 3];   
+    
+    (*Ensure all dirs exist*)
+    Assert[And@@(FileExistsQ/@diffDirNames)];
+    
+    EstimateDiffusionError[LoadDiffusions/@diffDirNames,opts];
+]]
+
+EstimateDiffusionError[parentDir_String,opts:OptionsPattern[]]:=
+Block[ {$VerboseIndentLevel = $VerboseIndentLevel+1},
+Module[{dirs},     
+    Puts["***EstimateDiffusionError (Parent Dir name)****"];
+    PutsOptions[EstimateDiffusionError, {opts}, LogLevel -> 3];   
+    dirs=Select[FileNames@FileNameJoin@{parentDir,"*"},DirectoryQ];
+    dirs=DeleteCases[dirs,OptionValue["DeleteCases"]];
+    EstimateDiffusionError[dirs,opts];
+]]
+
+
+EstimateDiffusionError[else___]:=Throw["Wrong arguments for EstimateDiffusionError",ToString@Short@else];
+
+
+ClearAll@EstimateDiffusionErrorAndSave;
+Options[EstimateDiffusionErrorAndSave]={"SkipIfExists"->True};
+EstimateDiffusionErrorAndSave::usage="EstimateDiffusionErrorAndSave[parentDirName, targetDirName:Null] Gets diffusion error and saves it to target dir.";
+EstimateDiffusionErrorAndSave[parentDir_String,targetDir_String,opts:OptionsPattern[]]:=
+Module[{diffFile},
+   diffFile=FileNameJoin@{parentDir,"diffusions.mx.gz"};
+   If[FileExistsQ@diffFile,
+       If[OptionValue["SkipIfExists"],
+            Print["Skipping: "<>diffFile];Return[True];,
+            Print["Overwritng:"<>diffFile]
+       ];
+   ];
+   SaveDiffusions[targetDir,EstimateDiffusionError[parentDir]]    
+];
+
+EstimateDiffusionErrorAndSave[parentDir_String]:=EstimateDiffusionErrorAndSave[parentDir,parentDir];
+
+EstimateDiffusionErrorAndSave[else___]:=Throw["Wrong arguments for EstimateDiffusionErrorAndSave",ToString@Short@else];
 
 
 ClearAll@GetDiffusionsRMSD   

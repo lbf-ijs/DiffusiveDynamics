@@ -54,7 +54,7 @@ diffInfos = {diffInfoOneBin..};
 (*Definitions of list depth: {bins, stride, diffs}*)
 diffInfosWithStride = listOfListOfRules;
 (*Definitions of list depth: {set, bins, stride, diffs}*)
-listOfdiffInfosWithStride = {diffInfosWithStride..}; (*Spelling miste fix*)
+listOfdiffInfosWithStride = {diffInfosWithStride..}; (*Spelling mistake fix*)
 listOfDiffInfosWithStride = {diffInfosWithStride..};
 
 NumericOrSymbolQ=(NumericQ[#] ||Head[#]===Symbol)&;

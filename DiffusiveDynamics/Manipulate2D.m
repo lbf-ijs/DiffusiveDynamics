@@ -119,7 +119,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
        strideN = GetValues[{"Stride","StepsInBin"},binInfos[[binIndex]]];
        (*carefull. Null devided by anything will not match this*)
        allStrideNEmpty=And@@(MatchQ[#,Null]&/@strideN[[All,2]]);
-       strideN[[All,2]] = strideN[[All,2]]/1000.;
+       strideN[[All,2]] = N@Log[10,strideN[[All,2]]];
        strideA= GetValues[{"Stride","Da"},binInfos[[binIndex]]];
        
 
@@ -135,7 +135,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
        strideyPlot = ListPlot[stridey,FrameLabel->{"Stride","Dy"},strideplotopts];        
        strideAPlot = ListPlot[strideA,FrameLabel->{"Stride","Da"},PlotRange->{Automatic,{0,180}},strideplotopts];
        strideNPlot = If[allStrideNEmpty, Graphics[],
-                     ListPlot[strideN,FrameLabel->{"Stride","StepsInBin (x 1000)"},strideplotopts]];       
+                     ListPlot[strideN,FrameLabel->{"Stride","Log(StepsInBin)"},strideplotopts]];       
        
        If[OptionValue@"MarkNonNormal", (*then*)
            nonNormalX=Pick[stridex,normals,False];

@@ -186,7 +186,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
             Assert[Last@Dimensions@rwData==3,"Must be a list of triplets in the form {t,x,y}"];
             Assert[Length@Dimensions@rwData==3,"rwData must be a list of lists of triplets!"];
             Puts[Row@{"\ndt: ",dt,"\nmin: ",min,"\nmax: ",max,"\ncellMin: ",cellMin,"\ncellMax: ",cellMax},LogLevel->2];
-            PutsOptions[GetDiffusionInBin, {opts}, LogLevel->2];
+            PutsOptions[GetDiffusionInBinByMiddlePoint, {opts}, LogLevel->2];
             PutsE["original data:\n",rwData,LogLevel->5];
             Puts["Is packed original data? ",And@@Developer`PackedArrayQ[#]&/@rwData, LogLevel->5];
             CompileFunctionsIfNecessary[];
@@ -197,7 +197,11 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
 	            (*Get the vectors in bin*)
 	            m = MemoryInUse[]; mm=MaxMemoryUsed[];
 	            t = AbsoluteTiming[   
-	                   steps = Map[compiledSelectByMiddlePoint[#,min,max,cellwidth,stride]&,rwData];
+	                   If[OptionValue@"StepsOverlap",	                  
+	                       steps = Map[compiledSelectByMiddlePointWithOverlap[#,min,max,cellwidth,stride]&,rwData];
+	                   ,(*else*)
+	                       steps = Map[compiledSelectByMiddlePointNoOverlap[#,min,max,cellwidth,stride]&,rwData];
+	                   ];
 	                   steps = Join@@steps; (*Flatten[steps,1] unpacks the array!*)
 	             ];
 	            (*TMP`$steps[stride]=steps;*)
@@ -263,7 +267,37 @@ compiledSelectByMiddlePoint::usage="Selects steps whose middle point lies in the
 (*This is a bit of a mess, because all the other functions expect {t,x,y}, but here the t (point index) is redundant. 
 For compatibility with other functions (both upstream and downstram) it is however kept and accepts a list of {t,x,y}*)
 compiledSelectByMiddlePointUncompiled[]:=Block[{points,min,max,result,i,stride,cellWidth}, (*These are just for WB syntax highlighting*)
-    compiledSelectByMiddlePoint=Compile@@(Hold[{{points,_Real, 2},{min,_Real, 1},{max,_Real, 1}, {cellWidth,_Real, 1} ,{stride,_Integer, 0}},
+    compiledSelectByMiddlePointWithOverlap=Compile@@(Hold[{{points,_Real, 2},{min,_Real, 1},{max,_Real, 1}, {cellWidth,_Real, 1} ,{stride,_Integer, 0}},
+        Module[{resultBag=Internal`Bag[](*Empty real bag *), middlePoint={0.,0.}, step={0.,0.}, len=0},
+        Print["cellWidth: ", cellWidth];
+        (*loop over points*)  
+        Do[          
+          Print["iteration: ", i];
+          step=points[[i+stride]]-points[[i]]; Print["Step: ", step];   
+          (*Take care of steps that went over periodic conditions (out of the unit cell)*)
+          
+          step[[2]]=MakeInPeriodicCell[step[[2]], cellWidth[[1]]];
+          step[[3]]=MakeInPeriodicCell[step[[3]], cellWidth[[2]]];  
+          Print["Step after periodic:", step];  
+          
+          middlePoint=points[[i]]+0.5*step; Print["middlePoint: ",middlePoint];      
+
+          If[compiledSelectBinFunc[middlePoint,min,max],
+             Print["Is in!"];
+             Internal`StuffBag[resultBag, Internal`Bag[ step[[{2,3}]] ]];
+             len=len+1;(*Internal`BagLength is not compilable. Must track manually*)
+                      
+            ];   
+        ,{i,1,Length@points-stride}];
+        
+        (*Return stuffed vectors*)
+        Table[Internal`BagPart[Internal`BagPart[resultBag, i], All], {i, 1, len}]
+        ]
+        ,   CompilationTarget->$Analyze2DCompilationTarget,
+            CompilationOptions->{"ExpressionOptimization"->True,"InlineCompiledFunctions"->True,"InlineExternalDefinitions"->True},
+            "RuntimeOptions"->"Speed"] //.stripPrint(*Compile*));
+            
+    compiledSelectByMiddlePointNoOverlap=Compile@@(Hold[{{points,_Real, 2},{min,_Real, 1},{max,_Real, 1}, {cellWidth,_Real, 1} ,{stride,_Integer, 0}},
         Module[{resultBag=Internal`Bag[](*Empty real bag *), middlePoint={0.,0.}, step={0.,0.}, len=0},
         Print["cellWidth: ", cellWidth];
         (*loop over points*)  
@@ -291,7 +325,7 @@ compiledSelectByMiddlePointUncompiled[]:=Block[{points,min,max,result,i,stride,c
         ]
         ,   CompilationTarget->$Analyze2DCompilationTarget,
             CompilationOptions->{"ExpressionOptimization"->True,"InlineCompiledFunctions"->True,"InlineExternalDefinitions"->True},
-            "RuntimeOptions"->"Speed"] //.stripPrint(*Compile*))
+            "RuntimeOptions"->"Speed"] //.stripPrint(*Compile*))            
 ];
 
   
@@ -669,12 +703,16 @@ GetTensorFromMomentsWithNormalityTest[data_, ds_, stepsOverlap_] :=
         dist = MultinormalDistribution[{ux, uy}, {{a, c}, {c, b}}];
         
         params=EstimatedDistribution[data, dist] /. MultinormalDistribution[{ux_, uy_}, {{a_, c_}, {c_, b_}}] :> {ux, uy, a, b, c};
-        If[stepsOverlap, (*The steps are correlated and so the number of independent observations is in fact lower! *)
-            pVal=AndersonDarlingTest[RandomSample[data,Round[Length[data]/ds]]];
+        If[And[stepsOverlap,ds>1], (*The steps are correlated and so the number of independent observations is in fact lower! 
+                                    But always take at least 10 samples *)
+            pVal=AndersonDarlingTest[RandomSample[data,Max[Round[Length[data]/ds],10]]];
          ,(*else*)
             pVal=AndersonDarlingTest[data];
         ];
-                
+        (*Hack to clear memory wasted by AndersonDarlingTest *) 
+        CleariHypothesisTestFunctionMemory[];         
+        
+        
         If[Not@VectorQ[params, NumberQ],
             Print["Could not fit distribution parameters",data];
             Return@ConstantArray[Missing[],7];
@@ -924,7 +962,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
  cellRange The periodic cell limits {{minx,minY},{maxX, maxY}. If Null then taken form binSpec}*)
 
 Options[GetDiffusionInBins] := {"Parallel"->True,(*Use parallel functions*)
-							   "Method"->"Select", (*The method of binning. For now select is redone for each bin. GatherBy would bin the data only once, but is not yet implemented*) 
+							   "StepsToBinMethod"->"Pad", (*Pad, NoPad, MiddlePoint*) 
 							   "CellRange"->Automatic (*cell range in {{MinX,MinY},{MaxX,MaxY}}. If automatic, then calculated from binsOrBinSpec*)
 							   }~Join~Options[GetDiffusionInBin];
 Attributes[GetDiffusionInBins]={HoldFirst};
@@ -933,11 +971,13 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
     Module[ {},
             Puts["********GetDiffusionInBins********"];
             PutsOptions[GetDiffusionInBins,{opts},LogLevel->2];
-            Switch[OptionValue@"Method",
-            "Select",(*then*)
-            	GetDiffusionInBinsBySelect[rwData,dt,binSpec, FilterRules[{opts},Options@GetDiffusionInBinsBySelect]],
+            Switch[OptionValue@"StepsToBinMethod",
+            "Pad",(*then*)
+            	GetDiffusionInBinsBySelect[rwData,dt,binSpec, FilterRules[{"PadSteps" -> True}~Join~{opts},Options@GetDiffusionInBinsBySelect]],
+            "NoPad",(*then*)
+                GetDiffusionInBinsBySelect[rwData,dt,binSpec, FilterRules[{"PadSteps" -> False}~Join~{opts},Options@GetDiffusionInBinsBySelect]],
             "MiddlePoint", (*then*)
-                GetDiffusionInBinsByMiddlePoint[rwData,dt,binSpec, FilterRules[{opts},Options@GetDiffusionInBinsBySelect]],
+                GetDiffusionInBinsByMiddlePoint[rwData,dt,binSpec, FilterRules[{"PadSteps" -> False}~Join~{opts},Options@GetDiffusionInBinsBySelect]],
             "GatherBy", (*then*)
             	Assert[False, "GatherBy not yet implemented as method in GetDiffusionInBins"],
             _,(*else*)
@@ -1374,6 +1414,43 @@ Block[ {$VerboseIndentLevel = $VerboseIndentLevel+1,i,covars1,covars2,rmsdList,d
         Mean@rmsdList
      ]
 ];
+
+(*Distribution Fit Test leaks memory. This fixes it.*)
+ClearAll@CleariHypothesisTestFunctionMemory;
+CleariHypothesisTestFunctionMemory[] :=
+  DownValues@
+    Statistics`GoodnessOfFitTestingDump`iHypothesisTestFunction = 
+   Uncompress@
+    "1:eJztWktv4zYQtrOvPjZFu4cCfVwK9I1edlGgi/\
+bkxnESYJ3Ekbd76SG0RNlEaFElqWT978sRrZclOxyt7UWBXgiTGc4M5/\
+HNkMo3E3EVPux0OgqGV0zp8ABmH5vhKuG0TzlZ0CDsZounggeXRGsqI0v5oRmORBQwzcRy\
+6Q8zeJpow4356vpEiCCiSl2EA6bH1CxG034yj6/Z6SIWekYVU7A8SCK/\
+YJLp4z0zP8xGTYO+\
+mUo2SYAoldtLtJgbOb7d8sQMS93UD446zHQQPoDNIKaqT59oUmf8syPjI8I5lWEH9j8yw5\
++cRDf3TFNhj80wJNqfjez8q6rAV2wiiVxcn477fxGeUMxJPTDqeBFT7ylsIvOY07E4Tzi3\
+osAQHtXvy4sopx0UphP+TXhYlqZ+dGQUYIhjIpX6yZE4TFm7UgPxC/\
+WdIzVxppw4mzQg2pk2pnP1vSPtXexMSqbOpDF1J3Xnqm7DxxkUHIl5LJIoOH4bS0ObB/\
+QyRVARZgFmm3kMDE8uBt4HkM8AVTlwZ/qhIs9u/Qgwn8ac+LTHOe6ElWQvZlBCUkD7+/\
+fBy+e/uUf4OhYv3UO/\
+ag9EHuzOXQBXUFWeWxGg4FlY6NmLlrAGw4W0RffXZj2Mx31JNR0mXLNbIhnRtIysI5z/\
+UlEvNot6HW1LEBz2XOhavetmTj+lJMCB+KdL05ZVax8B6UbXFGIx8Ze1+\
+6mVdSmpzwAzUPALyXwWhSxielGZ7PMcePbbTBRoB3Lj1ZME+\
+rDXkSJzOmqHxlDCbZT90qz1CdXlCLok0ggzfZ/CRXmnAoePXIsKogDvDqS+\
+AB9k5z42NNCbiWhI9UyU8Mn4ZFMuo87yMMudHoce22y6NaTVDr9q0m59Bh1g2kZ79J+\
+ERj7Ny4f9e95mF+\
+sH9zkGAm5oFsiUFvei5cK5sRDyNpAWgJDpEFldu5ltr6hOzB3kMAWHABw0Z8ZctJ4qyxKS\
+d8keJA2qw2u4YLVitOK5Vl1K2k3b5mylmctC3sQ7M5BETQ1dxqx79AP44jr1qm269QPmnQ\
+vUpTdC3pj9BbDtFjeRQZnqOpYJDZ+\
+44hSioW7oLJvWvE8sSwl77flRMbbBBU2sG2K7DQbnkNCn3CTjEVFIte9TtPGBAOuFu7jRC\
+w8y5S9iwHcr8MsOXNOjYE0RxODH+sjPk6PBDbvrJlrZjkx3bqe07vl+Iom/\
+OBGEt1M0pjtX9FlDYyBkS3V3b9fDsvfrhv2vlh4E9ja8626sS2hEybmtxjAmv6qcal7DhF\
+SVVXO8Yt6Y2hbScpO8oRvDvSVCdf52QBjPnuOzzjudrKhaurvneXSeG2PU+OCDi0Nc/\
+rRPvfK5UwsXz9UurQpOzU45Ywppte4a7khnUXpX4cbW5oeJgEVvomik38Wv76D6nj3acAd\
+Bfjj6/ytRy69E3UzYkJmAj6beoQWCXhxz5pMJf8+u+LrRFaUqvkWnHOzZKbVHBvu4A+\
+2Bd8e0P9vnN7syLKXO/dwMjTYf7ekTRA0oVx93MRLWpHQNeNZBERjuDdOzpsvh/\
+h4O92T5/IloPJOUBCutEOqYuYGGJLZ8QVI12SGtjt9q0+/pbTm2eKUbMJn5CSRfCmX/\
+uWCPlgTLeVxols7wUbIZnlMo+SyDEsjlHE62Cu7dbYD7emXLrcu/n5/PiQ==";
+
 End[]
 
 EndPackage[]

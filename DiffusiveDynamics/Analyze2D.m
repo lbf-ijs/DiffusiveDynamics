@@ -150,12 +150,14 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
 
             
 
+           
             diffs = Map[With[{stepdelta = #},
                             GetDiffsFromBinnedPoints[data,rwData,dt,{min,max},{cellMin,cellMax}
-                            ,"Stride"->stepdelta
+                            ,"Stride"->stepdelta,"Verbose"->OptionValue["Verbose"]
                             ,"PadSteps"->OptionValue["PadSteps"],"PadOnlyShort"->OptionValue@"PadOnlyShort"
-                            ,"ReturnStepsHistogram"->OptionValue["ReturnStepsHistogram"]]
-                        ]&,sd];
+                            ,"StepsOverlap"->OptionValue@"StepsOverlap"
+                            ]
+            ]&,sd];
             diffs
         ]
 ]; 
@@ -205,7 +207,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
 	            
 	            Puts["Histogram of sizes:", Histogram["Sturges"],LogLevel->5];
 	           
-	            GetDiffsFromSteps[steps, dt, stride]~Join~{"Stride"->stride, "x"->bincenter[[1]], "y"->bincenter[[2]],
+	            GetDiffsFromSteps[steps, dt, stride, OptionValue@"StepsOverlap"]~Join~{"Stride"->stride, "x"->bincenter[[1]], "y"->bincenter[[2]],
                       "xWidth"->binwidth[[1]], "yWidth"->binwidth[[2]], "StepsInBin"->Length[steps], "dt"->dt,
                       "StepsHistogram"->If[ OptionValue["ReturnStepsHistogram"],
                                             N@HistogramList[steps,"Sturges","PDF"]
@@ -393,13 +395,14 @@ GetDiffsFromBinnedPoints[binnedIndInterval_,rwData_,dt_,{min_,max_},{cellMin_,ce
             steps = Developer`ToPackedArray@Flatten[
                     Table[GetStepsFromBinnedPoints[binnedIndInterval[[i]],rwData[[i]],dt,{min,max},{cellMin,cellMax} 
                             ,"Stride"->OptionValue["Stride"], "Verbose"->OptionValue["Verbose"]
-                            ,"PadSteps"->OptionValue["PadSteps"],"PadOnlyShort"->OptionValue@"PadOnlyShort"]
+                            ,"PadSteps"->OptionValue["PadSteps"],"PadOnlyShort"->OptionValue@"PadOnlyShort"
+                            ,"StepsOverlap"->OptionValue@"StepsOverlap"]
                           ,{i,Length[rwData]}]
                   ,1];
 
             PutsE["Steps:\n",steps,LogLevel->5];
 
-            GetDiffsFromSteps[steps,dt, OptionValue["Stride"]]~Join~{"Stride"->OptionValue["Stride"], "x"->bincenter[[1]], "y"->bincenter[[2]],
+            GetDiffsFromSteps[steps,dt, OptionValue["Stride"],OptionValue["StepsOverlap"]]~Join~{"Stride"->OptionValue["Stride"], "x"->bincenter[[1]], "y"->bincenter[[2]],
                       "xWidth"->binwidth[[1]], "yWidth"->binwidth[[2]], "StepsInBin"->Length[steps], "dt"->dt,
                       "StepsHistogram"->If[ OptionValue["ReturnStepsHistogram"],
                                             N@HistogramList[steps,"Sturges","PDF"]
@@ -415,7 +418,8 @@ Options[GetStepsFromBinnedPoints] = {"Verbose":>$VerbosePrint,  (*Log output*)
 						        "VerboseLevel":>$VerboseLevel,  (*The amount of details to log. Higher number means more details*)
                                 "Stride"->1.,                   (*Number of points between a step*)
                                 "PadSteps"->True,               (*if Stride steps should be added to each continous segment of the trayectory in bbin*)
-                                "PadOnlyShort"->True            (*Pad only intervals smaller or equal than ds (If PadSteps is true) *)};
+                                "PadOnlyShort"->True,           (*Pad only intervals smaller or equal than ds (If PadSteps is true) *)
+                                "StepsOverlap"->False          (*If true steps are calcualted as [i+stride]-[i], where i is incremented by 1. If False, i is incremented by stride*)};
 
 GetStepsFromBinnedPoints::zerodata =            "Zero data (empty list) in bin {`1`,`2`}! Returning empty list";
 GetStepsFromBinnedPoints[binnedIndInterval_,rwData_,dt_,{min_,max_},{cellMin_,cellMax_},opts:OptionsPattern[]] :=
@@ -479,7 +483,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
             PutsE["All data:\n",data,LogLevel->5];
             Puts["After getting data is it packed? ",Developer`PackedArrayQ@data,LogLevel->5];
             Puts["data is packed: ", And@@(Developer`PackedArrayQ[#]&/@data),LogLevel->2];
-            Puts[
+            Puts[ 
              Module[ {dp},
                  dp = StrideData[Flatten[data,1],5000];
                  (*dp=Tooltip[#[[{2,3}]],#[[1]]]&/@dp;*)
@@ -494,12 +498,16 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
            (*calculate the steps (diferences between consecutive points*)
             Puts["Before getting Diffrences",LogLevel->5];
            
-                       
-            data = (If[Length[#]<=ds,{},(*If less than ds steps, then return empty list*)
-                    Drop[#,ds]-Drop[#,-ds]])&/@data; (*UNPACKING here? *)
-            
+                      
+            If[OptionValue["StepsOverlap"],
+                data = (If[Length[#]<=ds,{},(*If less than ds steps, then return empty list*)
+                        Drop[#,ds]-Drop[#,-ds]])&/@data; (*UNPACKING here? *)
+            ,(*else*)
+                data = (If[Length[#]<=ds,{},(*If less than ds steps, then return empty list*)
+                           With[{d = #[[1;; Length@# ;; ds]]}, Rest@d - Most@d]])&/@data;
+            ];           
             (*This is not supported in mma 8.
-            BUG IN Differences??
+            BUG IN Differences, just crashes, while running out of memory
             If[$VersionNumber>=9,
                 data = Differences[#,1,ds]&/@data;
             ,(*else*)
@@ -512,8 +520,8 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
             
 
             
-            data = Developer`ToPackedArray[Flatten[data,1]]; (*UNPACKING here! *)
-
+(*            data = Developer`ToPackedArray[Flatten[data,1]]; (*UNPACKING here? *)*)
+            data = Developer`ToPackedArray[Join@@data];
             If[ Length[data]===0,(*then*)
                 Message[GetStepsFromBinnedPoints::zerodata,min,max];
                 Return[{}];
@@ -553,10 +561,9 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
 (************************************************************************)
 ClearAll[GetDifferences,GetDifferencesUncompiled];
 GetDifferencesUncompiled[] := Block[{l,ds}, 
-GetDifferences = Compile[{{l,_Real, 2},{ds,_Integer,0}},
-  Block[ {lr},
-      lr = {{}};
-      (*If[ds==1,(*then*)lr=Differences[l];];*)
+GetDifferencesWithOverlap = Compile[{{l,_Real, 2},{ds,_Integer,0}},
+  Block[ {lr= {{}}},      
+      (*If[ds==1,(*then*)lr=Differences[l];]; Diffrences seem to have some problems...*)
       If[ Length[l]>ds,(*if list is long enough then*)
           lr = Drop[l,ds]-Drop[l,-ds]
       ];
@@ -565,6 +572,9 @@ GetDifferences = Compile[{{l,_Real, 2},{ds,_Integer,0}},
  CompilationTarget->$Analyze2DCompilationTarget, 
    CompilationOptions->{"ExpressionOptimization"->True,"InlineExternalDefinitions"->True},
    "RuntimeOptions"->{"Speed","CompareWithTolerance"->True}];
+   
+
+      
 ];
 
 
@@ -579,7 +589,7 @@ Returns a list of replacement rules for higher flexibility.
 (*TODO: here it would be possible to get parameters using FindDistribution and MultinormalDistribution. 
 Or add a test for normality in any other way*) 
 Attributes[GetDiffsFromSteps]={HoldFirst};
-GetDiffsFromSteps[data_,dt_,ds_] :=  Block[{$VerboseIndentLevel = $VerboseIndentLevel+1},
+GetDiffsFromSteps[data_,dt_,ds_, StepsOverlap_] :=  Block[{$VerboseIndentLevel = $VerboseIndentLevel+1},
     Module[ {ux,uy,sx,sy,rDx,rDy,rDa,pVal,isNormal,
              xMinWidth,yMinWidth,allMissing,result},
         allMissing={"Dx"->Missing[],"Dy"->Missing[],"Da"->Missing[],"ux"->Missing[],"uy"->Missing[]y,"sx"->Missing[],"sy"->Missing[],
@@ -589,7 +599,7 @@ GetDiffsFromSteps[data_,dt_,ds_] :=  Block[{$VerboseIndentLevel = $VerboseIndent
         If[ Length[data]>10, (*If enough steps then*)
             (*TODO: Perhaps add option to choose if we want the normality test and which test is wanted *)
             (*{ux,uy,sx,sy,rDa} = GetTensorFromMoments[data];*)
-            {ux,uy,sx,sy,rDa,pVal,isNormal}=GetTensorFromMomentsWithNormalityTest[data];
+            {ux,uy,sx,sy,rDa,pVal,isNormal}=GetTensorFromMomentsWithNormalityTest[data, ds, StepsOverlap];
             If[Not[NumericQ@ux && NumericQ@uy && NumericQ@sx && NumericQ@sy && NumericQ@rDa], 
                 Print["Some of the returned values are not numeric: ",{ux,uy,sx,sy,rDa}]; 
                 result=allMissing;
@@ -653,32 +663,27 @@ isNormal -- Is this a normal distribution according to AndersonDarlingTest
 *)
 
 Options[GetTensorFromMomentsWithNormalityTest]={HoldFirst};
-GetTensorFromMomentsWithNormalityTest[data_] :=
-    Module[ {ux,uy,a,b,c,eval,evec,sx,sy,alpha,dist,hypothesis,params,pVal, isNormal},
+GetTensorFromMomentsWithNormalityTest[data_, ds_, stepsOverlap_] :=
+    Module[ {ux,uy,a,b,c,eval,evec,sx,sy,alpha,dist,pVal, isNormal, params},
         
         dist = MultinormalDistribution[{ux, uy}, {{a, c}, {c, b}}];
-
-        hypothesis=AndersonDarlingTest[data, dist, "HypothesisTestData",SignificanceLevel->$SignificanceLevel]; 
-        (*hypothesis=CramerVonMisesTest[data, dist, "HypothesisTestData",SignificanceLevel->$SignificanceLevel];*)
-        params=hypothesis["FittedDistributionParameters"];
-        If[params===Indeterminate, 
+        
+        params=EstimatedDistribution[data, dist] /. MultinormalDistribution[{ux_, uy_}, {{a_, c_}, {c_, b_}}] :> {ux, uy, a, b, c};
+        If[stepsOverlap, (*The steps are correlated and so the number of independent observations is in fact lower! *)
+            pVal=AndersonDarlingTest[RandomSample[data,Round[Length[data]/ds]]];
+         ,(*else*)
+            pVal=AndersonDarlingTest[data];
+        ];
+                
+        If[Not@VectorQ[params, NumberQ],
             Print["Could not fit distribution parameters",data];
             Return@ConstantArray[Missing[],7];
           ];
-        {ux,uy,a,b,c}={uy,ux,a,b,c}/.params;
+        {ux,uy,a,b,c}=params;
 
-        (*hypothesis=JarqueBeraALMTest[data,  "HypothesisTestData",SignificanceLevel->$SignificanceLevel]; 
-        params=hypothesis["FittedDistributionParameters"];
-        If[params===Indeterminate, 
-            Print["Could not fit distribution parameters",data];
-            Return@ConstantArray[Missing[],7];
-          ];
-        {ux,uy,a,c,b}={\[FormalX][1],\[FormalX][2],\[FormalY][1, 1],\[FormalY][1, 2],\[FormalY][2, 2]}/.params;*)
         
         (*Is normal distribution?*)
-        pVal=hypothesis["PValue"];
-        isNormal=hypothesis["ShortTestConclusion"] == "Do not reject";
-        (*Retrive the parameters*)
+        isNormal=pVal>$SignificanceLevel;
         
         
         (*The tensor is symmetric*)

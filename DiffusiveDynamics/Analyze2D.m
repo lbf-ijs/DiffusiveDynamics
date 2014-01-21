@@ -1351,21 +1351,43 @@ EstimateDiffusionError[else___]:=Throw["Wrong arguments for EstimateDiffusionErr
 
 
 ClearAll@EstimateDiffusionErrorAndSave;
-Options[EstimateDiffusionErrorAndSave]={"SkipIfExists"->True};
+Options[EstimateDiffusionErrorAndSave]={"SkipExisting"->True,"FakeRun"->False}~Join~Options@EstimateDiffusionError;
 EstimateDiffusionErrorAndSave::usage="EstimateDiffusionErrorAndSave[parentDirName, targetDirName:Null] Gets diffusion error and saves it to target dir.";
 EstimateDiffusionErrorAndSave[parentDir_String,targetDir_String,opts:OptionsPattern[]]:=
-Module[{diffFile},
-   diffFile=FileNameJoin@{parentDir,"diffusions.mx.gz"};
+Module[{diffFile, iOpts},
+   diffFile=FileNameJoin@{targetDir,"diffusions.mx.gz"};
    If[FileExistsQ@diffFile,
-       If[OptionValue["SkipIfExists"],
+       If[OptionValue["SkipExisting"],
             Print["Skipping: "<>diffFile];Return[True];,
             Print["Overwritng:"<>diffFile]
        ];
    ];
-   SaveDiffusions[targetDir,EstimateDiffusionError[parentDir]]    
+  
+   Print["Getting diffusion for: ", targetDir, " from: \n", parentDir];
+   If[Not@OptionValue@"FakeRun",  
+     iOpts=FilterRules[{opts},Options[EstimateDiffusionError]];
+     SaveDiffusions[targetDir,EstimateDiffusionError[parentDir,iOpts]]
+   ]    
 ];
 
-EstimateDiffusionErrorAndSave[parentDir_String]:=EstimateDiffusionErrorAndSave[parentDir,parentDir]
+EstimateDiffusionErrorAndSave[parentDir_String,opts:OptionsPattern[]]:=EstimateDiffusionErrorAndSave[parentDir,parentDir,opts];
+
+EstimateDiffusionErrorAndSave[diffDirNames:{_String..},targetDir_String,opts:OptionsPattern[]]:=
+Module[{diffFile,iOpts},
+   diffFile=FileNameJoin@{targetDir,"diffusions.mx.gz"};
+   If[FileExistsQ@diffFile,
+       If[OptionValue["SkipExisting"],
+            Print["Skipping: "<>diffFile];Return[True];,
+            Print["Overwritng:"<>diffFile]
+       ];
+   ];
+   
+   Print["Getting diffusion for: ", targetDir, " from: \n", diffDirNames];
+   If[Not@OptionValue@"FakeRun",
+      iOpts=FilterRules[{opts},Options[EstimateDiffusionError]];
+      SaveDiffusions[targetDir,EstimateDiffusionError[diffDirNames,iOpts]]
+   ];       
+];
 
 EstimateDiffusionErrorAndSave[else___]:=Throw["Wrong arguments for EstimateDiffusionErrorAndSave",ToString@Short@else];
 

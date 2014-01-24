@@ -419,7 +419,7 @@ Attributes[GetDiffsFromBinnedPoints]={HoldAll};
 Options[GetDiffsFromBinnedPoints] := {"Verbose":>$VerbosePrint,  (*Log output*)
 						        "VerboseLevel":>$VerboseLevel,(*The amount of details to log. Higher number means more details*)
                                 "Stride"->1., (*kdaj sta dva koraka zaporedna*)
-                                "ReturnStepsHistogram"->True}~Join~Options[GetStepsFromBinnedPoints];
+                                "ReturnStepsHistogram"->False}~Join~Options[GetStepsFromBinnedPoints];
 GetDiffsFromBinnedPoints[binnedIndInterval_,rwData_,dt_,{min_,max_},{cellMin_,cellMax_},opts:OptionsPattern[]] :=
     Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["VerboseLevel"],$VerboseIndentLevel = $VerboseIndentLevel+1},
         Module[ {steps, bincenter = (min+max)/2,binwidth = (max-min)},
@@ -1092,8 +1092,12 @@ TransposeDiffusion[diffInfo : {__Rule}] :=
       SwitchValueRule[diffInfo, "ux", "uy"],
       SwitchValueRule[diffInfo, "sx", "sy"],
       SwitchValueRule[diffInfo, "xWidth", "yWidth"],
-      SwitchValueRule[diffInfo, "yMinWidth", "xMinWidth"]
-      
+      SwitchValueRule[diffInfo, "xMinWidth", "yMinWidth"],
+      SwitchValueRule[diffInfo, "uxError", "uyError"],
+      SwitchValueRule[diffInfo, "sxError", "syError"],
+      SwitchValueRule[diffInfo, "xMinWidthError", "yMinWidthError"](*,
+      SwitchValueRule[diffInfo, "Dxx", "Dyy"], (*What about Dxy*)
+      SwitchValueRule[diffInfo, "DxxError", "DyyError"]*)
       }
       ];
 
@@ -1429,9 +1433,10 @@ Block[ {$VerboseIndentLevel = $VerboseIndentLevel+1,i,covars1,covars2,rmsdList,d
      If[Length@rmsdList===0, Return[Missing["To little points with valid diffusions"]]];
      rmsdList=df[#[[1]] , #[[2]] ]&/@rmsdList; 
      If[OptionValue["ReturnErrors"],
-            {Mean@rmsdList, (* Percentiles corresponding to +-sigma*)
-                {Mean@rmsdList-Quantile[rmsdList, 25/100, {{1/2, 0}, {0, 1}}], Mean@rmsdList-Quantile[rmsdList, 75/100, {{1/2, 0}, {0, 1}}]}}
-        
+         With[{mean=Mean@rmsdList},
+            {mean, (* Percentiles corresponding to +-sigma*)
+                {mean-Quantile[rmsdList, 25/100, {{1/2, 0}, {0, 1}}], mean-Quantile[rmsdList, 75/100, {{1/2, 0}, {0, 1}}]}}
+         ]
      ,(*else*)        
         Mean@rmsdList
      ]
@@ -1477,4 +1482,3 @@ End[]
 
 EndPackage[]
 
- 

@@ -478,8 +478,10 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
         fillStyle=If[#===Automatic,None,#]&@OptionValue["FillStyle"];
         Puts["plotStyle: ",plotStyle];
         Puts["fillStyle: ",fillStyle];
-        values=GetValues[{"x","y","Dx","Dy","Da"},diffInfos];
-		
+		values=GetValues[{"x","y","Dx","Dy","Da"},diffInfos];
+		If[OptionValue@"TransposeDiffusions",
+            values=values/.{x_,y_,Dx_,Dy_,Da_}:>{y,x,Dx,Dy, Mod[90-Da,180]};  
+		];
 
 		Puts["Length of values: "Length@values,LogLevel->3];
 		PutsE["DiffValues:\n",values,LogLevel->5];

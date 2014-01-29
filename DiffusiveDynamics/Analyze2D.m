@@ -489,7 +489,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
             If[ OptionValue["PadSteps"], (*then*)
                 (*Expand the intervals. Unions are automagically preformed*)
                 
-                If[ OptionValue@"PadOnlyShort", (*Hmm, mogoèe bi lahko tukaj paddal samo toliko, da bi bila dolžina 2ds namesto last+2ds*)
+                If[ OptionValue@"PadOnlyShort", 
                     indpaths=If[(Last@# - First@#) <= ds, {First@# - ds, Last@# + ds}, #] & /@indpaths;
                      Puts["PaddingOnlyShort",LogLevel->5];
                 ,(*else*)

@@ -428,16 +428,18 @@ Get2DTensorRepresentation[tensor_,opt:OptionsPattern[]] :=
 ClearAll[WrapBinClickEventHandler];
 (*Must be HoldFirst, so binIndex emulates. HoldAll does not work becuase binsList does not get expanded!*)
 Attributes@WrapBinClickEventHandler=HoldFirst; 
-WrapBinClickEventHandler[binIndex_,binsList_,plot_]:=
+WrapBinClickEventHandler[binIndex_,binsList_,plot_,transpose_:False]:=
     MouseAppearance[EventHandler[plot,
      {{"MouseClicked", 1}:>Block[{pt},
          pt = MousePosition["Graphics"];
+
+         If[transpose,pt=Reverse@pt;];
          binIndex = GetBinIndexFromPoint[pt,binsList];
          (*Print["pt: ",pt, " binIndex: ",binIndex];*)
          If[ binIndex==-1,binIndex = 1];
      ]},PassEventsDown->False],"LinkHand"];                   
 
-
+ 
 (*takes a list of diffusion info rules and plots the tensor represntation in each bin*)
 Options[DrawDiffusionTensorRepresentations] := {
                                     "FillStyle"->Automatic,
@@ -479,8 +481,10 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
         Puts["plotStyle: ",plotStyle];
         Puts["fillStyle: ",fillStyle];
 		values=GetValues[{"x","y","Dx","Dy","Da"},diffInfos];
+		bins=GetValues[{{"x", "y"}, {"xWidth", "yWidth"}},diffInfos];
 		If[OptionValue@"TransposeDiffusions",
-            values=values/.{x_,y_,Dx_,Dy_,Da_}:>{y,x,Dx,Dy, Mod[90-Da,180]};  
+            values=values/.{x_,y_,Dx_,Dy_,Da_}:>{y,x,Dx,Dy, Mod[90-Da,180]}; 
+            bins=bins/. {{x_, y_}, {xWidth_, yWidth_}}:>{{y, x}, {yWidth, xWidth}};
 		];
 
 		Puts["Length of values: "Length@values,LogLevel->3];
@@ -499,7 +503,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
             ,(*else return empty list*){}];
             (*Todo: should perhaps delete the normal reps?*)
             
-        bins=GetValues[{{"x", "y"}, {"xWidth", "yWidth"}},diffInfos];
+        
         
         cellRange=If[#===Automatic, GetCellRangeFromBins@bins,#]&@OptionValue@"CellRange";
         plotRange=If[#===Automatic, Transpose@cellRange,#]&@OptionValue@PlotRange;
@@ -535,7 +539,8 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
         	,PlotRange->plotRange,AspectRatio->aspectRatio,FilterRules[{opts}~Join~Options@DrawDiffusionTensorRepresentations,Options@Graphics]];
         
         If[ OptionValue@"Clickable",
-            reps = WrapBinClickEventHandler[binIndex,bins,reps];
+            
+            reps = WrapBinClickEventHandler[binIndex,bins,reps,OptionValue@"TransposeDiffusions"];
         ];          	
         reps	
     ]
@@ -562,11 +567,15 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
                 "MarkSelectedBin"-> (OptionValue@"MarkSelectedBin" && i==1 ),
                 "MarkedBinDynamic"->(OptionValue@"MarkSelectedBin" && i==1 && OptionValue@"Clickable"), opts]
             ,{i,Length@diffInfos}];
-        
+         
         
         If[ OptionValue@"Clickable",
-            bins=GetValues[{{"x", "y"}, {"xWidth", "yWidth"}},First@diffInfos];
-            plots = WrapBinClickEventHandler[binIndex,bins,plots];
+            If[OptionValue@"TransposeDiffusions",
+                bins=GetValues[{{"x", "y"}, {"xWidth", "yWidth"}},First@diffInfos];
+            ,(*else*)
+                bins=GetValues[{{"y", "x"}, {"yWidth", "xWidth"}},First@diffInfos];
+            ];    
+            plots =  WrapBinClickEventHandler[binIndex,bins,plots,OptionValue@"TransposeDiffusions"];
         ];              
         plots    
              

@@ -4,7 +4,7 @@ A set of packages to calculate position-dependent diffusion coefficients in one 
 
 ## Installation
 ### Automatic installation
-Download the zip file of the repository (link in the lower right corner). Extract the file to any location, open `Install.m` with *Mathematica* and click on the `Run Package` botton in the upper right corner of the notebook. This will install and load the `DiffusiveDynamics` package automatically. 
+Download the [zip file](https://github.com/lbf-ijs/DiffusiveDynamics/archive/master.zip) of the repository. Extract the file to any location, open `Install.m` with *Mathematica* and click on the `Run Package` botton in the upper right corner of the notebook. This will install and load the `DiffusiveDynamics` package automatically. 
 
 ### Manual installation 
 The package can also be installed manually. Copy the `DiffusiveDynamics` subdirectory to the `$UserBaseDirectory/Applications` directory. The full path to the directory can be obtained (and copied to the clipboard)  by running this *Mathematica* commands:

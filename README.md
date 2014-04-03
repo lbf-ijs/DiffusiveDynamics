@@ -94,4 +94,4 @@ Tuturials are available in the `Tutorials` folder. For the courious here is a qu
 This code works under *Mathematica* 9. Due some strange memory leaks *Mathematica* 8 is currently not supported. A trial version of Mathematica can be obtained [here](http://www.wolfram.com/mathematica/trial/).
 
 ## Terms of use
-The code is licensed under [GPLv3](http://www.gnu.org/licenses/gpl-3.0.html). Copyright (C) 2013 Ajasja Ljubetič. In puiblished work which uses this package please cite [*ref to be included later...*].
+The code is licensed under [GPLv3](http://www.gnu.org/licenses/gpl-3.0.html). Copyright (C) 2013 Ajasja Ljubetič. In puiblished work which uses this package please cite [Ljubetič et al, J. Chem. Phys. 140, 084109 (2014)](http://dx.doi.org/10.1063/1.4866448).

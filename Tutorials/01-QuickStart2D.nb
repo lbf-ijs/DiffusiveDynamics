@@ -3208,28 +3208,28 @@ Cell[BoxData[
  CellTags->"Info3592637682-9805674"],
 
 Cell[BoxData[
- StyleBox[
-  "\"\<ParallelGenerateDiffusionTrajectory2D[steps, DiffX, DiffY, DiffA, F, \
-kT, dt, {min,max},opt]\\nGenerates a 2D diffusive process where the difusion \
-tensor and energy optionally depend on the location of the particle. \\nUses \
-\\\"ProcessCount\\\" threads to generate  \\\"ProcessCount\\\" independent \
-trajectories.\\n\\nsteps      -- number of steps to perform\\nDiffX[x,y] -- a \
-Function or CompiledFunction giving the difusion in the X and Y principal \
-direction\\nDiffY[x,y] -- as above for the Y direction\\nDiffA[x,y] -- a \
-Function or CompiledFunction giving the rotation of the principal \
-direction\\nF[x,y]     -- Free Energy as a function of position (must be \
-either a Function or CompiledFunction)\\nkT         -- set the temparature in \
-units of kT (thermal energy = boltzman konstant* temperature\\ndt         -- \
-the time size of one step\\nmin        -- the minimum sizes of the periodic \
-cell {minX, minY}\\nmax        -- the maximum sizes of the periodic cell \
-{maxX, maxY}\\n\\n\\nOPTIONS:\\n\\\"ProcessCount\\\"-> 2$ProcessorCount -- \
-Number of independent difussion processe that get started in seperate threads\
-\\n\\\"InitialPositions\\\"->Automatic     -- takes a list of points or the \
-default, Automatic, which generates uniformly randommly distributed points in \
-the cell\\n\\\"RandomSeeds\\\"->Automatic          -- takes a list of random \
-seeds used to generate each trajectory.\\n\\\"Verbose\\\"->False            \
--- Log output\\n\\\"VerboseLevel\\\"->3           -- Verbosity of the output  \
-\\n\\nSee also GenerateDiffusionTrajectory2D for further info.\\n\>\"", 
+ StyleBox["\<\"ParallelGenerateDiffusionTrajectory2D[steps, DiffX, DiffY, \
+DiffA, F, kT, dt, {min,max},opt]\\nGenerates a 2D diffusive process where the \
+difusion tensor and energy optionally depend on the location of the particle. \
+\\nUses \\\"ProcessCount\\\" threads to generate  \\\"ProcessCount\\\" \
+independent trajectories.\\n\\nsteps      -- number of steps to \
+perform\\nDiffX[x,y] -- a Function or CompiledFunction giving the difusion in \
+the X and Y principal direction\\nDiffY[x,y] -- as above for the Y \
+direction\\nDiffA[x,y] -- a Function or CompiledFunction giving the rotation \
+of the principal direction\\nF[x,y]     -- Free Energy as a function of \
+position (must be either a Function or CompiledFunction)\\nkT         -- set \
+the temparature in units of kT (thermal energy = boltzman konstant* \
+temperature\\ndt         -- the time size of one step\\nmin        -- the \
+minimum sizes of the periodic cell {minX, minY}\\nmax        -- the maximum \
+sizes of the periodic cell {maxX, maxY}\\n\\n\\nOPTIONS:\\n\\\"ProcessCount\\\
+\"-> 2$ProcessorCount -- Number of independent difussion processe that get \
+started in seperate threads\\n\\\"InitialPositions\\\"->Automatic     -- \
+takes a list of points or the default, Automatic, which generates uniformly \
+randommly distributed points in the cell\\n\\\"RandomSeeds\\\"->Automatic     \
+     -- takes a list of random seeds used to generate each \
+trajectory.\\n\\\"Verbose\\\"->False            -- Log \
+output\\n\\\"VerboseLevel\\\"->3           -- Verbosity of the output  \
+\\n\\nSee also GenerateDiffusionTrajectory2D for further info.\\n\"\>", 
   "MSG"]], "Print", "PrintUsage",
  CellTags->{"Info3592637682-9805674", "Info3592728476-1688790"}]
 }, Open  ]],
@@ -3381,7 +3381,187 @@ g5cCZTgx0e0jT1FhEBGa+W4yeEa8b3GMV6G/4L1xyEuK/wEEr+hA
    190.65272364958514`}},
   PlotRangeClipping->True,
   PlotRangePadding->{{2.3605373826687357`, 2.3605373826687357`}, {
-   1.515313296771292, 1.515313296771292}}]], "Output"]
+   1.515313296771292, 
+   1.515313296771292}}]], \
+"Output",ImageCache->GraphicsData["CompressedBitmap", "\<\
+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
+5ecliazNhIEJrQuYHl8FWo5e2+rLXwtVwiBjCoiH33FqNIWgwVB/8o3bTLxp
+rPsKI1x/ShOY49j4yxLh2nzNWTAUKR5T5yp8JwpsG2ycFuh3LdIOq5t9ie+6
+q40sngqhzs6bSH5ZIjoXg7AIrcjj6OrMuNRigpiV1/Ipy0saQSEjZtfetaTI
+NzY2iwVSG+fNJP9AIi0tANl2iQzb2JouBNGnVWsr16jtrxZd/N0dRsi084oi
+Pec0njuDbESE2E7FExam3hfsrnSXFdIZ1d2UcHBfJazsHhkR2TR3TvXdJaBS
+doZrmfEKRrCzGkHx7wcTr76vUloqdf1FhILNOQk7FIkYwWTl1quVBxCktLVT
+dSG7ZIiEKLHj3sKXJ3w5KVF+UVGZ0yxeZ02C2LWbQYut708Iu60XkcCbkwpQ
+d4O9Py87rZ2Ke9WQYsxSXy6QnGuItdgdOJ2bMOfESn7Jt9uGMStFWH7BY/ac
+tn0GOSiPLp4XmYNHX+7h+y3uExMv23GZ5LmJFp2Y+DCNo+SCSRZtov2CJGhG
+jHlZ/vZCab3CS0DwtSSsXP0B6A4VMcclCnVL0zh0KZNlZmJeXKfUZYb3rG1l
+3R1LCgAIxqI2spOXEEAleCAb32BoX23iK0vQZ2/VsHJF/S3tPD+vuuCSBjmh
+eqqy16BuZVezJJtBPbjpq0i5bvP70OYVZe5m4A/sxRNYZamvQcJ3rEECxbUa
+aslXI/j6oVCL3EH1+e2iC6eudyS6rya87JfwXfajSYQJT6Uxa8tbKjRs38sa
+LRCDUVi4V8oFt/TYhz9ZyOvKs+OvHQ70/HaJB37sSHzJaq/l+T16XSePPem8
+VMLWVsvgNJpzvzg7MYr+d7fTc0GCe3Zf8Y5Evrujafqzq5lp7ttOUNme/FAv
+htnl1SFaWk1mlN11AqDqDJY02V+8OV7PqqiBClbJid35a8sFswuqgZcUgFso
+NO+IDs/2JGxsXNbBl/ge207jsVMx9o571F+RgDRvHPYwVxMJ70m89pO9oAIX
+DFQ4D7KaULwnQakD1IUJVXZ3e7gqd6VKu1npE+rw+0FlVIXbBmxVG+ZmmztC
+ePZEU3le2U5LtmxO7rmKQJ9op0XXuWPWs/Gl9zNJmm3KRR1fPs1PurNsRkB1
+byKKDrReUFkMVum+kBb0MLvOlx7t1F+P8Zd4F/Nwc20RV1bvbmvbUA3xNUWR
+1w018kpz/NBvtgLScEkOE3CHDoSwgvy0hKWLiVQN3xDVE9/2+r95fio3W3vq
+bp6cvc+Q7ih+CeqZ/bBBN9Lz/thshvTZ3UhnZ/inifIa0iFqJtLtF9rN8dOt
+Nd/00u2Y+t+F2pewN6shO7YD03b2zvGDpyl7dTUx8ZtIHmlbxoZJ2R1pL/I3
+pMOk3I30nL8MmiJ9QTfSthoKsc4oUeRjE+5Xb5ElTOb4Wc3MW7yyHV+ow3EJ
+k0eJDruTjqU2Jjv48LV2p/zq7Zj4PcNjEs61H2pe4TTjk7qsHPGrRQkIzJWE
+vaSvOkwF0deqATdP53gcB0cl7LJDBl4nuejiAQMfODNH5ja5Fv2SkTfq+WX6
+qAf/9NKsbkqsOIrshlDL4Rc9gjJmgI3poeTINdZaxnu/QOfND8yLMBbr0Ae9
+dWySYQm6DRAvvuO2KU9AYl4HgvgO+mFpWMyK4LoWKsnieMjfdZMWX2lH6E0R
+IZLGi/1UCDsAwe+QMZbxuym8aqcUuqlbmABxvxzlfXGPtyOlbnSFO6dEijkU
+LuX9lhYPyfjjJOinSCz69Bl305kblQNL7cjocbchlxGiEBYRc1UmayXzgskR
+7JJKFi/ypaYNXlLdTDlydmIF0DwvwNyotPuTdrwvrc3LsxMSr+zK4HkYevDH
+7cNenwzhrizgjz0OHusZQvKRFlNCkCWa+MI8Hc0N0xrFuh9tMvb62qgZaFMi
+4ik/30ttmHttCO5VCoMPcwijm/snMsSjvUOEEMUduS33rfaxLv2hryFdoPDi
+i71DJId8h/z5LpGDl7yXQ5jRTOt4bF8+9Wtdct4wFjeYPbScWmLlfrw0u39n
+W8tPp80iQB4WFX03D9J97dnmeo0Q59hHVrhhj4c7KFDgLxvI9iiVP1rHO6zm
+jVIV8JgTGn2DrPEe74TqT3wQQncYr+c15HpHFodAxf6sE0w25OERN+SuhljO
+VzqhcTQPed7Y+YZqISVPQ2j5D5n4oLf7bF2EJP/+t/6y+uCI/wBHXPCM\
+\>"]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -6842,7 +7022,7 @@ CWmCYZa8+kWwo63PPHRdMqryfnn/Qq0IHbM3/r00wsL/AUHs7GI=
   PlotRangePadding->{{39.99475135980449, 39.99475135980449}, {
    19.999440229090542`, 19.999440229090542`}}]], "Output"]
 }, Open  ]]
-}, Closed]]
+}, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -6889,7 +7069,7 @@ Cell[BoxData[{
   RowBox[{"diffs", "=", 
    RowBox[{"GetDiffusionInBins", "[", 
     RowBox[{"rw", ",", "STEP", ",", "binSpec", ",", 
-     RowBox[{"\"\<PadSteps\>\"", "\[Rule]", "True"}], ",", 
+     RowBox[{"\"\<StepsToBinMethod\>\"", "\[Rule]", "\"\<Pad\>\""}], ",", 
      RowBox[{"\"\<Strides\>\"", "\[Rule]", "STRIDES"}], ",", 
      RowBox[{"\"\<Parallel\>\"", "\[Rule]", "True"}]}], "]"}]}], 
   ";"}]}], "Input"],
@@ -6972,25 +7152,25 @@ Cell[BoxData[
 Cell[BoxData[
  RowBox[{"{", 
   RowBox[{
-   RowBox[{"\<\"Dx\"\>", "\[Rule]", "12.620626465222172`"}], ",", 
-   RowBox[{"\<\"Dy\"\>", "\[Rule]", "8.03711628668131`"}], ",", 
-   RowBox[{"\<\"Da\"\>", "\[Rule]", "139.99068816032377`"}], ",", 
+   RowBox[{"\<\"Dx\"\>", "\[Rule]", "13.514454971401193`"}], ",", 
+   RowBox[{"\<\"Dy\"\>", "\[Rule]", "9.431142415556131`"}], ",", 
+   RowBox[{"\<\"Da\"\>", "\[Rule]", "105.41315231478154`"}], ",", 
    RowBox[{"\<\"ux\"\>", "\[Rule]", 
-    RowBox[{"-", "1.5785545800488707`"}]}], ",", 
-   RowBox[{"\<\"uy\"\>", "\[Rule]", "0.253630015910651`"}], ",", 
-   RowBox[{"\<\"sx\"\>", "\[Rule]", "50.24067369218325`"}], ",", 
-   RowBox[{"\<\"sy\"\>", "\[Rule]", "40.092683339186244`"}], ",", 
-   RowBox[{"\<\"PValue\"\>", "\[Rule]", "2.5804951571135954`*^-14"}], ",", 
-   RowBox[{"\<\"IsNormal\"\>", "\[Rule]", "False"}], ",", 
-   RowBox[{"\<\"xMinWidth\"\>", "\[Rule]", "230.8880393091205`"}], ",", 
-   RowBox[{"\<\"yMinWidth\"\>", "\[Rule]", "230.88803930912056`"}], ",", 
+    RowBox[{"-", "0.2931179755403458`"}]}], ",", 
+   RowBox[{"\<\"uy\"\>", "\[Rule]", "0.12243956407013605`"}], ",", 
+   RowBox[{"\<\"sx\"\>", "\[Rule]", "51.98933538986855`"}], ",", 
+   RowBox[{"\<\"sy\"\>", "\[Rule]", "43.43073201215041`"}], ",", 
+   RowBox[{"\<\"PValue\"\>", "\[Rule]", "0.8934603100053365`"}], ",", 
+   RowBox[{"\<\"IsNormal\"\>", "\[Rule]", "True"}], ",", 
+   RowBox[{"\<\"xMinWidth\"\>", "\[Rule]", "251.21232330147024`"}], ",", 
+   RowBox[{"\<\"yMinWidth\"\>", "\[Rule]", "251.21232330147024`"}], ",", 
    RowBox[{"\<\"Stride\"\>", "\[Rule]", "100"}], ",", 
    RowBox[{"\<\"x\"\>", "\[Rule]", 
     RowBox[{"-", "100.`"}]}], ",", 
    RowBox[{"\<\"y\"\>", "\[Rule]", "450.`"}], ",", 
    RowBox[{"\<\"xWidth\"\>", "\[Rule]", "200.`"}], ",", 
    RowBox[{"\<\"yWidth\"\>", "\[Rule]", "100.`"}], ",", 
-   RowBox[{"\<\"StepsInBin\"\>", "\[Rule]", "20484"}], ",", 
+   RowBox[{"\<\"StepsInBin\"\>", "\[Rule]", "269"}], ",", 
    RowBox[{"\<\"dt\"\>", "\[Rule]", "1"}], ",", 
    RowBox[{"\<\"StepsHistogram\"\>", "\[Rule]", "Null"}]}], "}"}]], "Output"]
 }, Open  ]],
@@ -7047,455 +7227,453 @@ Cell[BoxData[
    {EdgeForm[{RGBColor[0.24720000000000014`, 0.24, 0.6], Opacity[1]}], 
     FaceForm[None], 
     GeometricTransformationBox[
-     DiskBox[{-900., -450.}, {30.275894681998473`, 29.199828791044897`}], \
-{{{-0.9709106616706602, -0.2394420327641761}, {
-      0.2394420327641761, -0.9709106616706602}}, {-1881.5685102474736`, \
--671.4119682640386}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., -350.}, {29.64961673941153, 20.678453046589947`}], {{{
-      0.4745403398020774, -0.8802337563968613}, {0.8802337563968613, 
-      0.4745403398020774}}, {-780.9955089170319, 608.2994996879022}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., -250.}, {28.94981309937553, 17.565759091825573`}], {{{
-      0.6490724950184557, -0.7607265581077848}, {0.7607265581077848, 
-      0.6490724950184557}}, {-506.0163940103361, 596.9220260516203}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., -150.}, {30.303007829543557`, 20.197853342771484`}], {{{
-      0.7064442534036602, -0.7077686887910097}, {0.7077686887910097, 
-      0.7064442534036602}}, {-370.3654752553573, 592.9584579224578}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., -50.}, {31.161800295756876`, 30.467253581494266`}], {{{
-      0.51772519242022, -0.8555469742413015}, {0.8555469742413015, 
-      0.51772519242022}}, {-476.8246755338671, 745.8785364381824}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., 50.}, {39.32275321602623, 30.291840152853787`}], \
-{{{-0.574605276898967, -0.8184306786526647}, {
-      0.8184306786526647, -0.574605276898967}}, {-1376.223215276437, 
-      815.3178746323466}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., 150.}, {46.80535503993354, 29.468798827514263`}], \
-{{{-0.6444035793232447, -0.764685573916097}, {
-      0.764685573916097, -0.6444035793232447}}, {-1365.2603853035057`, 
-      934.8775534229741}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., 250.}, {51.09128836453088, 29.446322689015354`}], \
-{{{-0.7328651797039214, -0.6803738886652978}, {
-      0.6803738886652978, -0.7328651797039214}}, {-1389.485189567205, 
-      1045.5527947247483`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., 350.}, {47.849957359265524`, 28.54671817089472}], \
-{{{-0.8431632827089248, -0.5376575849846347}, {
-      0.5376575849846347, -0.8431632827089248}}, {-1470.6667996934102`, 
-      1128.9989754342948`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., 450.}, {40.627163841287945`, 29.35565257348773}], \
-{{{-0.9385342120595196, -0.345186229148581}, {
-      0.345186229148581, -0.9385342120595196}}, {-1589.346987736706, 
-      1183.0080016605066`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., -450.}, {28.402488254911038`, 20.52078607794374}], \
-{{{-0.8398021537374682, -0.542892570015385}, {
-      0.542892570015385, -0.8398021537374682}}, {-1532.163164123151, \
--447.8861701710912}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., -350.}, {21.550940803322455`, 20.52659567617832}], {{{
-      0.9939493186654289, -0.10983966462316606`}, {0.10983966462316606`, 
-      0.9939493186654289}}, {-42.679359552307915`, 74.77002676911633}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., -250.}, {21.50689473293249, 17.758677901105234`}], {{{
-      0.8194793544320532, -0.5731087049239657}, {0.5731087049239657, 
-      0.8194793544320532}}, {-269.64162812855415`, 356.0459320547893}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., -150.}, {21.5284631970822, 19.822175857440513`}], {{{
-      0.8152925562183696, -0.5790492619587013}, {0.5790492619587013, 
-      0.8152925562183696}}, {-216.15259994094652`, 377.62836680384635`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., -50.}, {29.306580690357045`, 20.77749488624931}], \
-{{{-0.4158995254922554, -0.9094105699272012}, {
-      0.9094105699272012, -0.4158995254922554}}, {-1036.600196340939, 
-      565.792422674428}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., 50.}, {40.40068313270388, 20.860548688181375`}], \
-{{{-0.39589740836526166`, -0.918294746826785}, {
-      0.918294746826785, -0.39589740836526166`}}, {-931.2134485143439, 
-      712.6011931970125}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., 150.}, {48.7277286697547, 20.978409932210784`}], \
-{{{-0.4389323595943502, -0.8985201075662893}, {
-      0.8985201075662893, -0.4389323595943502}}, {-872.4746355811018, 
-      844.803929235555}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., 250.}, {52.78467708186524, 21.14541245756157}], \
-{{{-0.5660297131367406, -0.8243848396509601}, {
-      0.8243848396509601, -0.5660297131367406}}, {-890.1245892829784, 
-      968.5768160398572}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., 350.}, {47.42958877550337, 21.015482668940876`}], \
-{{{-0.7140206071090366, -0.7001246836268828}, {
-      0.7001246836268828, -0.7140206071090366}}, {-954.7707857069166, 
-      1089.9944910269808`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., 450.}, {39.558526177035546`, 21.00542712545637}], \
-{{{-0.8534359439283665, -0.5211977452091461}, {
-      0.5211977452091461, -0.8534359439283665}}, {-1062.8661754057407`, 
-      1198.8845964141672`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., -450.}, {29.063111496564908`, 17.780466080255373`}], \
-{{{-0.7477539069908357, -0.663975974399632}, {
-      0.663975974399632, -0.7477539069908357}}, {-1172.6661419752522`, \
--454.50127094606006`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., -350.}, {21.67884394561767, 17.56529585876493}], \
-{{{-0.6157151459701432, -0.787968818560078}, {
-      0.787968818560078, -0.6157151459701432}}, {-1083.646659481099, \
--171.51589180951112`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., -250.}, {17.91808561713963, 17.622726163231818`}], \
-{{{-0.9992562226407237, -0.03856165859753041}, {
-      0.03856165859753041, -0.9992562226407237}}, {-1009.2685259697444`, \
--480.5332263614157}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., -150.}, {20.25182931750018, 17.147812463720015`}], \
-{{{-0.19158704937837384`, -0.9814756250210641}, {
-      0.9814756250210641, -0.19158704937837384`}}, {-743.0148684423466, 
-      311.999755103776}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., -50.}, {30.270675944736126`, 17.2684264067403}], \
-{{{-0.20183091791167437`, -0.9794203799058558}, {
-      0.9794203799058558, -0.20183091791167437`}}, {-649.88647795113, 
-      429.6186440573442}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., 50.}, {38.19984384793867, 17.370562539463208`}], \
-{{{-0.20682082366609586`, -0.9783788360845086}, {
-      0.9783788360845086, -0.20682082366609586`}}, {-554.4914700288225, 
-      549.5304592255591}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., 150.}, {46.289126620756036`, 18.342856973877684`}], \
-{{{-0.2556751507922073, -0.9667627512825379}, {
-      0.9667627512825379, -0.2556751507922073}}, {-482.82316270372297`, 
-      671.7326482601}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., 250.}, {50.93185411444272, 17.88296214978514}], \
-{{{-0.3811464055207583, -0.9245146929922778}, {
-      0.9245146929922778, -0.3811464055207583}}, {-459.4445295123097, 
-      807.5439478763285}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., 350.}, {47.47618510318232, 17.987785518643694`}], \
-{{{-0.5401615352515277, -0.841561355953749}, {
-      0.841561355953749, -0.5401615352515277}}, {-475.5342930419517, 
-      959.8372153149091}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., 450.}, {40.249148645543016`, 17.852392030971014`}], \
-{{{-0.745297242021457, -0.6667323458744219}, {
-      0.6667323458744219, -0.745297242021457}}, {-572.6190653672386, 
-      1118.7499318468665`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., -450.}, {29.87831409836226, 20.689886062190634`}], \
-{{{-0.6774749414976825, -0.7355458542080919}, {
-      0.7355458542080919, -0.6774749414976825}}, {-834.238116842946, \
--534.1999674115295}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., -350.}, {21.6571256941747, 20.726721359235324`}], \
-{{{-0.9884856168401308, -0.15131485485630983`}, {
-      0.15131485485630983`, -0.9884856168401308}}, {-649.5058842517476, \
--650.5755094371528}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., -250.}, {20.90422060565882, 17.452131431746263`}], {{{
-      0.9713030636334892, -0.23784524081048608`}, {0.23784524081048608`, 
-      0.9713030636334892}}, {-68.07039111257478, 64.1793381515181}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., -150.}, {21.10929721060092, 20.622772710991544`}], {{{
-      0.9406003018549837, -0.3395159379915964}, {0.3395159379915964, 
-      0.9406003018549837}}, {-68.74730014224437, 92.94482667572646}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., -50.}, {29.668049432722984`, 21.27722643087956}], \
-{{{-0.06521089461946325, -0.9978715043646297}, {
-      0.9978715043646297, -0.06521089461946325}}, {-369.45684360407046`, 
-      246.10090657841573`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., 50.}, {39.51693705732904, 21.2638316985362}], \
-{{{-0.07259320702998417, -0.9973616326554284}, {
-      0.9973616326554284, -0.07259320702998417}}, {-271.90988047622386`, 
-      352.83815014812774`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., 150.}, {47.740827693533376`, 21.160405161466315`}], \
-{{{-0.1351633187480941, -0.9908233330241073}, {
-      0.9908233330241073, -0.1351633187480941}}, {-191.92549567081215`, 
-      467.5214977194463}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., 250.}, {53.056651212170074`, 21.047196275653874`}], \
-{{{-0.27826672632815597`, -0.9605038412305341}, {
-      0.9605038412305341, -0.27826672632815597`}}, {-143.35405759081326`, 
-      607.7178339511993}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., 350.}, {48.340126041429386`, 21.198831647521658`}], \
-{{{-0.4280109832737275, -0.9037735325827245}, {
-      0.9037735325827245, -0.4280109832737275}}, {-112.08255857816468`, 
-      770.935903920622}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., 450.}, {37.89752674954602, 21.43168995574814}], \
-{{{-0.6781038961394199, -0.7349660577472533}, {
-      0.7349660577472533, -0.6781038961394199}}, {-172.696442855562, 
-      975.636570586915}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., -450.}, {30.390670655241163`, 29.47436999028621}], \
-{{{-0.9951304606795489, -0.09856655734938082}, {
-      0.09856655734938082, -0.9951304606795489}}, {-243.86799687517626`, \
--887.9520515708589}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., -350.}, {29.108940835574487`, 20.638098889632005`}], {{{
-      0.9263403346244566, -0.3766876483876922}, {0.3766876483876922, 
-      0.9263403346244566}}, {-139.20664347324663`, 11.887881957329057`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., -250.}, {29.685646541017455`, 17.419838719339324`}], {{{
-      0.9790600145297672, -0.20357182503718946`}, {0.20357182503718946`, 
-      0.9790600145297672}}, {-52.98695480632064, 15.122186136160735`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., -150.}, {29.780837907500814`, 20.602943284710534`}], {{{
-      0.9966523317820685, -0.08175652605979358}, {0.08175652605979358, 
-      0.9966523317820685}}, {-12.598245730762187`, 7.673502373289637}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., -50.}, {29.607700948970383`, 28.808474744257307`}], {{{
-      0.11131964854063425`, -0.9937846526530734}, {0.9937846526530734, 
-      0.11131964854063425`}}, {-138.55726777859024`, 54.944447692339054`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., 50.}, {40.2279909891156, 29.158656275653435`}], \
-{{{-0.08725903064625079, -0.9961856561759342}, {
-      0.9961856561759342, -0.08725903064625079}}, {-58.91662025582837, 
-      153.98151714990595`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., 150.}, {48.7504903637763, 29.132350695520252`}], \
-{{{-0.0922397799596411, -0.9957368241623873}, {
-      0.9957368241623873, -0.0922397799596411}}, {40.136545628393975`, 
-      263.4096494101849}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., 250.}, {51.75874098909211, 29.224887822223717`}], \
-{{{-0.2340545731734552, -0.9722234603097129}, {
-      0.9722234603097129, -0.2340545731734552}}, {119.65040776008271`, 
-      405.7359893243351}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., 350.}, {49.25504637585665, 28.84967950279115}], \
-{{{-0.380855388448211, -0.9246346159916156}, {
-      0.9246346159916156, -0.380855388448211}}, {185.53657675224434`, 
-      575.7628475560355}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., 450.}, {38.86318358572165, 29.060873749406646`}], \
-{{{-0.640393436090914, -0.7680470343746354}, {
-      0.7680470343746354, -0.640393436090914}}, {181.58182185949448`, 
-      814.9817496783749}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., -450.}, {39.48229204007004, 29.694575856313186`}], {{{
-      0.8136549353387689, -0.5813481282320121}, {0.5813481282320121, 
-      0.8136549353387689}}, {-242.97215123828232`, -141.99009192075522`}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., -350.}, {39.618374444181185`, 20.960247959634223`}], {{{
-      0.9294893526226286, -0.3688489438254729}, {0.3688489438254729, 
-      0.9294893526226286}}, {-122.04606560117838`, -61.56362096462726}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., -250.}, {39.76807757575591, 17.57302529321898}], {{{
-      0.9797733320974434, -0.20011051374346317`}, {0.20011051374346317`, 
-      0.9797733320974434}}, {-48.00496164561014, -25.067718349985455`}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., -150.}, {40.87502354588735, 21.64751919306959}], {{{
-      0.9970026284977366, -0.0773676855580176}, {0.0773676855580176, 
-      0.9970026284977366}}, {-11.305415683476298`, -8.186374281141298}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., -50.}, {40.30982786693706, 28.42906466176659}], {{{
-      0.9999617394388556, -0.008747551567056125}, {0.008747551567056125, 
-      0.9999617394388556}}, {-0.4335515222383606, -0.8766681847628348}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., 50.}, {41.006766939532994`, 38.852207330596954`}], \
-{{{-0.9918770531584321, -0.1272002807298195}, {
-      0.1272002807298195, -0.9918770531584321}}, {205.54771935233418`, 
-      86.87382458493965}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., 150.}, {47.78420653690119, 40.96943251733948}], \
-{{{-0.12292579992838698`, -0.9924158642988161}, {
-      0.9924158642988161, -0.12292579992838698`}}, {261.15495963766114`, 
-      69.19728355937644}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., 250.}, {51.87877106856589, 40.8188620973168}], \
-{{{-0.13065647252328022`, -0.9914277009382849}, {
-      0.9914277009382849, -0.13065647252328022`}}, {360.92257248689924`, 
-      183.52134803699158`}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., 350.}, {48.9754494431912, 39.63338956162427}], \
-{{{-0.315087830283668, -0.9490625159635853}, {
-      0.9490625159635853, -0.315087830283668}}, {463.68066361562165`, 
-      365.37448900292526`}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., 450.}, {39.784750704910216`, 38.6218279322939}], {{{
-      0.3525712872960442, -0.9357849578692801}, {0.9357849578692801, 
-      0.3525712872960442}}, {485.8461023115716, 197.7644249298521}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., -450.}, {47.70440322354322, 30.403422492280853`}], {{{
-      0.7690685918466623, -0.6391662546122033}, {0.6391662546122033, 
-      0.7690685918466623}}, {-218.34539212949016`, -295.66901005266294`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., -350.}, {48.13970935455556, 20.407786028721343`}], {{{
-      0.9015096507456422, -0.43275899714791644`}, {0.43275899714791644`, 
-      0.9015096507456422}}, {-121.91854422546339`, -164.29932138340016`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., -250.}, {48.966386452989184`, 17.43030770856374}], {{{
-      0.9653759104284443, -0.26086270635039466`}, {0.26086270635039466`, 
-      0.9653759104284443}}, {-54.8284497161319, -86.91483429800732}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., -150.}, {47.82114056126727, 20.058065380905145`}], {{{
-      0.9866612297928647, -0.16278703149708157`}, {0.16278703149708157`, 
-      0.9866612297928647}}, {-20.416423662421664`, -50.836924980194766`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., -50.}, {48.08699905811375, 29.451944776026572`}], {{{
-      0.9976907922098781, -0.06791968153360092}, {0.06791968153360092, 
-      0.9976907922098781}}, {-2.7032217396434817`, -20.491364849586375`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., 50.}, {48.283350248914786`, 39.271659992524604`}], \
-{{{-0.9999510561223286, -0.009893703039794846}, {
-      0.009893703039794846, -0.9999510561223286}}, {600.4800019886884, 
-      97.02944189417798}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., 150.}, {48.86560360469741, 47.387591966025475`}], {{{
-      0.4789143247999812, -0.87786164599063}, {0.87786164599063, 
-      0.4789143247999812}}, {288.00494945860015`, -185.19564251718617`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., 250.}, {51.679986133963986`, 48.87716653429509}], \
-{{{-0.190607957004387, -0.9816662399851661}, {
-      0.9816662399851661, -0.190607957004387}}, {602.5989470976076, 
-      3.1521172555469263`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., 350.}, {49.11137781305108, 48.038441735589}], {{{
-      0.8262803577544431, -0.5632590615242594}, {0.5632590615242594, 
-      0.8262803577544431}}, {249.25656420715788`, -108.17584367133293`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., 450.}, {48.54302003687713, 39.50831907950041}], {{{
-      0.7419014090593873, -0.6705089852013139}, {0.6705089852013139, 
-      0.7419014090593873}}, {379.15862062277506`, -85.00832963711844}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., -450.}, {50.75686315119635, 31.450659603822213`}], {{{
-      0.6788324638189621, -0.7342931880832597}, {0.7342931880832597, 
-      0.6788324638189621}}, {-169.84816654694794`, -511.67198532309686`}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., -350.}, {50.41010367553565, 20.433489070597023`}], {{{
-      0.8510913936005595, -0.5250175613625295}, {0.5250175613625295, 
-      0.8510913936005595}}, {-109.30184327716506`, -314.6267929210689}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., -250.}, {53.168071693844176`, 17.65066694516358}], {{{
-      0.9313370397085006, -0.36415837003563006`}, {0.36415837003563006`, 
-      0.9313370397085006}}, {-56.70811236315785, -199.2449250906899}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., -150.}, {51.64984877861913, 20.608623702161545`}], {{{
-      0.9654646240863168, -0.2605341813234245}, {0.2605341813234245, 
-      0.9654646240863168}}, {-21.81243924167211, -135.4473970487647}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., -50.}, {50.95217799499643, 29.47112422701978}], {{{
-      0.972880301658204, -0.23130914086010929`}, {0.23130914086010929`, 
-      0.972880301658204}}, {1.9943921278925245`, -117.01055534714445`}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., 50.}, {52.50069760452402, 38.9302726695741}], {{{
-      0.9726557879272518, -0.23225141164612295`}, {0.23225141164612295`, 
-      0.9726557879272518}}, {25.284676618680237`, -114.75849521942408`}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., 150.}, {52.08854171768894, 50.17861106607506}], {{{
-      0.98239029515078, -0.18684032753547444`}, {0.18684032753547444`, 
-      0.98239029515078}}, {36.83090155493113, -90.77870804035422}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., 250.}, {52.788970478676006`, 50.29749992894921}], \
-{{{-0.7773912491866773, -0.6290173651720415}, {
-      0.6290173651720415, -0.7773912491866773}}, {1045.949965886349, 
-      129.83912971064856`}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., 350.}, {49.69891911953622, 47.16228149706797}], {{{
-      0.8959472213371533, -0.44416053018951834`}, {0.44416053018951834`, 
-      0.8959472213371533}}, {207.48257489775472`, -185.6617925627629}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., 450.}, {51.62347827118435, 38.39826236039485}], {{{
-      0.7044143215325509, -0.7097890275425762}, {0.7097890275425762, 
-      0.7044143215325509}}, {467.1979016278838, -221.88095846093597`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., -450.}, {48.590652521657276`, 29.36689557035969}], {{{
-      0.553038300600702, -0.8331558306035477}, {0.8331558306035477, 
-      0.553038300600702}}, {-62.046934192087974`, -784.3418461521674}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., -350.}, {47.44967521256335, 21.7374600811416}], {{{
-      0.7217810495582853, -0.6921214607989989}, {0.6921214607989989, 
-      0.7217810495582853}}, {-47.48924597044925, -581.8616552138994}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., -250.}, {47.50823402898892, 17.75613935979195}], {{{
-      0.8453707093435494, -0.5341800855366887}, {0.5341800855366887, 
-      0.8453707093435494}}, {-25.304517924656807`, -412.58338253979474`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., -150.}, {48.187677250524494`, 20.88269009294239}], {{{
-      0.9107506519661479, -0.4129567167915259}, {0.4129567167915259, 
-      0.9107506519661479}}, {0.5310361049675976, -302.45710395914597`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., -50.}, {48.05397829658845, 29.39565005891994}], {{{
-      0.9444217426202988, -0.32873632605180414`}, {0.32873632605180414`, 
-      0.9444217426202988}}, {22.46796386320068, -232.89434110524795`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., 50.}, {48.423690457571595`, 39.81524900219442}], {{{
-      0.9482367731249697, -0.31756420153024917`}, {0.31756420153024917`, 
-      0.9482367731249697}}, {52.11246888903372, -219.70677972742288`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., 150.}, {48.45471509951249, 46.88471045688979}], \
-{{{-0.74525262189697, -0.6667822204855884}, {
-      0.6667822204855884, -0.74525262189697}}, {
-      1321.6941684007172`, -204.95966105536644`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., 250.}, {50.981950099072186`, 47.28309095935177}], \
-{{{-0.6737089442239601, -0.7389967919231023}, {
-      0.7389967919231023, -0.6737089442239601}}, {
-      1356.3454589375476`, -98.87051829018156}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., 350.}, {49.493352069964494`, 46.822613962753486`}], {{{
-      0.9227671191148539, -0.3853580722918272}, {0.3853580722918272, 
-      0.9227671191148539}}, {188.93834192174182`, -242.71914229447793`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., 450.}, {48.509703682518534`, 39.276813715172175`}], {{{
-      0.5595207807218351, -0.828816322197161}, {0.828816322197161, 
-      0.5595207807218351}}, {681.3027984834379, -381.95577686283843`}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., -450.}, {39.49524237276201, 28.423488826349622`}], {{{
-      0.34334719708351646`, -0.9392085509911485}, {0.9392085509911485, 
-      0.34334719708351646`}}, {168.3436746788184, -1140.7814572044513`}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., -350.}, {38.85234266284429, 21.3348842037021}], {{{
-      0.5578638297185452, -0.8299324957439358}, {0.8299324957439358, 
-      0.5578638297185452}}, {107.4461797429318, -901.6869057680515}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., -250.}, {39.639667231585676`, 17.66237111624817}], {{{
-      0.6835815472915959, -0.7298741454541513}, {0.7298741454541513, 
-      0.6835815472915959}}, {102.30807107402586`, -735.9913440858371}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., -150.}, {40.571461800244464`, 20.905664439836208`}], {{{
-      0.7750651140803836, -0.6318813725182615}, {0.6318813725182615, 
-      0.7750651140803836}}, {107.65919144991551`, -602.4334681543778}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., -50.}, {38.92063867825176, 29.6991659038375}], {{{
-      0.8104464564724124, -0.5858127185298302}, {0.5858127185298302, 
-      0.8104464564724124}}, {141.30755324833729`, -536.7091238532266}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., 50.}, {39.996198225286655`, 37.80614664209072}], {{{
-      0.9986450409111665, -0.05203923773014596}, {0.05203923773014596, 
-      0.9986450409111665}}, {3.8214250664574365`, -46.76756600268968}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., 150.}, {48.51551085309575, 39.38120215977992}], \
-{{{-0.7398493915239056, -0.6727725305492984}, {
-      0.6727725305492984, -0.7398493915239056}}, {
-      1666.7803319539098`, -344.51786876578274`}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., 250.}, {51.556607176562224`, 40.46713859591459}], \
-{{{-0.7774276738291148, -0.6289723459458701}, {
-      0.6289723459458701, -0.7774276738291148}}, {
-      1756.9279929326708`, -121.7181928940044}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., 350.}, {47.19514101033768, 39.24445167746581}], \
-{{{-0.8713662047705757, -0.4906332002460934}, {
-      0.4906332002460934, -0.8713662047705757}}, {1855.9512043796508`, 
-      213.40829144821743`}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., 450.}, {40.72322496174761, 39.58971377853789}], \
-{{{-0.7732594616601713, -0.6340897451883463}, {
-      0.6340897451883463, -0.7732594616601713}}, {1881.27390082891, 
-      227.2859870775655}}], 
+     DiskBox[{-900., -450.}, {29.71397134352321, 28.826048487133033`}], {{{
+      0.9452530151916866, -0.3263383784831706}, {0.3263383784831706, 
+      0.9452530151916866}}, {-196.1245566449088, 269.06839747111246`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., -350.}, {28.496221718692023`, 22.048022297295308`}], {{{
+      0.5259162110579364, -0.850536383082149}, {0.850536383082149, 
+      0.5259162110579364}}, {-724.3631441266093, 599.5534186442119}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., -250.}, {30.059670415493994`, 17.875987718299587`}], {{{
+      0.6538025450736417, -0.7566652047340546}, {0.7566652047340546, 
+      0.6538025450736417}}, {-500.74401061723614`, 594.4493205290596}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., -150.}, {29.418113853445966`, 21.08150830862172}], {{{
+      0.7321140752257649, -0.6811820467806848}, {0.6811820467806848, 
+      0.7321140752257649}}, {-343.27463931391435`, 572.8809533864811}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., -50.}, {29.232213615856757`, 28.41722623259882}], {{{
+      0.38724578978424395`, -0.9219765172141735}, {0.9219765172141735, 
+      0.38724578978424395`}}, {-597.5776150548891, 799.1411549819684}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., 50.}, {40.31241041412068, 29.54107652747917}], \
+{{{-0.5976294452671957, -0.8017724403779566}, {
+      0.8017724403779566, -0.5976294452671957}}, {-1397.7778787215784`, 
+      801.4766686035207}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., 150.}, {46.422378178303774`, 29.465374842156137`}], \
+{{{-0.6305672330733447, -0.7761346304438593}, {
+      0.7761346304438593, -0.6305672330733447}}, {-1351.0903151994314`, 
+      943.1062523604751}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., 250.}, {50.15118182051985, 28.644934241890077`}], \
+{{{-0.7219967127255424, -0.6918964856201473}, {
+      0.6918964856201473, -0.7219967127255424}}, {-1376.8229200479514`, 
+      1053.2060152395181`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., 350.}, {47.8744623251341, 28.083649638200786`}], \
+{{{-0.8202463666563907, -0.5720104002437278}, {
+      0.5720104002437278, -0.8202463666563907}}, {-1438.018089905447, 
+      1151.8955885490918`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., 450.}, {40.596768887192475`, 28.636403949511788`}], \
+{{{-0.9523312027294661, -0.3050660261449124}, {
+      0.3050660261449124, -0.9523312027294661}}, {-1619.818370691309, 
+      1153.1084647586808`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., -450.}, {29.27087967011855, 21.07045609073226}], \
+{{{-0.8807494230227515, -0.473582573417868}, {
+      0.473582573417868, -0.8807494230227515}}, {-1529.6367541539666`, \
+-514.8294389677305}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., -350.}, {21.32724037077621, 21.10439858461445}], {{{
+      0.8587945049356791, -0.5123202107005752}, {0.5123202107005752, 
+      0.8587945049356791}}, {-278.15592029022594`, 309.2022242178904}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., -250.}, {20.578717728978386`, 17.917467094813993`}], {{{
+      0.8474088507252119, -0.5309409003953034}, {0.5309409003953034, 
+      0.8474088507252119}}, {-239.5490295911775, 333.51084295801536`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., -150.}, {21.10203133901544, 20.708220260880662`}], \
+{{{-0.3214618940946926, -0.9469225156500677}, {
+      0.9469225156500677, -0.3214618940946926}}, {-1067.061703213795, 
+      464.62647684084345`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., -50.}, {29.25615561739726, 20.294087516230373`}], \
+{{{-0.3603960607958479, -0.9327993778743827}, {
+      0.9327993778743827, -0.3603960607958479}}, {-998.9172114508126, 
+      584.9397614722756}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., 50.}, {39.045837462105176`, 21.934586065783865`}], \
+{{{-0.3908913884130997, -0.9204368106852742}, {
+      0.9204368106852742, -0.3908913884130997}}, {-927.6021313549061, 
+      713.8503369003469}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., 150.}, {46.66061392033695, 20.783515368945817`}], \
+{{{-0.4694698252701705, -0.8829485167102301}, {
+      0.8829485167102301, -0.4694698252701705}}, {-896.1866001825848, 
+      838.4844354876866}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., 250.}, {50.18572023628176, 20.132533971172965`}], \
+{{{-0.562896279610356, -0.8265275424332935}, {
+      0.8265275424332935, -0.562896279610356}}, {-887.3955101189258, 
+      969.2933496058945}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., 350.}, {48.277260306784726`, 20.64466205920684}], \
+{{{-0.6876352477304998, -0.7260563105425186}, {
+      0.7260563105425186, -0.6876352477304998}}, {-927.2249647214683, 
+      1098.911754085438}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., 450.}, {39.96611821154581, 21.414761307371347`}], \
+{{{-0.8649024107229962, -0.501940056107848}, {
+      0.501940056107848, -0.8649024107229962}}, {-1079.5586622575656`, 
+      1190.5641241008418`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., -450.}, {29.57858195823963, 17.775614102539745`}], \
+{{{-0.7810001495832893, -0.6245308369895595}, {
+      0.6245308369895595, -0.7810001495832893}}, {-1171.5389514369465`, \
+-489.18464881770046`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., -350.}, {20.651256174626116`, 17.650987279994563`}], \
+{{{-0.662528174426461, -0.7490369938068084}, {
+      0.7490369938068084, -0.662528174426461}}, {-1093.4270350456134`, \
+-207.3663641458571}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., -250.}, {17.683644223805892`, 17.515592203826465`}], \
+{{{-0.8565866814709959, -0.5160031561206835}, {
+      0.5160031561206835, -0.8565866814709959}}, {-1057.294129765669, \
+-206.14509230740725`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., -150.}, {20.733511231281657`, 17.83611648815801}], \
+{{{-0.2619157916478451, -0.9650907304940207}, {
+      0.9650907304940207, -0.2619157916478451}}, {-775.7215053980257, 
+      293.25799649983355`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., -50.}, {28.532025806910845`, 17.658929832778902`}], \
+{{{-0.2118920210608148, -0.9772930836810231}, {
+      0.9772930836810231, -0.2118920210608148}}, {-654.8106647144585, 
+      428.0519407874708}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., 50.}, {39.889669079344515`, 17.635285989070834`}], \
+{{{-0.1978917646249764, -0.9802238772309175}, {
+      0.9802238772309175, -0.1978917646249764}}, {-549.9346884509423, 
+      550.0065268467076}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., 150.}, {48.311405384366715`, 17.636299076011696`}], \
+{{{-0.2555471556176562, -0.9667965924928187}, {
+      0.9667965924928187, -0.2555471556176562}}, {-482.7540889349053, 
+      671.7303695890578}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., 250.}, {50.93348025204701, 17.608551902127854`}], \
+{{{-0.3874272140622306, -0.9219002949364853}, {
+      0.9219002949364853, -0.3874272140622306}}, {-463.238533296994, 
+      807.8069509838002}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., 350.}, {48.336003252346046`, 17.44599733294948}], \
+{{{-0.5559964236030405, -0.831184682811605}, {
+      0.831184682811605, -0.5559964236030405}}, {-487.0835728174585, 
+      960.1910896668667}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., 450.}, {38.9303114863411, 17.711285315122204`}], \
+{{{-0.7518815050154964, -0.6592982651392555}, {
+      0.6592982651392555, -0.7518815050154964}}, {-579.2565331950832, 
+      1117.995809826601}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., -450.}, {29.822453616417057`, 20.718854073247755`}], \
+{{{-0.689738269355517, -0.7240587819966389}, {
+      0.7240587819966389, -0.689738269355517}}, {-832.7479327051426, \
+-543.1645866109909}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., -350.}, {21.514227365426564`, 20.68347471578805}], {{{
+      0.8723362353928475, -0.48890642501467957`}, {0.48890642501467957`, 
+      0.8723362353928475}}, {-209.41637813728357`, 101.9896098919005}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., -250.}, {20.887839507906023`, 17.260582603501362`}], {{{
+      0.9539576615506603, -0.2999412942040424}, {0.2999412942040424, 
+      0.9539576615506603}}, {-88.79802508581253, 78.47180364887777}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., -150.}, {20.946570214747045`, 20.453344328127756`}], {{{
+      0.9981147733754477, -0.061375069610376635`}, {0.061375069610376635`, 
+      0.9981147733754477}}, {-9.771828428922163, 18.12973688943015}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., -50.}, {30.057240320110715`, 20.83250046613117}], \
+{{{-0.05243710866030401, -0.9986242284439866}, {
+      0.9986242284439866, -0.05243710866030401}}, {-365.66234402029056`, 
+      246.9654131001808}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., 50.}, {39.48274860483301, 20.932277698739718`}], \
+{{{-0.0978501999075846, -0.9952011547310653}, {
+      0.9952011547310653, -0.0978501999075846}}, {-279.5950022357221, 
+      353.45285641469883`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., 150.}, {48.19123388578724, 21.28895498429109}], \
+{{{-0.1447503548147571, -0.9894682080698712}, {
+      0.9894682080698712, -0.1447503548147571}}, {-195.00487523394645`, 
+      468.55301564317494`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., 250.}, {51.03621243158551, 21.483982588082814`}], \
+{{{-0.2717303580552065, -0.9623734267482603}, {
+      0.9623734267482603, -0.2717303580552065}}, {-140.92575072949688`, 
+      606.6446175382798}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., 350.}, {48.72635689787118, 21.342252011487854`}], \
+{{{-0.44402091488578616`, -0.8960164212468371}, {
+      0.8960164212468371, -0.44402091488578616`}}, {-119.60052702934283`, 
+      774.2122465840763}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., 450.}, {38.78935553206048, 21.2954978897916}], \
+{{{-0.6732825901247693, -0.739385254001513}, {
+      0.739385254001513, -0.6732825901247693}}, {-169.26141273674997`, 
+      974.7927417566001}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., -450.}, {29.638327822234537`, 28.640233721791155`}], \
+{{{-0.9374062137205007, -0.34823783608073794`}, {
+      0.34823783608073794`, -0.9374062137205007}}, {-350.4476476083821, \
+-837.0090125661516}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., -350.}, {29.234978546696503`, 20.57255147149826}], {{{
+      0.9535426570573593, -0.301258030883811}, {0.301258030883811, 
+      0.9535426570573593}}, {-110.08604510359791`, 13.86573305845684}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., -250.}, {29.857479121549527`, 17.604034254874176`}], {{{
+      0.9853546994177718, -0.17051720246154864`}, {0.17051720246154864`, 
+      0.9853546994177718}}, {-44.09383067360998, 13.3903951005978}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., -150.}, {29.539248671036695`, 21.269471360137462`}], {{{
+      0.9968673463205607, -0.07909167996574075}, {0.07909167996574075, 
+      0.9968673463205607}}, {-12.177017362805046`, 7.439269944658179}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., -50.}, {29.38834362659619, 29.24688017678512}], \
+{{{-0.7515109285233686, -0.6597206411125427}, {
+      0.6597206411125427, -0.7515109285233686}}, {-208.137124907964, \
+-21.60348231491416}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., 50.}, {39.277221316862764`, 29.20654671583638}], {{{
+      0.019592798869219826`, -0.9998080426924312}, {0.9998080426924312, 
+      0.019592798869219826`}}, {-48.050317978456455`, 149.00116432578213`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., 150.}, {47.88389789891145, 28.832133113011693`}], \
+{{{-0.08188397468990558, -0.9966418688219871}, {
+      0.9966418688219871, -0.08188397468990558}}, {41.30788285430751, 
+      261.94678308568456`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., 250.}, {50.60321672810949, 28.335529304496184`}], \
+{{{-0.20198190775996525`, -0.9793892530233548}, {
+      0.9793892530233548, -0.20198190775996525`}}, {124.64912247984216`, 
+      398.43440224232677`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., 350.}, {48.107371945993165`, 28.92315436640373}], \
+{{{-0.384990147428663, -0.9229206826065045}, {
+      0.9229206826065045, -0.384990147428663}}, {184.5232241694103, 
+      577.0386198606825}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., 450.}, {40.00614583623917, 28.720419096188245`}], \
+{{{-0.6243132104867117, -0.7811741260511479}, {
+      0.7811741260511479, -0.6243132104867117}}, {189.09703567434536`, 
+      809.0583573241352}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., -450.}, {38.97465810307926, 30.446706859684596`}], {{{
+      0.797428927710401, -0.603412881243548}, {0.603412881243548, 
+      0.797428927710401}}, {-251.27868933063667`, -151.49827065467434`}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., -350.}, {40.53946122791343, 20.381344167978835`}], {{{
+      0.9273608791727996, -0.37416814372665685`}, {0.37416814372665685`, 
+      0.9273608791727996}}, {-123.69493822160985`, -62.84050666218582}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., -250.}, {39.59071404028731, 17.7124694489101}], {{{
+      0.9809199969100106, -0.19441183004659118`}, {0.19441183004659118`, 
+      0.9809199969100106}}, {-46.69495720264885, -24.211183777156435`}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., -150.}, {38.45447862929261, 20.906258602057665`}], {{{
+      0.9971452974123102, -0.07550666095461693}, {0.07550666095461693, 
+      0.9971452974123102}}, {-11.040528884423566`, -7.978871483615194}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., -50.}, {38.97273155472675, 30.83599786527609}], {{{
+      0.989928883796209, -0.1415655502796908}, {0.1415655502796908, 
+      0.989928883796209}}, {-6.071165893605453, -14.66011083815863}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., 50.}, {40.509396091011524`, 39.47834104709645}], {{{
+      0.9999861143027227, -0.005269838872497191}, {0.005269838872497191, 
+      0.9999861143027227}}, {0.264880513352594, -0.5262896023858517}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., 150.}, {47.16579188893537, 40.92025506503413}], \
+{{{-0.03688368901440175, -0.9993195652466177}, {
+      0.9993195652466177, -0.03688368901440175}}, {253.58630368843285`, 
+      55.60059682749849}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., 250.}, {51.03978741452074, 40.118908228224164`}], \
+{{{-0.24685053594622594`, -0.9690535655489128}, {
+      0.9690535655489128, -0.24685053594622594`}}, {366.9484449818508, 
+      214.80727743166523`}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., 350.}, {47.77135622656285, 39.76849063871876}], \
+{{{-0.3592228778574849, -0.933251800975378}, {
+      0.933251800975378, -0.3592228778574849}}, {462.5604181271308, 
+      382.40282715258195`}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., 450.}, {41.26496788630861, 39.72548121215017}], {{{
+      0.8894301896082983, -0.45707104241391894`}, {0.45707104241391894`, 
+      0.8894301896082983}}, {216.7389501254337, 4.04931043487386}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., -450.}, {47.51463033729045, 29.813276890707307`}], {{{
+      0.7671664507454702, -0.6414480780629076}, {0.6414480780629076, 
+      0.7671664507454702}}, {-218.80157035194952`, -297.2095205834107}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., -350.}, {48.56487764121163, 20.957298025095213`}], {{{
+      0.900457889784017, -0.4349432017237597}, {0.4349432017237597, 
+      0.900457889784017}}, {-122.367487538521, -165.322699092722}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., -250.}, {48.150426330697215`, 17.727464673275556`}], {{{
+      0.9624531935719013, -0.27144769327302876`}, {0.27144769327302876`, 
+      0.9624531935719013}}, {-56.59788138982759, -90.82100958893332}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., -150.}, {49.50275671097811, 21.552696599010208`}], {{{
+      0.9886792830742249, -0.15004424420762244`}, {0.15004424420762244`, 
+      0.9886792830742249}}, {-19.110421553410845`, -46.711380801152984`}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., -50.}, {46.35079199093904, 30.400043239523686`}], {{{
+      0.9976573355705632, -0.06840936180264058}, {0.06840936180264058, 
+      0.9976573355705632}}, {-2.717668761301013, -20.639941762264012`}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., 50.}, {49.10621760599189, 39.54977509157539}], {{{
+      0.998669529719492, -0.05156714467418887}, {0.05156714467418887, 
+      0.998669529719492}}, {2.97749831786183, -15.403619888231262`}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., 150.}, {49.496201800282506`, 49.107109662526334`}], \
+{{{-0.014866795617215977`, -0.999889483087044}, {
+      0.999889483087044, -0.014866795617215977`}}, {
+      454.4434611482214, -147.7368255835308}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., 250.}, {50.667135702007016`, 47.33468290143073}], \
+{{{-0.33622030418441673`, -0.9417833652460306}, {
+      0.9417833652460306, -0.33622030418441673`}}, {636.3119325668326, 
+      51.520066472294985`}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., 350.}, {47.692862480186854`, 47.41877742073522}], \
+{{{-0.8985680832056238, -0.43883413705427615`}, {
+      0.43883413705427615`, -0.8985680832056238}}, {723.1623729306838, 
+      532.8485880056854}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., 450.}, {47.906300266253766`, 39.34782572578837}], {{{
+      0.7403076265259239, -0.6722682634986968}, {0.6722682634986968, 
+      0.7403076265259239}}, {380.42843061663643`, -84.81891098627477}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., -450.}, {51.97310904953926, 29.386207044803708`}], {{{
+      0.6717443322014793, -0.7407830668658596}, {0.7407830668658596, 
+      0.6717443322014793}}, {-169.2245461903765, -518.106583942264}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., -350.}, {51.60814456702702, 20.427287762462356`}], {{{
+      0.8432588738886007, -0.5375076479531516}, {0.5375076479531516, 
+      0.8432588738886007}}, {-109.7571137279034, -323.6132181155656}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., -250.}, {50.443235912600784`, 17.862693117587085`}], {{{
+      0.9088886590851833, -0.41703885356922965`}, {0.41703885356922965`, 
+      0.9088886590851833}}, {-58.70404293489912, -231.297262013319}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., -150.}, {52.45075763287798, 21.478017262552527`}], {{{
+      0.9621075153690927, -0.27267036668899525`}, {0.27267036668899525`, 
+      0.9621075153690927}}, {-21.954312687895595`, -142.01905603913374`}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., -50.}, {51.48257300590451, 29.402054877819126`}], {{{
+      0.9778680793043601, -0.20922241628850777`}, {0.20922241628850777`, 
+      0.9778680793043601}}, {0.6048395333945678, -105.71780417903588`}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., 50.}, {52.18142308152428, 40.58623556050745}], {{{
+      0.983508476582316, -0.18086203717400703`}, {0.18086203717400703`, 
+      0.983508476582316}}, {17.288863567542364`, -89.60644241611931}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., 150.}, {51.14601984431542, 47.5232543411731}], {{{
+      0.8365588581486488, -0.5478770636310932}, {0.5478770636310932, 
+      0.8365588581486488}}, {163.90213047033956`, -249.42236053784393`}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., 250.}, {52.47427967970878, 50.932254666469554`}], \
+{{{-0.8933467166372828, -0.4493680494576648}, {
+      0.4493680494576648, -0.8933467166372828}}, {1059.0153706830577`, 
+      248.65265443048833`}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., 350.}, {51.65213604523945, 47.63403456399428}], {{{
+      0.8408438726263067, -0.5412777308062797}, {0.5412777308062797, 
+      0.8408438726263067}}, {269.0252694690446, -214.93422082234724`}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., 450.}, {50.86021884699175, 39.87494694369488}], {{{
+      0.6838748988937781, -0.729599289105345}, {0.729599289105345, 
+      0.6838748988937781}}, {486.3822306505162, -222.54334905487258`}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., -450.}, {47.714226376491254`, 28.72227072916746}], {{{
+      0.5722808962489644, -0.8200576661360358}, {0.8200576661360358, 
+      0.5722808962489644}}, {-69.62257713549116, -766.5139629831912}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., -350.}, {49.111068718417734`, 21.628603616640447`}], {{{
+      0.7259960803943993, -0.6876988376113259}, {0.6876988376113259, 
+      0.7259960803943993}}, {-48.89184944004364, -577.2905581898883}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., -250.}, {49.75514845822426, 17.84961940032883}], {{{
+      0.8505100316336516, -0.5259588254707064}, {0.5259588254707064, 
+      0.8505100316336516}}, {-26.846728511232754`, -405.5436699210816}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., -150.}, {48.91357890901249, 21.086095849405112`}], {{{
+      0.9188287907335316, -0.39465637372169204`}, {0.39465637372169204`, 
+      0.9188287907335316}}, {-2.378609571725974, -288.4351429951547}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., -50.}, {48.24243961985309, 29.507090382473468`}], {{{
+      0.9283260570104301, -0.3717670397916788}, {0.3717670397916788, 
+      0.9283260570104301}}, {31.58340810311506, -263.8206250036537}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., 50.}, {50.091525571615506`, 40.01165041527604}], {{{
+      0.9193315111152229, -0.39348389124664407`}, {0.39348389124664407`, 
+      0.9193315111152229}}, {76.14213678167619, -271.405299428412}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., 150.}, {48.79270781285018, 48.401033036117354`}], {{{
+      0.8995890407166494, -0.4367374014467945}, {0.4367374014467945, 
+      0.8995890407166494}}, {135.79828171536474`, -290.6545371202536}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., 250.}, {50.83668556188417, 47.65047098297468}], \
+{{{-0.6682094267347694, -0.7439732266841266}, {
+      0.7439732266841266, -0.6682094267347694}}, {
+      1353.73990538537, -103.72890199519622`}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., 350.}, {49.45013342694454, 47.91979533480004}], {{{
+      0.7074468098080856, -0.7067665889757115}, {0.7067665889757115, 
+      0.7074468098080856}}, {452.1555392758391, -392.342995715828}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., 450.}, {48.152346051880585`, 39.95848031852945}], {{{
+      0.4789935311938249, -0.8778184305848621}, {0.8778184305848621, 
+      0.4789935311938249}}, {759.7228219275105, -380.01999044662466`}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., -450.}, {39.64465779173736, 29.215328210676894`}], {{{
+      0.2899429153327102, -0.9570439414407098}, {0.9570439414407098, 
+      0.2899429153327102}}, {208.38160255224147`, -1180.8652353969192`}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., -350.}, {38.21874716522754, 21.484211098435427`}], {{{
+      0.48710629876141187`, -0.8733426897312178}, {0.8733426897312178, 
+      0.48710629876141187`}}, {155.9343897088031, -965.5212161916019}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., -250.}, {42.657859126937936`, 17.421312529113504`}], {{{
+      0.7435039859696748, -0.6687315028075211}, {0.6687315028075211, 
+      0.7435039859696748}}, {63.66353692541247, -665.9823560343503}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., -150.}, {40.79342595309841, 21.390164795835418`}], {{{
+      0.7806035016753341, -0.625026537974354}, {0.625026537974354, 
+      0.7806035016753341}}, {103.70286779604623`, -595.4333589256184}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., -50.}, {39.05962298325598, 29.225871271905632`}], {{{
+      0.7865275454494122, -0.617555196115556}, {0.617555196115556, 
+      0.7865275454494122}}, {161.24744928975122`, -566.4732992315297}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., 50.}, {39.26070383945142, 38.761143462172086`}], \
+{{{-0.9677049821243305, -0.2520854370481348}, {
+      0.2520854370481348, -0.9677049821243305}}, {
+      1783.5387557643044`, -128.4916442371048}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., 150.}, {48.28592603595938, 40.17522367136923}], \
+{{{-0.679395527965274, -0.7337722511657051}, {
+      0.7337722511657051, -0.679395527965274}}, {
+      1621.5218128436022`, -408.4856968543435}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., 250.}, {52.753359519506084`, 38.71308706304864}], \
+{{{-0.7296500543503496, -0.6838207354172086}, {
+      0.6838207354172086, -0.7296500543503496}}, {
+      1727.640232769617, -183.0261482879003}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., 350.}, {49.369265200998356`, 39.84783895589314}], \
+{{{-0.8868996701305456, -0.46196209273308275`}, {
+      0.46196209273308275`, -0.8868996701305456}}, {1859.89643557407, 
+      244.64900108591644`}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., 450.}, {41.0347063784893, 38.24360819204367}], {{{
+      0.44173927893540216`, -0.8971434720520631}, {0.8971434720520631, 
+      0.44173927893540216`}}, {906.1492113815664, -556.2118003677878}}], 
     {EdgeForm[None], FaceForm[{RGBColor[1, 0, 0], Opacity[0.3]}]}}, 
    {EdgeForm[{RGBColor[0.6, 0.24, 0.4428931686004542], Opacity[1]}], FaceForm[
     None], GeometricTransformationBox[
@@ -7969,461 +8147,452 @@ Cell[BoxData[
    {EdgeForm[{RGBColor[0.24720000000000014`, 0.24, 0.6], Opacity[1]}], 
     FaceForm[None], 
     GeometricTransformationBox[
-     DiskBox[{-900., -450.}, {35.8156062448042, 29.730895591056523`}], \
-{{{-0.3701125714067536, -0.9289869129792306}, {
-      0.9289869129792306, -0.3701125714067536}}, {-1651.145425106732, 
-      219.5375645482685}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., -350.}, {28.652169376254598`, 20.85927123290189}], {{{
-      0.3664057122936135, -0.9304551864537108}, {0.9304551864537108, 
-      0.3664057122936135}}, {-895.8941741945466, 615.6516671111045}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., -250.}, {29.423773435644726`, 17.056074815357864`}], {{{
-      0.49661522314218454`, -0.8679708060432898}, {0.8679708060432898, 
-      0.49661522314218454`}}, {-670.0390006828563, 655.327531224507}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., -150.}, {37.368819798128314`, 23.092622096903124`}], {{{
-      0.40113817069186924`, -0.9160175587913044}, {0.9160175587913044, 
-      0.40113817069186924`}}, {-676.3782801960133, 734.5865285159543}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., -50.}, {36.61477827582951, 27.01106260155631}], \
-{{{-0.1976456168715246, -0.980273538422554}, {
-      0.980273538422554, -0.1976456168715246}}, {-1126.8947321054998`, 
-      822.3639037367224}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., 50.}, {43.47888911061385, 36.17380879972117}], \
-{{{-0.45998152532474273`, -0.8879284860617566}, {
-      0.8879284860617566, -0.45998152532474273`}}, {-1269.5869484891807`, 
-      872.134713721818}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., 150.}, {48.51530001641209, 35.54630600326433}], \
-{{{-0.6176563014548248, -0.7864481504035384}, {
-      0.7864481504035384, -0.6176563014548248}}, {-1337.9234487488116`, 
-      950.4517805814083}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., 250.}, {49.23579554666382, 30.12505009823179}], \
-{{{-0.6512478642787969, -0.7588650863442762}, {
-      0.7588650863442762, -0.6512478642787969}}, {-1296.406806264848, 
-      1095.7905437795478`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., 350.}, {53.96787622016892, 33.08224244897597}], \
-{{{-0.819218598350422, -0.5734813755622497}, {
-      0.5734813755622497, -0.819218598350422}}, {-1436.5782570685924`, 
-      1152.8597474286726`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., 450.}, {46.42571098208301, 31.168787235520913`}], \
-{{{-0.8769865052508753, -0.4805150045605824}, {
-      0.4805150045605824, -0.8769865052508753}}, {-1473.0561026735256`, 
-      1277.1074314674179`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., -450.}, {33.262641542040946`, 24.44774294028537}], \
-{{{-0.7681115091406397, -0.640316101254442}, {
-      0.640316101254442, -0.7681115091406397}}, {-1525.8203019629468`, \
--347.4289082351785}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., -350.}, {22.23554818135072, 20.012046192080884`}], \
-{{{-0.20469188800484786`, -0.9788264560099562}, {
-      0.9788264560099562, -0.20469188800484786`}}, {-1185.873581206878, 
-      263.5363584052726}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., -250.}, {21.66723289672304, 17.523026188423348`}], {{{
-      0.2912859459254668, -0.9566360319924742}, {0.9566360319924742, 
-      0.2912859459254668}}, {-735.2588458502918, 492.46670887609866`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., -150.}, {22.38571374608413, 21.001136472927982`}], \
-{{{-0.14783578887186952`, -0.9890119208223084}, {
-      0.9890119208223084, -0.14783578887186952`}}, {-951.8368403336549, 
-      520.1329762448354}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., -50.}, {28.086429514684315`, 21.2426386706094}], \
-{{{-0.4186797559616409, -0.908133944937585}, {
-      0.908133944937585, -0.4186797559616409}}, {-1038.4825264200279`, 
-      564.7597736582275}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., 50.}, {47.42833131924471, 25.01579600713078}], \
-{{{-0.4556217367372002, -0.890173484784049}, {
-      0.890173484784049, -0.4556217367372002}}, {-974.4265414768377, 
-      695.9025261856943}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., 150.}, {53.88509866551413, 22.483840092043824`}], \
-{{{-0.506767299098688, -0.8620828872934556}, {
-      0.8620828872934556, -0.506767299098688}}, {-925.4246762750633, 
-      829.4731159702221}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., 250.}, {53.57753644521966, 21.223216111203314`}], \
-{{{-0.6339788770081207, -0.7733503627124785}, {
-      0.7733503627124785, -0.6339788770081207}}, {-950.4476232275649, 
-      949.8399731507651}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., 350.}, {48.076823460694854`, 24.277990760983403`}], \
-{{{-0.7137127226956373, -0.7004385408173799}, {
-      0.7004385408173799, -0.7137127226956373}}, {-954.4454166008632, 
-      1090.106431515639}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., 450.}, {39.3488797871457, 26.3001309466838}], \
-{{{-0.8356999745993582, -0.5491862638983536}, {
-      0.5491862638983536, -0.8356999745993582}}, {-1037.8561634652915`, 
-      1210.4953732985587`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., -450.}, {32.11682894360964, 19.154618635704633`}], \
-{{{-0.7817647756185262, -0.623573440423913}, {
-      0.623573440423913, -0.7817647756185262}}, {-1171.490436000024, \
--490.00742881638024`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., -350.}, {24.4053716593058, 17.276531660243627`}], \
-{{{-0.6100457172054137, -0.7923662176792575}, {
-      0.7923662176792575, -0.6100457172054137}}, {-1082.351034790447, \
--167.33289218226605`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., -250.}, {19.777757773225655`, 19.080787789272925`}], \
-{{{-0.42810494772562663`, -0.9037290267180969}, {
-      0.9037290267180969, -0.42810494772562663`}}, {-939.9847305423375, 
-      94.83827642764174}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., -150.}, {24.43623250984979, 17.636578934093844`}], {{{
-      0.03464499926689281, -0.999399681821941}, {0.999399681821941, 
-      0.03464499926689281}}, {-632.5874526398447, 354.89659080100444`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., -50.}, {33.957222359201815`, 17.55330248968827}], \
-{{{-0.06681276948095098, -0.9977655304901474}, {
-      0.9977655304901474, -0.06681276948095098}}, {-583.2946612649829, 
-      445.5421267710262}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., 50.}, {45.79051763475357, 17.076176733215085`}], \
-{{{-0.25020082673431343`, -0.9681939610953304}, {
-      0.9681939610953304, -0.25020082673431343`}}, {-576.6907153123902, 
-      546.6070218843809}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., 150.}, {59.51599404254191, 16.98284756971685}], \
-{{{-0.31914099011608077`, -0.9477072482722328}, {
-      0.9477072482722328, -0.31914099011608077`}}, {-517.4144078172055, 
-      671.7247726535286}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., 250.}, {57.14224950292471, 17.120421096870086`}], \
-{{{-0.3398421871758892, -0.9404824760810314}, {
-      0.9404824760810314, -0.3398421871758892}}, {-434.8004745676867, 
-      805.2017848344881}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., 350.}, {54.353589966634615`, 19.824343024205145`}], \
-{{{-0.4256196348169919, -0.9049021640256202}, {
-      0.9049021640256202, -0.4256196348169919}}, {-396.0940599995289, 
-      951.4179541987572}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., 450.}, {44.599383417557846`, 21.215641570470705`}], \
-{{{-0.6338816782602854, -0.7734300343055758}, {
-      0.7734300343055758, -0.6338816782602854}}, {-468.8973236926336, 
-      1121.9617723699164`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., -450.}, {35.685934373857144`, 22.22432805953762}], \
-{{{-0.763525163777476, -0.6457780766475263}, {
-      0.6457780766475263, -0.763525163777476}}, {-819.6576836246296, \
--599.8529007056063}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., -350.}, {26.5998973569371, 22.406379614549017`}], \
-{{{-0.42327224860656293`, -0.9060025405922126}, {
-      0.9060025405922126, -0.42327224860656293`}}, {-744.0825637892433, \
--226.34452483463323`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., -250.}, {24.10049772761312, 17.62074806064397}], {{{
-      0.9891312710884731, -0.14703512694217544`}, {0.14703512694217544`, 
-      0.9891312710884731}}, {-40.01940040900189, 41.3933558547709}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., -150.}, {23.758022108617823`, 21.908410773808875`}], {{{
-      0.05630407365746556, -0.998413667419259}, {0.998413667419259, 
-      0.05630407365746556}}, {-432.8708280156492, 157.96971127439753`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., -50.}, {30.254687671730473`, 20.156409229893413`}], {{{
-      0.09671135327923651, -0.9953124706075468}, {0.9953124706075468, 
-      0.09671135327923651}}, {-320.7522175466064, 253.4293088462258}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., 50.}, {42.377752127931075`, 22.609208120503254`}], {{{
-      0.007762044278010144, -0.9999698748805517}, {0.9999698748805517, 
-      0.007762044278010144}}, {-247.67289297256937`, 349.602860250265}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., 150.}, {56.10660475973251, 21.45229165716155}], \
-{{{-0.20109105372587768`, -0.9795725537760928}, {
-      0.9795725537760928, -0.20109105372587768`}}, {-213.3914330513494, 
-      474.03542419170947`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., 250.}, {57.822894833113075`, 20.58179333342299}], \
-{{{-0.32414400582347075`, -0.946007750226558}, {
-      0.946007750226558, -0.32414400582347075`}}, {-160.7412641904017, 
-      614.8383265238351}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., 350.}, {50.815137915039635`, 22.442927062580885`}], \
-{{{-0.4147379695904399, -0.9099408863107533}, {
-      0.9099408863107533, -0.4147379695904399}}, {-105.9420806683683, 
-      768.14055524988}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., 450.}, {41.00460347009491, 22.127199421319148`}], \
-{{{-0.6125832883657398, -0.7904060442677655}, {
-      0.7904060442677655, -0.6125832883657398}}, {-128.09226658922745`, 
-      962.7842930449126}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., -450.}, {33.39899202511021, 26.072781979073785`}], \
-{{{-0.9193624051979591, -0.39341170281096594`}, {
-      0.39341170281096594`, -0.9193624051979591}}, {-368.9715067847306, \
--824.371912057985}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., -350.}, {32.39707315200518, 20.653643883904973`}], {{{
-      0.9630058822357512, -0.26948037178863776`}, {0.26948037178863776`, 
-      0.9630058822357512}}, {-98.0175419024481, 14.0000959613767}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., -250.}, {32.44901874114836, 17.4010512005479}], {{{
-      0.9473532466336599, -0.32019029668724164`}, {0.32019029668724164`, 
-      0.9473532466336599}}, {-85.31224950844441, 18.85734132713918}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., -150.}, {29.424601140842974`, 24.085436631242725`}], {{{
-      0.9768911055606089, -0.21373761455712761`}, {0.21373761455712761`, 
-      0.9768911055606089}}, {-34.37153162750826, 17.907427289804076`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., -50.}, {31.546804038433592`, 26.764295906352746`}], \
-{{{-0.28388051426250666`, -0.9588596631530887}, {
-      0.9588596631530887, -0.28388051426250666`}}, {-176.33103458390508`, 
-      31.691940602183536`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., 50.}, {45.74524482818121, 30.58603258525437}], \
-{{{-0.17820541113428073`, -0.9839933086370364}, {
-      0.9839933086370364, -0.17820541113428073`}}, {-68.62087568157625, 
-      157.30960142041766`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., 150.}, {53.872924059857155`, 30.432426026719007`}], \
-{{{-0.16259169468940765`, -0.9866934381144057}, {
-      0.9866934381144057, -0.16259169468940765`}}, {31.744846248220085`, 
-      273.0580980148517}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., 250.}, {59.52558631729372, 28.683321595996194`}], \
-{{{-0.2594392645232783, -0.9657594255422105}, {
-      0.9657594255422105, -0.2594392645232783}}, {115.49592993322477`, 
-      411.43575868504064`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., 350.}, {58.827513584327306`, 30.03867269824893}], \
-{{{-0.47239816325844736`, -0.8813852593219638}, {
-      0.8813852593219638, -0.47239816325844736`}}, {161.24502443684258`, 
-      603.477883072653}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., 450.}, {44.1721926282776, 28.129907003384588`}], \
-{{{-0.7659399657063232, -0.6429121004723714}, {
-      0.6429121004723714, -0.7659399657063232}}, {112.71644864193479`, 
-      858.9641946150825}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., -450.}, {40.10108935304618, 31.735156249687886`}], {{{
-      0.7338226392357488, -0.6793411029409895}, {0.6793411029409895, 
-      0.7338226392357488}}, {-279.0857602470202, -187.71392263801204`}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., -350.}, {41.72473090680983, 24.55494119831058}], {{{
-      0.968684216644766, -0.2482959694061023}, {0.2482959694061023, 
-      0.968684216644766}}, {-83.7720109566124, -35.79012111494217}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., -250.}, {42.51231284071437, 18.43216030678383}], {{{
-      0.987577951136163, -0.15712985212778133`}, {0.15712985212778133`, 
-      0.987577951136163}}, {-38.04025814556164, -18.818497428737402`}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., -150.}, {38.48828776532281, 19.85628271956934}], \
-{{{-0.9999203210042795, -0.01262345605207199}, {
-      0.01262345605207199, -0.9999203210042795}}, {
-      198.09851369261713`, -301.25039375584913`}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., -50.}, {36.59223976812618, 26.670628828637287`}], \
-{{{-0.9688605993696486, -0.247606823389593}, {
-      0.247606823389593, -0.9688605993696486}}, {
-      184.50571876748523`, -123.20371230744173`}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., 50.}, {46.47958814436273, 35.61539811308433}], \
-{{{-0.7882379125577671, -0.6153706145133793}, {
-      0.6153706145133793, -0.7882379125577671}}, {209.59232198144568`, 
-      27.87483417655043}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., 150.}, {52.47146684294702, 41.34500758047983}], \
-{{{-0.12188733924296087`, -0.992543941864677}, {
-      0.992543941864677, -0.12188733924296087`}}, {261.07032520399764`, 
-      69.02870669997644}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., 250.}, {53.940868033419875`, 44.205411369167265`}], \
-{{{-0.1984101335474278, -0.9801190840432054}, {
-      0.9801190840432054, -0.1984101335474278}}, {364.8707843655441, 
-      201.5906249825364}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., 350.}, {51.75233372412032, 43.94932903919839}], \
-{{{-0.38390284207315195`, -0.9233734931479008}, {
-      0.9233734931479008, -0.38390284207315195`}}, {461.5710068090805, 
-      392.02864541081306`}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., 450.}, {42.01174840860955, 41.25453390007557}], {{{
-      0.23792427495490148`, -0.9712837069503351}, {0.9712837069503351, 
-      0.23792427495490148`}}, {513.2852406321606, 245.80570557526082`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., -450.}, {49.51868795491333, 30.977862233204924`}], {{{
-      0.6752840590005363, -0.7375577534402036}, {0.7375577534402036, 
-      0.6752840590005363}}, {-234.48620674825247`, -367.3894994818197}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., -350.}, {49.89409908347456, 23.13777020199916}], {{{
-      0.8748451703956561, -0.48440265052474213`}, {0.48440265052474213`, 
-      0.8748451703956561}}, {-131.99447880235658`, -189.124985518943}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., -250.}, {53.71690413315471, 18.49045500498825}], {{{
-      0.9672078780574729, -0.2539860638372912}, {0.2539860638372912, 
-      0.9672078780574729}}, {-53.65887937656464, -84.39384963681914}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., -150.}, {50.56212206084486, 21.71695596867906}], {{{
-      0.994452162962665, -0.10518980739062665`}, {0.10518980739062665`, 
-      0.994452162962665}}, {-14.114119997393459`, -32.38911777278825}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., -50.}, {48.85265254591212, 29.019728063368422`}], \
-{{{-0.9987520864867789, -0.0499426645094717}, {
-      0.0499426645094717, -0.9987520864867789}}, {
-      597.1284927205601, -114.92040367718046`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., 50.}, {48.265114516750586`, 39.14831652173984}], \
-{{{-0.9658720815152213, -0.25901954009196637`}, {
-      0.25901954009196637`, -0.9658720815152213}}, {602.7126014591647, 
-      20.58774204817115}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., 150.}, {51.04703229765348, 45.69227833107301}], \
-{{{-0.5514366841987958, -0.8342167484052556}, {
-      0.8342167484052556, -0.5514366841987958}}, {
-      590.563517520427, -17.54952189175731}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., 250.}, {59.01767168855424, 46.429579931959026`}], \
-{{{-0.7012854613207745, -0.7128805662522358}, {
-      0.7128805662522358, -0.7012854613207745}}, {688.6057799592913, 
-      211.4571954545229}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., 350.}, {57.32769278218657, 49.36337397441609}], \
-{{{-0.8486814748819487, -0.5289042958723255}, {
-      0.5289042958723255, -0.8486814748819487}}, {739.7209460198985, 
-      488.36722744698443`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., 450.}, {51.1791925563579, 43.4071220886125}], {{{
-      0.7589398947374617, -0.6511606838376304}, {0.6511606838376304, 
-      0.7589398947374617}}, {365.3403393056951, -86.87115778314683}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., -450.}, {60.26761725670594, 32.259345718559906`}], {{{
-      0.569842235764823, -0.821754115498394}, {0.821754115498394, 
-      0.569842235764823}}, {-154.71046985668886`, -604.4480516550267}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., -350.}, {57.389891568178385`, 25.013748356981235`}], {{{
-      0.8317106419368998, -0.5552093371773479}, {0.5552093371773479, 
-      0.8317106419368998}}, {-110.17858898052168`, -336.50594391075896`}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., -250.}, {60.17109007849601, 17.995525862671464`}], {{{
-      0.9194157037768377, -0.3932871262176557}, {0.3932871262176557, 
-      0.9194157037768377}}, {-58.02963344283273, -216.78963716461845`}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., -150.}, {52.8840141818691, 19.9372097024904}], {{{
-      0.9582205263891433, -0.28603045783012854`}, {0.28603045783012854`, 
-      0.9582205263891433}}, {-22.01483186909104, -149.28214995669276`}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., -50.}, {53.30412940496296, 32.07325091389466}], {{{
-      0.9904393451519012, -0.13794891654186023`}, {0.13794891654186023`, 
-      0.9904393451519012}}, {-2.117118403043605, -69.45249101333505}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., 50.}, {57.6234037925892, 46.00934172089586}], {{{
-      0.9843335497152471, -0.17631637163060396`}, {0.17631637163060396`, 
-      0.9843335497152471}}, {16.64904372390663, -87.37486330106432}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., 150.}, {60.364991691831285`, 56.53530476372073}], {{{
-      0.5131668232073187, -0.8582888858416544}, {0.8582888858416544, 
-      0.5131668232073187}}, {372.1599212725888, -356.119466401925}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., 250.}, {67.98463744613272, 51.135065976260876`}], \
-{{{-0.6598846208259775, -0.7513669457710765}, {
-      0.7513669457710765, -0.6598846208259775}}, {1017.7840468557579`, 
-      39.28768232095612}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., 350.}, {65.0881570396948, 48.690336798611604`}], \
-{{{-0.963796106131492, -0.26664033041866303`}, {
-      0.26664033041866303`, -0.963796106131492}}, {1075.222168712278, 
-      554.0084719366907}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., 450.}, {63.558262466923125`, 42.33351750658158}], {{{
-      0.8690755879193405, -0.4946793127700538}, {0.4946793127700538, 
-      0.8690755879193405}}, {288.06789678685396`, -188.4236709487301}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., -450.}, {52.906693461942154`, 31.058711746522512`}], {{{
-      0.688450577338396, -0.7252832567779497}, {0.7252832567779497, 
-      0.688450577338396}}, {-108.29286968695465`, -647.8955199422866}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., -350.}, {45.88872680971061, 24.16159599772886}], {{{
-      0.6286552142167648, -0.7776841400196313}, {0.7776841400196313, 
-      0.6286552142167648}}, {-12.248098958606306`, -674.3495730378742}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., -250.}, {56.04536842549798, 23.619888306680867`}], {{{
-      0.8041495974296065, -0.594426971926579}, {0.594426971926579, 
-      0.8041495974296065}}, {-11.511461182369317`, -465.06148099120367`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., -150.}, {46.80325654259153, 21.75545978925115}], {{{
-      0.8925101048329462, -0.45102739691850574`}, {0.45102739691850574`, 
-      0.8925101048329462}}, {7.5888170791617995`, -331.8426621180121}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., -50.}, {47.24685670821517, 28.87251127692848}], {{{
-      0.9306145924208946, -0.3660006562470785}, {0.3660006562470785, 
-      0.9306145924208946}}, {30.269752493019837`, -259.66972975191027`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., 50.}, {47.76205866487524, 40.57717538723169}], {{{
-      0.9099605634486586, -0.41469479496154726`}, {0.41469479496154726`, 
-      0.9099605634486586}}, {83.76234533401635, -285.784384645516}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., 150.}, {50.122979491172785`, 46.43638083865368}], {{{
-      0.9986310957237553, -0.05230616267297652}, {0.05230616267297652, 
-      0.9986310957237553}}, {8.804157394317826, -36.40897822964686}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., 250.}, {58.91067625187018, 48.24069669267321}], \
-{{{-0.8382503398104749, -0.5452855837151973}, {
-      0.5452855837151973, -0.8382503398104749}}, {1423.0966337961318`, 
-      77.86267635198058}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., 350.}, {53.46910523536286, 47.657553661278214`}], \
-{{{-0.1931742840266389, -0.9811644591967218}, {
-      0.9811644591967218, -0.1931742840266389}}, {
-      1178.6295595375, -269.20412202838156`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., 450.}, {56.282181111836124`, 43.29755706571672}], {{{
-      0.5479836262966443, -0.8364890586916124}, {0.8364890586916124, 
-      0.5479836262966443}}, {692.8315380035746, -382.1349729176186}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., -450.}, {38.4132772298341, 34.90323215962393}], {{{
-      0.47690631170653086`, -0.8789541341017023}, {0.8789541341017023, 
-      0.47690631170653086`}}, {75.25495911835617, -1026.4508804235934`}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., -350.}, {39.93631401153221, 27.37266580100707}], {{{
-      0.401481830956472, -0.9158669878382116}, {0.9158669878382116, 
-      0.401481830956472}}, {218.11290639580113`, -1033.7616482196254`}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., -250.}, {43.136245932604055`, 20.74170156855955}], {{{
-      0.5703472007542221, -0.8214037196116312}, {0.8214037196116312, 
-      0.5703472007542221}}, {181.33658941829242`, -846.6765474619126}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., -150.}, {43.62191811244682, 23.166640556274963`}], {{{
-      0.5954758988904751, -0.8033731722186027}, {0.8033731722186027, 
-      0.5954758988904751}}, {243.56571516578197`, -783.7144701631712}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., -50.}, {39.265730848534474`, 32.016226060112174`}], {{{
-      0.6337880645276188, -0.7735067480393012}, {0.7735067480393012, 
-      0.6337880645276188}}, {290.91540452317804`, -714.4666700089901}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., 50.}, {48.406088351147204`, 37.10849524886196}], {{{
-      0.9789393474374357, -0.2041513018297155}, {0.2041513018297155, 
-      0.9789393474374357}}, {29.162152397793648`, -182.68313901861572`}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., 150.}, {53.789840775513454`, 39.02316738856728}], \
-{{{-0.9141741377000955, -0.40532165740345877`}, {
-      0.40532165740345877`, -0.9141741377000955}}, {
-      1783.554972540605, -77.66337100809855}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., 250.}, {60.692630076140205`, 39.474854754929666`}], \
-{{{-0.7779151975649524, -0.6283692747083366}, {
-      0.6283692747083366, -0.7779151975649524}}, {
-      1757.2159964855414`, -121.05354784626479`}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., 350.}, {47.224747903080385`, 40.46850233357136}], \
-{{{-0.8101114721248726, -0.5862758759591526}, {
-      0.5862758759591526, -0.8101114721248726}}, {1834.2968814980886`, 
-      105.89072688046804`}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., 450.}, {41.14960973863841, 40.854402926196435`}], {{{
-      0.40494298305086246`, -0.9143419384879318}, {0.9143419384879318, 
-      0.40494298305086246`}}, {947.0051875737931, -555.1320870120268}}], 
+     DiskBox[{-900., -450.}, {34.30391923681373, 28.093842546934148`}], {{{
+      0.7649170083519671, -0.6441288460656585}, {0.6441288460656585, 
+      0.7649170083519671}}, {-501.43267321277597`, 473.9286152174777}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., -350.}, {33.70190479628248, 23.648344273979916`}], {{{
+      0.6683629673323096, -0.7438352935285809}, {0.7438352935285809, 
+      0.6683629673323096}}, {-558.8156821359246, 553.3788027420312}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., -250.}, {36.09700514031391, 22.8844951724133}], {{{
+      0.5569769123570079, -0.8305279761099286}, {0.8305279761099286, 
+      0.5569769123570079}}, {-606.3527729061751, 636.7194065881877}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., -150.}, {31.572509709540387`, 24.635956993242033`}], {{{
+      0.5521711722012665, -0.8337307698471247}, {0.8337307698471247, 
+      0.5521711722012665}}, {-528.1055604959288, 683.1833686926022}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., -50.}, {33.19117238647482, 29.65709104776467}], \
+{{{-0.4106547698905693, -0.9117909080299734}, {
+      0.9117909080299734, -0.4106547698905693}}, {-1315.1788383030112`, 
+      750.0790787324477}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., 50.}, {37.50524252430403, 32.28801105184304}], \
+{{{-0.4891511151502734, -0.8721990521361761}, {
+      0.8721990521361761, -0.4891511151502734}}, {-1296.6260510284374`, 
+      859.4367026800721}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., 150.}, {40.02583424503117, 30.150179575463415`}], \
+{{{-0.48753708426472875`, -0.8731022800718405}, {
+      0.8731022800718405, -0.48753708426472875`}}, {-1207.8180338274797`, 
+      1008.9226147043657`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., 250.}, {53.38204332731956, 36.7146006691829}], \
+{{{-0.3153166452479215, -0.9489865189925495}, {
+      0.9489865189925495, -0.3153166452479215}}, {-946.538350974992, 
+      1182.917028405275}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., 350.}, {47.18449190015166, 37.00609366757458}], \
+{{{-0.5826038581998311, -0.8127562638397019}, {
+      0.8127562638397019, -0.5826038581998311}}, {-1139.8787800359523`, 
+      1285.3919878256725`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., 450.}, {37.86026397003135, 34.554143420773094`}], \
+{{{-0.548392226669266, -0.8362212420936964}, {
+      0.8362212420936964, -0.548392226669266}}, {-1017.2534450601761`, 
+      1449.3756198854965`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., -450.}, {33.931170276036, 20.912539080543368`}], \
+{{{-0.8537293933315935, -0.5207169317025031}, {
+      0.5207169317025031, -0.8537293933315935}}, {-1531.9331945982417`, \
+-469.6763748074649}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., -350.}, {24.945585516092432`, 22.06760186388053}], {{{
+      0.6475860501460043, -0.7619923278198389}, {0.7619923278198389, 
+      0.6475860501460043}}, {-513.3870796347405, 410.04974702498873`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., -250.}, {25.153148505539615`, 21.833278651711634`}], {{{
+      0.8398851716354618, -0.5427641278371949}, {0.5427641278371949, 
+      0.8398851716354618}}, {-247.7714118144754, 339.90618239490186`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., -150.}, {24.22686431523062, 22.241107081157693`}], \
+{{{-0.8087506816964614, -0.5881516257356678}, {
+      0.5881516257356678, -0.8087506816964614}}, {-1354.3482210478733`, 
+      140.39353576049825`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., -50.}, {32.1874646829666, 22.793175042061257`}], \
+{{{-0.3421166991743546, -0.9396574717129876}, {
+      0.9396574717129876, -0.3421166991743546}}, {-986.4645630076976, 
+      590.6543952403736}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., 50.}, {36.176859463071736`, 25.04172987656743}], \
+{{{-0.5278797379204194, -0.8493191286513387}, {
+      0.8493191286513387, -0.5278797379204194}}, {-1027.0498601117267`, 
+      670.9173769519581}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., 150.}, {42.13528335986256, 23.68603014293188}], \
+{{{-0.4729384822859067, -0.8810954499786633}, {
+      0.8810954499786633, -0.4729384822859067}}, {-898.8926201033352, 
+      837.7075873279504}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., 250.}, {42.462666302787056`, 20.89250456100782}], \
+{{{-0.6239621825398179, -0.7814545378716198}, {
+      0.7814545378716198, -0.6239621825398179}}, {-941.4098933099676, 
+      953.0087221450883}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., 350.}, {45.19141333386896, 20.85497317268931}], \
+{{{-0.5940959614080705, -0.804394174915893}, {
+      0.804394174915893, -0.5940959614080705}}, {-834.3292117650867, 
+      1121.0095089339497`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., 450.}, {43.13387627385135, 22.00118165151696}], \
+{{{-0.7294135535671594, -0.6840729989354416}, {
+      0.6840729989354416, -0.7294135535671594}}, {-902.7566379760628, 
+      1257.087198360031}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., -450.}, {35.174205925332785`, 21.10288965078333}], \
+{{{-0.6781041845552661, -0.7349657916451878}, {
+      0.7349657916451878, -0.6781041845552661}}, {-1169.7866985179676`, \
+-387.66398722727587`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., -350.}, {26.083138079769316`, 23.23093181337167}], {{{
+      0.011295773891041047`, -0.9999362007109266}, {0.9999362007109266, 
+      0.011295773891041047`}}, {-844.3297833033039, 153.9216212173277}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., -250.}, {21.7862213538809, 16.713626181197174`}], {{{
+      0.1007835950163207, -0.9949083711455976}, {0.9949083711455976, 
+      0.1007835950163207}}, {-698.3352952782391, 272.650084326879}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., -150.}, {25.710246480684596`, 18.75528900829174}], \
+{{{-0.19637646492356578`, -0.9805285737927903}, {
+      0.9805285737927903, -0.19637646492356578`}}, {-745.2675185307014, 
+      310.8078171578603}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., -50.}, {31.035536323038286`, 17.716808082032895`}], \
+{{{-0.1417608077677491, -0.9899009411961559}, {
+      0.9899009411961559, -0.1417608077677491}}, {-620.3754509436824, 
+      437.8624302096905}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., 50.}, {37.401797091358425`, 19.79061951169998}], \
+{{{-0.21385219065949712`, -0.9768660299908755}, {
+      0.9768660299908755, -0.21385219065949712`}}, {-558.0827938302048, 
+      549.1256245284126}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., 150.}, {51.79171786293218, 19.628597320428824`}], \
+{{{-0.2525572584909761, -0.9675819506292592}, {
+      0.9675819506292592, -0.2525572584909761}}, {-481.14133665109915`, 
+      671.674564088276}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., 250.}, {59.68670576106541, 20.535534288412684`}], \
+{{{-0.40005642164068267`, -0.91649051250084}, {
+      0.91649051250084, -0.40005642164068267`}}, {-470.90558269513133`, 
+      808.2593616605907}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., 350.}, {58.23899733040564, 18.678331213563894`}], \
+{{{-0.5405306040342871, -0.8413243524957118}, {
+      0.8413243524957118, -0.5405306040342871}}, {-475.8017786436444, 
+      959.8478876598564}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., 450.}, {48.384547282634486`, 21.0780107886566}], \
+{{{-0.6675159577589334, -0.7445954916175452}, {
+      0.7445954916175452, -0.6675159577589334}}, {-498.69000765157136`, 
+      1122.6799268002926`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., -450.}, {35.30556673513993, 21.243708239406075`}], \
+{{{-0.7990236313756025, -0.6012996229030461}, {
+      0.6012996229030461, -0.7990236313756025}}, {-810.2919197190515, \
+-629.1707472481073}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., -350.}, {23.769357272826703`, 22.913089932237714`}], \
+{{{-0.8127882855933084, -0.5825591839481123}, {
+      0.5825591839481123, -0.8127882855933084}}, {-747.7322000598318, \
+-459.70814477322426`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., -250.}, {23.799253191362986`, 22.277651180220406`}], {{{
+      0.5759072738992248, -0.81751502241241}, {0.81751502241241, 
+      0.5759072738992248}}, {-331.6065734333351, 139.23132519852925`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., -150.}, {27.821850555752707`, 22.3357610845832}], {{{
+      0.518960624944098, -0.8547981456213105}, {0.8547981456213105, 
+      0.518960624944098}}, {-272.53153435996717`, 184.28353742800783`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., -50.}, {36.94555735405583, 21.839713169521318`}], \
+{{{-0.04700180868245021, -0.9988948042614789}, {
+      0.9988948042614789, -0.04700180868245021}}, {-364.04528281780904`, 
+      247.31835084432112`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., 50.}, {44.277002723661, 24.453506385963948`}], \
+{{{-0.0056191518490837375`, -0.9999842124416249}, {
+      0.9999842124416249, -0.0056191518490837375`}}, {-251.68653493264387`, 
+      350.2762213249417}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., 150.}, {50.154330606885694`, 24.573608467333816`}], \
+{{{-0.18707012858395725`, -0.9823465615512591}, {
+      0.9823465615512591, -0.18707012858395725`}}, {-208.7690543424983, 
+      472.7644877529713}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., 250.}, {56.892280299300275`, 24.236336275020584`}], \
+{{{-0.26820908787191916`, -0.96336072433067}, {
+      0.96336072433067, -0.26820908787191916`}}, {-139.62254527890826`, 
+      606.0604892671809}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., 350.}, {59.58262456028494, 22.67397041227949}], \
+{{{-0.39756615994171635`, -0.917573511207248}, {
+      0.917573511207248, -0.39756615994171635`}}, {-98.11911905997815, 
+      764.4202093417751}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., 450.}, {46.37397795413564, 24.681345573211523`}], \
+{{{-0.6016701016942757, -0.798744695586268}, {
+      0.798744695586268, -0.6016701016942757}}, {-121.0659174944621, 
+      960.3749544383045}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., -450.}, {38.38101023508638, 33.26537378136041}], \
+{{{-0.9975887151688538, -0.06940284841240628}, {
+      0.06940284841240628, -0.9975887151688538}}, {-230.9901533024682, \
+-891.9746369847436}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., -350.}, {31.89454882786962, 24.259330630119653`}], {{{
+      0.9883725035412393, -0.15205194587253076`}, {0.15205194587253076`, 
+      0.9883725035412393}}, {-54.380930701261846`, 11.13557082668683}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., -250.}, {33.15438144892765, 18.820181573805993`}], {{{
+      0.9547449457820566, -0.2974257697369512}, {0.2974257697369512, 
+      0.9547449457820566}}, {-78.88194785603213, 18.428813419209234`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., -150.}, {32.72225180496178, 28.61706867131277}], {{{
+      0.6231885437888988, -0.7820716328382407}, {0.7820716328382407, 
+      0.6231885437888988}}, {-154.99189054684624`, 21.685444852158867`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., -50.}, {36.04330961251997, 33.42905370794854}], \
+{{{-0.9997811105809823, -0.020922020109388668`}, {
+      0.020922020109388668`, -0.9997811105809823}}, {-201.0242120635677, \
+-97.89685351811025}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., 50.}, {48.51344442693951, 31.500823796965378`}], \
+{{{-0.1321557223114471, -0.9912289670204053}, {
+      0.9912289670204053, -0.1321557223114471}}, {-63.654123880124445`, 
+      155.7306828176129}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., 150.}, {56.059739587226495`, 31.18203712333146}], \
+{{{-0.13648317389281478`, -0.9906423891819609}, {
+      0.9906423891819609, -0.13648317389281478`}}, {34.94804098801265, 
+      269.5367150021183}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., 250.}, {56.80248148335899, 30.520971105398193`}], \
+{{{-0.06443105328247031, -0.997922160978957}, {
+      0.997922160978957, -0.06443105328247031}}, {143.0374349164922, 
+      365.8999794185133}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., 350.}, {58.14135698875305, 31.456958307066184`}], \
+{{{-0.12444439925857864`, -0.9922265827386261}, {
+      0.9922265827386261, -0.12444439925857864`}}, {234.83486403266124`, 
+      492.7781980143651}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., 450.}, {47.300592399904176`, 33.008998454446456`}], \
+{{{-0.2657774197425449, -0.9640344201090515}, {
+      0.9640344201090515, -0.2657774197425449}}, {307.2377470748187, 
+      666.0032808950504}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., -450.}, {41.5487973162539, 34.26072216871975}], {{{
+      0.9862677902922934, -0.16515400640601094`}, {0.16515400640601094`, 
+      0.9862677902922934}}, {-72.94608191193424, -22.694895009069114`}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., -350.}, {39.64296354166242, 23.41343079966917}], {{{
+      0.8638737338610948, -0.5037084195691893}, {0.5037084195691893, 
+      0.8638737338610948}}, {-162.68532023532572`, -98.01503510553573}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., -250.}, {36.280948872684256`, 19.107913406978284`}], {{{
+      0.9871643976214575, -0.15970739515960128`}, {0.15970739515960128`, 
+      0.9871643976214575}}, {-38.643288552046045`, -19.179640110595756`}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., -150.}, {49.14212542678897, 26.260725877540942`}], {{{
+      0.9931731082229341, -0.1166498054125938}, {0.1166498054125938, 
+      0.9931731082229341}}, {-16.81478163418248, -12.689014307819264`}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., -50.}, {41.92120851288433, 37.39319162330982}], {{{
+      0.6394094984724749, -0.7688663689245214}, {0.7688663689245214, 
+      0.6394094984724749}}, {-2.3842682934735535`, -94.9161619688284}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., 50.}, {46.61454636433098, 41.7697537721123}], \
+{{{-0.6070168204313973, -0.7946889830074133}, {
+      0.7946889830074133, -0.6070168204313973}}, {200.4361311935104, 
+      0.8819427208285333}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., 150.}, {63.58821584612986, 46.53751593841379}], \
+{{{-0.046450776066304676`, -0.9989205801277887}, {
+      0.9989205801277887, -0.046450776066304676`}}, {254.4831646257988, 
+      57.07555839716683}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., 250.}, {57.110112520863765`, 38.748184373467076`}], \
+{{{-0.098335628003904, -0.9951533069156118}, {
+      0.9951533069156118, -0.098335628003904}}, {358.62188952929336`, 
+      175.06857630941482`}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., 350.}, {61.294455615574904`, 39.77417330416066}], \
+{{{-0.17945963035347617`, -0.9837653384183617}, {
+      0.9837653384183617, -0.17945963035347617`}}, {462.2638314817742, 
+      314.4343367818805}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., 450.}, {49.61140954445307, 39.393456025403616`}], {{{
+      0.11227038181801771`, -0.993677694912408}, {0.993677694912408, 
+      0.11227038181801771`}}, {535.9279245287819, 300.11055869065126`}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., -450.}, {58.223789100893505`, 33.20645947492869}], {{{
+      0.8533751203197225, -0.5212973278459224}, {0.5212973278459224, 
+      0.8533751203197225}}, {-190.59633362658184`, -222.3703942099016}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., -350.}, {59.46449621070434, 26.166336189578132`}], {{{
+      0.880258081287449, -0.47449521633852}, {0.47449521633852, 
+      0.880258081287449}}, {-130.15075010471662`, -184.25823645094883`}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., -250.}, {49.76828747306182, 17.632647008459056`}], {{{
+      0.9193111890727738, -0.39353136805800226`}, {0.39353136805800226`, 
+      0.9193111890727738}}, {-74.17619873633271, -138.23161314920725`}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., -150.}, {54.01414597839679, 30.3878260514361}], {{{
+      0.9243532386779517, -0.38153779648362707`}, {0.38153779648362707`, 
+      0.9243532386779517}}, {-34.53664107592954, -125.80835314339537`}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., -50.}, {64.10576302844225, 39.96035163954922}], {{{
+      0.9759810951849219, -0.2178552313846064}, {0.2178552313846064, 
+      0.9759810951849219}}, {-3.6870901247069128`, -66.55751465613582}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., 50.}, {58.91907030863658, 49.64215872819987}], {{{
+      0.9792863403929485, -0.20248027933551038`}, {0.20248027933551038`, 
+      0.9792863403929485}}, {16.338111848891003`, -59.70840082030054}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., 150.}, {60.80469448477827, 54.68189627052624}], {{{
+      0.9088405646825519, -0.41714365389815083`}, {0.41714365389815083`, 
+      0.9088405646825519}}, {89.91937867995705, -111.46918087182803`}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., 250.}, {59.03106634378939, 53.21582068785013}], {{{
+      0.28250472228608425`, -0.9592659078097493}, {0.9592659078097493, 
+      0.28250472228608425`}}, {455.065060266612, -108.40595291444583`}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., 350.}, {66.68795921865377, 48.90222823365599}], {{{
+      0.4326650134633826, -0.9015547604692301}, {0.9015547604692301, 
+      0.4326650134633826}}, {485.74466212521577`, -71.89918285295295}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., 450.}, {59.594544420153476`, 40.23304920855017}], {{{
+      0.6266285931229264, -0.779318039237372}, {0.779318039237372, 
+      0.6266285931229264}}, {462.7045397199395, -65.77827867652854}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., -450.}, {58.1831270425262, 32.28270657394084}], {{{
+      0.48437344681383643`, -0.8748613398828888}, {0.8748613398828888, 
+      0.48437344681383643`}}, {-135.87432635421817`, -669.462618875218}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., -350.}, {66.5705815382374, 24.483542662253004`}], {{{
+      0.7879446718779425, -0.615746046726377}, {0.615746046726377, 
+      0.7879446718779425}}, {-109.48345229320319`, -382.09238820590866`}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., -250.}, {61.2183181168309, 18.789466480537968`}], {{{
+      0.8512148595045632, -0.5248173615255375}, {0.5248173615255375, 
+      0.8512148595045632}}, {-56.81177013366596, -299.60496588662795`}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., -150.}, {58.957492506336635`, 29.11570259801902}], {{{
+      0.9635556547122918, -0.2675079443156159}, {0.2675079443156159, 
+      0.9635556547122918}}, {-21.904019003488315`, -139.2206239509642}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., -50.}, {54.580136756835046`, 35.22436110914411}], {{{
+      0.9989266558041715, -0.04631993441159258}, {0.04631993441159258, 
+      0.9989266558041715}}, {-1.7793246226653991`, -23.213634415587716`}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., 50.}, {60.16827983891202, 46.798294896097296`}], {{{
+      0.9991234402573308, -0.041861093253233485`}, {0.041861093253233485`, 
+      0.9991234402573308}}, {2.5313345339963007`, -20.886718639483277`}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., 150.}, {61.741319208465114`, 51.59779474997676}], {{{
+      0.5265989803976112, -0.8501138240519303}, {0.8501138240519303, 
+      0.5265989803976112}}, {364.21758340898396`, -354.0467590856068}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., 250.}, {66.38244922356071, 55.64487906847225}], {{{
+      0.3648920058408257, -0.9310498504771153}, {0.9310498504771153, 
+      0.3648920058408257}}, {550.316459698866, -306.7479266987641}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., 350.}, {66.19781630280178, 48.29129455326057}], {{{
+      0.553142958240203, -0.8330863507159849}, {0.8330863507159849, 
+      0.553142958240203}}, {515.0087436304932, -260.1432107420635}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., 450.}, {57.525493991598694`, 46.68602050167319}], {{{
+      0.5656808405601308, -0.8246242699697747}, {0.8246242699697747, 
+      0.5656808405601308}}, {588.2405012063332, -216.86851323694623`}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., -450.}, {48.17536453716252, 32.140031332856836`}], {{{
+      0.48712476075249556`, -0.8733323923122421}, {0.8733323923122421, 
+      0.48712476075249556`}}, {-33.98690906725585, -842.1265322799466}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., -350.}, {63.272341197373166`, 25.307846992293975`}], {{{
+      0.6544702419588142, -0.7560877610372827}, {0.7560877610372827, 
+      0.6544702419588142}}, {-22.75988573421887, -650.1968480405128}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., -250.}, {70.31583571121121, 19.538271639824316`}], {{{
+      0.8139134784995075, -0.5809861009669954}, {0.5809861009669954, 
+      0.8139134784995075}}, {-14.985960191404047`, -453.2119010520199}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., -150.}, {49.35443295264051, 31.84616019604082}], {{{
+      0.8266840924417328, -0.5626663410084067}, {0.5626663410084067, 
+      0.8266840924417328}}, {36.921184139526076`, -419.8638248396248}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., -50.}, {56.65484929408993, 35.58708634601763}], {{{
+      0.9395000580204209, -0.34254874248729283`}, {0.34254874248729283`, 
+      0.9395000580204209}}, {25.222522261340714`, -242.80911684008393`}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., 50.}, {67.32260254603689, 39.624384007903636`}], {{{
+      0.9339701391954099, -0.35735105861226507`}, {0.35735105861226507`, 
+      0.9339701391954099}}, {64.08845549382625, -246.84424798835607`}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., 150.}, {63.33748488443592, 53.63169801813222}], {{{
+      0.9195472997291307, -0.3929793424098322}, {0.3929793424098322, 
+      0.9195472997291307}}, {115.26379155108327`, -263.0176346462521}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., 250.}, {64.50521467617708, 57.463514337501856`}], \
+{{{-0.7030892515050794, -0.711101613286053}, {
+      0.711101613286053, -0.7030892515050794}}, {
+      1369.9378793750689`, -71.9988164239673}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., 350.}, {57.66719206285139, 50.25450939733287}], \
+{{{-0.5603442076585742, -0.8282598438554682}, {
+      0.8282598438554682, -0.5603442076585742}}, {
+      1382.1318907104157`, -33.6614180183268}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., 450.}, {50.258310134239366`, 40.59680427693091}], {{{
+      0.6362881819427451, -0.7714514563600202}, {0.7714514563600202, 
+      0.6362881819427451}}, {601.7514280020876, -376.34570132624935`}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., -450.}, {43.492790383886735`, 35.12307196118599}], {{{
+      0.30702356405155745`, -0.9517019129523063}, {0.9517019129523063, 
+      0.30702356405155745`}}, {195.41293152506046`, -1168.371117833875}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., -350.}, {49.738861091158846`, 25.818282851384275`}], {{{
+      0.50560646366713, -0.8627642226576269}, {0.8627642226576269, 
+      0.50560646366713}}, {142.98670476941356`, -949.5255381083687}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., -250.}, {51.787283931461836`, 22.92522196554623}], {{{
+      0.7672924696596758, -0.6412973304197948}, {0.6412973304197948, 
+      0.7672924696596758}}, {49.112444701343065`, -635.3444799628962}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., -150.}, {47.899603376066, 26.897502689240476`}], {{{
+      0.8463086672494029, -0.5326928193044651}, {0.5326928193044651, 
+      0.8463086672494029}}, {58.418276579867666`, -502.4772372866081}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., -50.}, {48.21453350065643, 30.166485356151615`}], {{{
+      0.5475109138916275, -0.8367985415675357}, {0.8367985415675357, 
+      0.5475109138916275}}, {365.4002504191584, -775.7431417162009}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., 50.}, {47.411467671913236`, 38.052375723260916`}], {{{
+      0.0900895565123312, -0.9959336683772727}, {0.9959336683772727, 
+      0.0900895565123312}}, {868.7160825577655, -850.8447793651619}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., 150.}, {59.86165471265581, 42.05918701865534}], \
+{{{-0.5559544663079068, -0.8312127473711471}, {
+      0.8312127473711471, -0.5559544663079068}}, {
+      1525.0409317827882`, -514.6983026878464}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., 250.}, {61.93494615469373, 47.753188566416185`}], \
+{{{-0.618320357999704, -0.7859261637603865}, {
+      0.7859261637603865, -0.618320357999704}}, {
+      1652.9698631398303`, -302.7534578844219}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., 350.}, {53.42929033927195, 41.896939879774095`}], \
+{{{-0.006817349712316717, -0.9999767616014384}, {
+      0.9999767616014384, -0.006817349712316717}}, {
+      1256.1274813015884`, -547.5930130419838}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., 450.}, {47.32381239042495, 37.93304753713952}], \
+{{{-0.40470920269586963`, -0.9144454391888417}, {
+      0.9144454391888417, -0.40470920269586963`}}, {
+      1675.7387300612613`, -190.88175405681613`}}], 
     {EdgeForm[None], FaceForm[{RGBColor[1, 0, 0], Opacity[0.3]}]}}, 
    {EdgeForm[{RGBColor[0.6, 0.24, 0.4428931686004542], Opacity[1]}], FaceForm[
     None], GeometricTransformationBox[
@@ -8922,455 +9091,453 @@ Cell[BoxData[
  GraphicsBox[{
    {EdgeForm[{RGBColor[1, 0, 0], Opacity[0.8], Thickness[Large]}], FaceForm[
     None], GeometricTransformationBox[
-     DiskBox[{-900., -450.}, {30.275894681998473`, 29.199828791044897`}], \
-{{{-0.9709106616706602, -0.2394420327641761}, {
-      0.2394420327641761, -0.9709106616706602}}, {-1881.5685102474736`, \
--671.4119682640386}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., -350.}, {29.64961673941153, 20.678453046589947`}], {{{
-      0.4745403398020774, -0.8802337563968613}, {0.8802337563968613, 
-      0.4745403398020774}}, {-780.9955089170319, 608.2994996879022}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., -250.}, {28.94981309937553, 17.565759091825573`}], {{{
-      0.6490724950184557, -0.7607265581077848}, {0.7607265581077848, 
-      0.6490724950184557}}, {-506.0163940103361, 596.9220260516203}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., -150.}, {30.303007829543557`, 20.197853342771484`}], {{{
-      0.7064442534036602, -0.7077686887910097}, {0.7077686887910097, 
-      0.7064442534036602}}, {-370.3654752553573, 592.9584579224578}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., -50.}, {31.161800295756876`, 30.467253581494266`}], {{{
-      0.51772519242022, -0.8555469742413015}, {0.8555469742413015, 
-      0.51772519242022}}, {-476.8246755338671, 745.8785364381824}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., 50.}, {39.32275321602623, 30.291840152853787`}], \
-{{{-0.574605276898967, -0.8184306786526647}, {
-      0.8184306786526647, -0.574605276898967}}, {-1376.223215276437, 
-      815.3178746323466}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., 150.}, {46.80535503993354, 29.468798827514263`}], \
-{{{-0.6444035793232447, -0.764685573916097}, {
-      0.764685573916097, -0.6444035793232447}}, {-1365.2603853035057`, 
-      934.8775534229741}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., 250.}, {51.09128836453088, 29.446322689015354`}], \
-{{{-0.7328651797039214, -0.6803738886652978}, {
-      0.6803738886652978, -0.7328651797039214}}, {-1389.485189567205, 
-      1045.5527947247483`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., 350.}, {47.849957359265524`, 28.54671817089472}], \
-{{{-0.8431632827089248, -0.5376575849846347}, {
-      0.5376575849846347, -0.8431632827089248}}, {-1470.6667996934102`, 
-      1128.9989754342948`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-900., 450.}, {40.627163841287945`, 29.35565257348773}], \
-{{{-0.9385342120595196, -0.345186229148581}, {
-      0.345186229148581, -0.9385342120595196}}, {-1589.346987736706, 
-      1183.0080016605066`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., -450.}, {28.402488254911038`, 20.52078607794374}], \
-{{{-0.8398021537374682, -0.542892570015385}, {
-      0.542892570015385, -0.8398021537374682}}, {-1532.163164123151, \
--447.8861701710912}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., -350.}, {21.550940803322455`, 20.52659567617832}], {{{
-      0.9939493186654289, -0.10983966462316606`}, {0.10983966462316606`, 
-      0.9939493186654289}}, {-42.679359552307915`, 74.77002676911633}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., -250.}, {21.50689473293249, 17.758677901105234`}], {{{
-      0.8194793544320532, -0.5731087049239657}, {0.5731087049239657, 
-      0.8194793544320532}}, {-269.64162812855415`, 356.0459320547893}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., -150.}, {21.5284631970822, 19.822175857440513`}], {{{
-      0.8152925562183696, -0.5790492619587013}, {0.5790492619587013, 
-      0.8152925562183696}}, {-216.15259994094652`, 377.62836680384635`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., -50.}, {29.306580690357045`, 20.77749488624931}], \
-{{{-0.4158995254922554, -0.9094105699272012}, {
-      0.9094105699272012, -0.4158995254922554}}, {-1036.600196340939, 
-      565.792422674428}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., 50.}, {40.40068313270388, 20.860548688181375`}], \
-{{{-0.39589740836526166`, -0.918294746826785}, {
-      0.918294746826785, -0.39589740836526166`}}, {-931.2134485143439, 
-      712.6011931970125}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., 150.}, {48.7277286697547, 20.978409932210784`}], \
-{{{-0.4389323595943502, -0.8985201075662893}, {
-      0.8985201075662893, -0.4389323595943502}}, {-872.4746355811018, 
-      844.803929235555}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., 250.}, {52.78467708186524, 21.14541245756157}], \
-{{{-0.5660297131367406, -0.8243848396509601}, {
-      0.8243848396509601, -0.5660297131367406}}, {-890.1245892829784, 
-      968.5768160398572}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., 350.}, {47.42958877550337, 21.015482668940876`}], \
-{{{-0.7140206071090366, -0.7001246836268828}, {
-      0.7001246836268828, -0.7140206071090366}}, {-954.7707857069166, 
-      1089.9944910269808`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-700., 450.}, {39.558526177035546`, 21.00542712545637}], \
-{{{-0.8534359439283665, -0.5211977452091461}, {
-      0.5211977452091461, -0.8534359439283665}}, {-1062.8661754057407`, 
-      1198.8845964141672`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., -450.}, {29.063111496564908`, 17.780466080255373`}], \
-{{{-0.7477539069908357, -0.663975974399632}, {
-      0.663975974399632, -0.7477539069908357}}, {-1172.6661419752522`, \
--454.50127094606006`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., -350.}, {21.67884394561767, 17.56529585876493}], \
-{{{-0.6157151459701432, -0.787968818560078}, {
-      0.787968818560078, -0.6157151459701432}}, {-1083.646659481099, \
--171.51589180951112`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., -250.}, {17.91808561713963, 17.622726163231818`}], \
-{{{-0.9992562226407237, -0.03856165859753041}, {
-      0.03856165859753041, -0.9992562226407237}}, {-1009.2685259697444`, \
--480.5332263614157}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., -150.}, {20.25182931750018, 17.147812463720015`}], \
-{{{-0.19158704937837384`, -0.9814756250210641}, {
-      0.9814756250210641, -0.19158704937837384`}}, {-743.0148684423466, 
-      311.999755103776}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., -50.}, {30.270675944736126`, 17.2684264067403}], \
-{{{-0.20183091791167437`, -0.9794203799058558}, {
-      0.9794203799058558, -0.20183091791167437`}}, {-649.88647795113, 
-      429.6186440573442}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., 50.}, {38.19984384793867, 17.370562539463208`}], \
-{{{-0.20682082366609586`, -0.9783788360845086}, {
-      0.9783788360845086, -0.20682082366609586`}}, {-554.4914700288225, 
-      549.5304592255591}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., 150.}, {46.289126620756036`, 18.342856973877684`}], \
-{{{-0.2556751507922073, -0.9667627512825379}, {
-      0.9667627512825379, -0.2556751507922073}}, {-482.82316270372297`, 
-      671.7326482601}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., 250.}, {50.93185411444272, 17.88296214978514}], \
-{{{-0.3811464055207583, -0.9245146929922778}, {
-      0.9245146929922778, -0.3811464055207583}}, {-459.4445295123097, 
-      807.5439478763285}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., 350.}, {47.47618510318232, 17.987785518643694`}], \
-{{{-0.5401615352515277, -0.841561355953749}, {
-      0.841561355953749, -0.5401615352515277}}, {-475.5342930419517, 
-      959.8372153149091}}], 
-    GeometricTransformationBox[
-     DiskBox[{-500., 450.}, {40.249148645543016`, 17.852392030971014`}], \
-{{{-0.745297242021457, -0.6667323458744219}, {
-      0.6667323458744219, -0.745297242021457}}, {-572.6190653672386, 
-      1118.7499318468665`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., -450.}, {29.87831409836226, 20.689886062190634`}], \
-{{{-0.6774749414976825, -0.7355458542080919}, {
-      0.7355458542080919, -0.6774749414976825}}, {-834.238116842946, \
--534.1999674115295}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., -350.}, {21.6571256941747, 20.726721359235324`}], \
-{{{-0.9884856168401308, -0.15131485485630983`}, {
-      0.15131485485630983`, -0.9884856168401308}}, {-649.5058842517476, \
--650.5755094371528}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., -250.}, {20.90422060565882, 17.452131431746263`}], {{{
-      0.9713030636334892, -0.23784524081048608`}, {0.23784524081048608`, 
-      0.9713030636334892}}, {-68.07039111257478, 64.1793381515181}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., -150.}, {21.10929721060092, 20.622772710991544`}], {{{
-      0.9406003018549837, -0.3395159379915964}, {0.3395159379915964, 
-      0.9406003018549837}}, {-68.74730014224437, 92.94482667572646}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., -50.}, {29.668049432722984`, 21.27722643087956}], \
-{{{-0.06521089461946325, -0.9978715043646297}, {
-      0.9978715043646297, -0.06521089461946325}}, {-369.45684360407046`, 
-      246.10090657841573`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., 50.}, {39.51693705732904, 21.2638316985362}], \
-{{{-0.07259320702998417, -0.9973616326554284}, {
-      0.9973616326554284, -0.07259320702998417}}, {-271.90988047622386`, 
-      352.83815014812774`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., 150.}, {47.740827693533376`, 21.160405161466315`}], \
-{{{-0.1351633187480941, -0.9908233330241073}, {
-      0.9908233330241073, -0.1351633187480941}}, {-191.92549567081215`, 
-      467.5214977194463}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., 250.}, {53.056651212170074`, 21.047196275653874`}], \
-{{{-0.27826672632815597`, -0.9605038412305341}, {
-      0.9605038412305341, -0.27826672632815597`}}, {-143.35405759081326`, 
-      607.7178339511993}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., 350.}, {48.340126041429386`, 21.198831647521658`}], \
-{{{-0.4280109832737275, -0.9037735325827245}, {
-      0.9037735325827245, -0.4280109832737275}}, {-112.08255857816468`, 
-      770.935903920622}}], 
-    GeometricTransformationBox[
-     DiskBox[{-300., 450.}, {37.89752674954602, 21.43168995574814}], \
-{{{-0.6781038961394199, -0.7349660577472533}, {
-      0.7349660577472533, -0.6781038961394199}}, {-172.696442855562, 
-      975.636570586915}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., -450.}, {30.390670655241163`, 29.47436999028621}], \
-{{{-0.9951304606795489, -0.09856655734938082}, {
-      0.09856655734938082, -0.9951304606795489}}, {-243.86799687517626`, \
--887.9520515708589}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., -350.}, {29.108940835574487`, 20.638098889632005`}], {{{
-      0.9263403346244566, -0.3766876483876922}, {0.3766876483876922, 
-      0.9263403346244566}}, {-139.20664347324663`, 11.887881957329057`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., -250.}, {29.685646541017455`, 17.419838719339324`}], {{{
-      0.9790600145297672, -0.20357182503718946`}, {0.20357182503718946`, 
-      0.9790600145297672}}, {-52.98695480632064, 15.122186136160735`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., -150.}, {29.780837907500814`, 20.602943284710534`}], {{{
-      0.9966523317820685, -0.08175652605979358}, {0.08175652605979358, 
-      0.9966523317820685}}, {-12.598245730762187`, 7.673502373289637}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., -50.}, {29.607700948970383`, 28.808474744257307`}], {{{
-      0.11131964854063425`, -0.9937846526530734}, {0.9937846526530734, 
-      0.11131964854063425`}}, {-138.55726777859024`, 54.944447692339054`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., 50.}, {40.2279909891156, 29.158656275653435`}], \
-{{{-0.08725903064625079, -0.9961856561759342}, {
-      0.9961856561759342, -0.08725903064625079}}, {-58.91662025582837, 
-      153.98151714990595`}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., 150.}, {48.7504903637763, 29.132350695520252`}], \
-{{{-0.0922397799596411, -0.9957368241623873}, {
-      0.9957368241623873, -0.0922397799596411}}, {40.136545628393975`, 
-      263.4096494101849}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., 250.}, {51.75874098909211, 29.224887822223717`}], \
-{{{-0.2340545731734552, -0.9722234603097129}, {
-      0.9722234603097129, -0.2340545731734552}}, {119.65040776008271`, 
-      405.7359893243351}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., 350.}, {49.25504637585665, 28.84967950279115}], \
-{{{-0.380855388448211, -0.9246346159916156}, {
-      0.9246346159916156, -0.380855388448211}}, {185.53657675224434`, 
-      575.7628475560355}}], 
-    GeometricTransformationBox[
-     DiskBox[{-100., 450.}, {38.86318358572165, 29.060873749406646`}], \
-{{{-0.640393436090914, -0.7680470343746354}, {
-      0.7680470343746354, -0.640393436090914}}, {181.58182185949448`, 
-      814.9817496783749}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., -450.}, {39.48229204007004, 29.694575856313186`}], {{{
-      0.8136549353387689, -0.5813481282320121}, {0.5813481282320121, 
-      0.8136549353387689}}, {-242.97215123828232`, -141.99009192075522`}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., -350.}, {39.618374444181185`, 20.960247959634223`}], {{{
-      0.9294893526226286, -0.3688489438254729}, {0.3688489438254729, 
-      0.9294893526226286}}, {-122.04606560117838`, -61.56362096462726}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., -250.}, {39.76807757575591, 17.57302529321898}], {{{
-      0.9797733320974434, -0.20011051374346317`}, {0.20011051374346317`, 
-      0.9797733320974434}}, {-48.00496164561014, -25.067718349985455`}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., -150.}, {40.87502354588735, 21.64751919306959}], {{{
-      0.9970026284977366, -0.0773676855580176}, {0.0773676855580176, 
-      0.9970026284977366}}, {-11.305415683476298`, -8.186374281141298}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., -50.}, {40.30982786693706, 28.42906466176659}], {{{
-      0.9999617394388556, -0.008747551567056125}, {0.008747551567056125, 
-      0.9999617394388556}}, {-0.4335515222383606, -0.8766681847628348}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., 50.}, {41.006766939532994`, 38.852207330596954`}], \
-{{{-0.9918770531584321, -0.1272002807298195}, {
-      0.1272002807298195, -0.9918770531584321}}, {205.54771935233418`, 
-      86.87382458493965}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., 150.}, {47.78420653690119, 40.96943251733948}], \
-{{{-0.12292579992838698`, -0.9924158642988161}, {
-      0.9924158642988161, -0.12292579992838698`}}, {261.15495963766114`, 
-      69.19728355937644}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., 250.}, {51.87877106856589, 40.8188620973168}], \
-{{{-0.13065647252328022`, -0.9914277009382849}, {
-      0.9914277009382849, -0.13065647252328022`}}, {360.92257248689924`, 
-      183.52134803699158`}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., 350.}, {48.9754494431912, 39.63338956162427}], \
-{{{-0.315087830283668, -0.9490625159635853}, {
-      0.9490625159635853, -0.315087830283668}}, {463.68066361562165`, 
-      365.37448900292526`}}], 
-    GeometricTransformationBox[
-     DiskBox[{100., 450.}, {39.784750704910216`, 38.6218279322939}], {{{
-      0.3525712872960442, -0.9357849578692801}, {0.9357849578692801, 
-      0.3525712872960442}}, {485.8461023115716, 197.7644249298521}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., -450.}, {47.70440322354322, 30.403422492280853`}], {{{
-      0.7690685918466623, -0.6391662546122033}, {0.6391662546122033, 
-      0.7690685918466623}}, {-218.34539212949016`, -295.66901005266294`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., -350.}, {48.13970935455556, 20.407786028721343`}], {{{
-      0.9015096507456422, -0.43275899714791644`}, {0.43275899714791644`, 
-      0.9015096507456422}}, {-121.91854422546339`, -164.29932138340016`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., -250.}, {48.966386452989184`, 17.43030770856374}], {{{
-      0.9653759104284443, -0.26086270635039466`}, {0.26086270635039466`, 
-      0.9653759104284443}}, {-54.8284497161319, -86.91483429800732}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., -150.}, {47.82114056126727, 20.058065380905145`}], {{{
-      0.9866612297928647, -0.16278703149708157`}, {0.16278703149708157`, 
-      0.9866612297928647}}, {-20.416423662421664`, -50.836924980194766`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., -50.}, {48.08699905811375, 29.451944776026572`}], {{{
-      0.9976907922098781, -0.06791968153360092}, {0.06791968153360092, 
-      0.9976907922098781}}, {-2.7032217396434817`, -20.491364849586375`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., 50.}, {48.283350248914786`, 39.271659992524604`}], \
-{{{-0.9999510561223286, -0.009893703039794846}, {
-      0.009893703039794846, -0.9999510561223286}}, {600.4800019886884, 
-      97.02944189417798}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., 150.}, {48.86560360469741, 47.387591966025475`}], {{{
-      0.4789143247999812, -0.87786164599063}, {0.87786164599063, 
-      0.4789143247999812}}, {288.00494945860015`, -185.19564251718617`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., 250.}, {51.679986133963986`, 48.87716653429509}], \
-{{{-0.190607957004387, -0.9816662399851661}, {
-      0.9816662399851661, -0.190607957004387}}, {602.5989470976076, 
-      3.1521172555469263`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., 350.}, {49.11137781305108, 48.038441735589}], {{{
-      0.8262803577544431, -0.5632590615242594}, {0.5632590615242594, 
-      0.8262803577544431}}, {249.25656420715788`, -108.17584367133293`}}], 
-    GeometricTransformationBox[
-     DiskBox[{300., 450.}, {48.54302003687713, 39.50831907950041}], {{{
-      0.7419014090593873, -0.6705089852013139}, {0.6705089852013139, 
-      0.7419014090593873}}, {379.15862062277506`, -85.00832963711844}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., -450.}, {50.75686315119635, 31.450659603822213`}], {{{
-      0.6788324638189621, -0.7342931880832597}, {0.7342931880832597, 
-      0.6788324638189621}}, {-169.84816654694794`, -511.67198532309686`}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., -350.}, {50.41010367553565, 20.433489070597023`}], {{{
-      0.8510913936005595, -0.5250175613625295}, {0.5250175613625295, 
-      0.8510913936005595}}, {-109.30184327716506`, -314.6267929210689}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., -250.}, {53.168071693844176`, 17.65066694516358}], {{{
-      0.9313370397085006, -0.36415837003563006`}, {0.36415837003563006`, 
-      0.9313370397085006}}, {-56.70811236315785, -199.2449250906899}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., -150.}, {51.64984877861913, 20.608623702161545`}], {{{
-      0.9654646240863168, -0.2605341813234245}, {0.2605341813234245, 
-      0.9654646240863168}}, {-21.81243924167211, -135.4473970487647}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., -50.}, {50.95217799499643, 29.47112422701978}], {{{
-      0.972880301658204, -0.23130914086010929`}, {0.23130914086010929`, 
-      0.972880301658204}}, {1.9943921278925245`, -117.01055534714445`}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., 50.}, {52.50069760452402, 38.9302726695741}], {{{
-      0.9726557879272518, -0.23225141164612295`}, {0.23225141164612295`, 
-      0.9726557879272518}}, {25.284676618680237`, -114.75849521942408`}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., 150.}, {52.08854171768894, 50.17861106607506}], {{{
-      0.98239029515078, -0.18684032753547444`}, {0.18684032753547444`, 
-      0.98239029515078}}, {36.83090155493113, -90.77870804035422}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., 250.}, {52.788970478676006`, 50.29749992894921}], \
-{{{-0.7773912491866773, -0.6290173651720415}, {
-      0.6290173651720415, -0.7773912491866773}}, {1045.949965886349, 
-      129.83912971064856`}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., 350.}, {49.69891911953622, 47.16228149706797}], {{{
-      0.8959472213371533, -0.44416053018951834`}, {0.44416053018951834`, 
-      0.8959472213371533}}, {207.48257489775472`, -185.6617925627629}}], 
-    GeometricTransformationBox[
-     DiskBox[{500., 450.}, {51.62347827118435, 38.39826236039485}], {{{
-      0.7044143215325509, -0.7097890275425762}, {0.7097890275425762, 
-      0.7044143215325509}}, {467.1979016278838, -221.88095846093597`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., -450.}, {48.590652521657276`, 29.36689557035969}], {{{
-      0.553038300600702, -0.8331558306035477}, {0.8331558306035477, 
-      0.553038300600702}}, {-62.046934192087974`, -784.3418461521674}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., -350.}, {47.44967521256335, 21.7374600811416}], {{{
-      0.7217810495582853, -0.6921214607989989}, {0.6921214607989989, 
-      0.7217810495582853}}, {-47.48924597044925, -581.8616552138994}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., -250.}, {47.50823402898892, 17.75613935979195}], {{{
-      0.8453707093435494, -0.5341800855366887}, {0.5341800855366887, 
-      0.8453707093435494}}, {-25.304517924656807`, -412.58338253979474`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., -150.}, {48.187677250524494`, 20.88269009294239}], {{{
-      0.9107506519661479, -0.4129567167915259}, {0.4129567167915259, 
-      0.9107506519661479}}, {0.5310361049675976, -302.45710395914597`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., -50.}, {48.05397829658845, 29.39565005891994}], {{{
-      0.9444217426202988, -0.32873632605180414`}, {0.32873632605180414`, 
-      0.9444217426202988}}, {22.46796386320068, -232.89434110524795`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., 50.}, {48.423690457571595`, 39.81524900219442}], {{{
-      0.9482367731249697, -0.31756420153024917`}, {0.31756420153024917`, 
-      0.9482367731249697}}, {52.11246888903372, -219.70677972742288`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., 150.}, {48.45471509951249, 46.88471045688979}], \
-{{{-0.74525262189697, -0.6667822204855884}, {
-      0.6667822204855884, -0.74525262189697}}, {
-      1321.6941684007172`, -204.95966105536644`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., 250.}, {50.981950099072186`, 47.28309095935177}], \
-{{{-0.6737089442239601, -0.7389967919231023}, {
-      0.7389967919231023, -0.6737089442239601}}, {
-      1356.3454589375476`, -98.87051829018156}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., 350.}, {49.493352069964494`, 46.822613962753486`}], {{{
-      0.9227671191148539, -0.3853580722918272}, {0.3853580722918272, 
-      0.9227671191148539}}, {188.93834192174182`, -242.71914229447793`}}], 
-    GeometricTransformationBox[
-     DiskBox[{700., 450.}, {48.509703682518534`, 39.276813715172175`}], {{{
-      0.5595207807218351, -0.828816322197161}, {0.828816322197161, 
-      0.5595207807218351}}, {681.3027984834379, -381.95577686283843`}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., -450.}, {39.49524237276201, 28.423488826349622`}], {{{
-      0.34334719708351646`, -0.9392085509911485}, {0.9392085509911485, 
-      0.34334719708351646`}}, {168.3436746788184, -1140.7814572044513`}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., -350.}, {38.85234266284429, 21.3348842037021}], {{{
-      0.5578638297185452, -0.8299324957439358}, {0.8299324957439358, 
-      0.5578638297185452}}, {107.4461797429318, -901.6869057680515}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., -250.}, {39.639667231585676`, 17.66237111624817}], {{{
-      0.6835815472915959, -0.7298741454541513}, {0.7298741454541513, 
-      0.6835815472915959}}, {102.30807107402586`, -735.9913440858371}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., -150.}, {40.571461800244464`, 20.905664439836208`}], {{{
-      0.7750651140803836, -0.6318813725182615}, {0.6318813725182615, 
-      0.7750651140803836}}, {107.65919144991551`, -602.4334681543778}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., -50.}, {38.92063867825176, 29.6991659038375}], {{{
-      0.8104464564724124, -0.5858127185298302}, {0.5858127185298302, 
-      0.8104464564724124}}, {141.30755324833729`, -536.7091238532266}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., 50.}, {39.996198225286655`, 37.80614664209072}], {{{
-      0.9986450409111665, -0.05203923773014596}, {0.05203923773014596, 
-      0.9986450409111665}}, {3.8214250664574365`, -46.76756600268968}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., 150.}, {48.51551085309575, 39.38120215977992}], \
-{{{-0.7398493915239056, -0.6727725305492984}, {
-      0.6727725305492984, -0.7398493915239056}}, {
-      1666.7803319539098`, -344.51786876578274`}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., 250.}, {51.556607176562224`, 40.46713859591459}], \
-{{{-0.7774276738291148, -0.6289723459458701}, {
-      0.6289723459458701, -0.7774276738291148}}, {
-      1756.9279929326708`, -121.7181928940044}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., 350.}, {47.19514101033768, 39.24445167746581}], \
-{{{-0.8713662047705757, -0.4906332002460934}, {
-      0.4906332002460934, -0.8713662047705757}}, {1855.9512043796508`, 
-      213.40829144821743`}}], 
-    GeometricTransformationBox[
-     DiskBox[{900., 450.}, {40.72322496174761, 39.58971377853789}], \
-{{{-0.7732594616601713, -0.6340897451883463}, {
-      0.6340897451883463, -0.7732594616601713}}, {1881.27390082891, 
-      227.2859870775655}}], 
+     DiskBox[{-900., -450.}, {29.71397134352321, 28.826048487133033`}], {{{
+      0.9452530151916866, -0.3263383784831706}, {0.3263383784831706, 
+      0.9452530151916866}}, {-196.1245566449088, 269.06839747111246`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., -350.}, {28.496221718692023`, 22.048022297295308`}], {{{
+      0.5259162110579364, -0.850536383082149}, {0.850536383082149, 
+      0.5259162110579364}}, {-724.3631441266093, 599.5534186442119}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., -250.}, {30.059670415493994`, 17.875987718299587`}], {{{
+      0.6538025450736417, -0.7566652047340546}, {0.7566652047340546, 
+      0.6538025450736417}}, {-500.74401061723614`, 594.4493205290596}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., -150.}, {29.418113853445966`, 21.08150830862172}], {{{
+      0.7321140752257649, -0.6811820467806848}, {0.6811820467806848, 
+      0.7321140752257649}}, {-343.27463931391435`, 572.8809533864811}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., -50.}, {29.232213615856757`, 28.41722623259882}], {{{
+      0.38724578978424395`, -0.9219765172141735}, {0.9219765172141735, 
+      0.38724578978424395`}}, {-597.5776150548891, 799.1411549819684}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., 50.}, {40.31241041412068, 29.54107652747917}], \
+{{{-0.5976294452671957, -0.8017724403779566}, {
+      0.8017724403779566, -0.5976294452671957}}, {-1397.7778787215784`, 
+      801.4766686035207}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., 150.}, {46.422378178303774`, 29.465374842156137`}], \
+{{{-0.6305672330733447, -0.7761346304438593}, {
+      0.7761346304438593, -0.6305672330733447}}, {-1351.0903151994314`, 
+      943.1062523604751}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., 250.}, {50.15118182051985, 28.644934241890077`}], \
+{{{-0.7219967127255424, -0.6918964856201473}, {
+      0.6918964856201473, -0.7219967127255424}}, {-1376.8229200479514`, 
+      1053.2060152395181`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., 350.}, {47.8744623251341, 28.083649638200786`}], \
+{{{-0.8202463666563907, -0.5720104002437278}, {
+      0.5720104002437278, -0.8202463666563907}}, {-1438.018089905447, 
+      1151.8955885490918`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-900., 450.}, {40.596768887192475`, 28.636403949511788`}], \
+{{{-0.9523312027294661, -0.3050660261449124}, {
+      0.3050660261449124, -0.9523312027294661}}, {-1619.818370691309, 
+      1153.1084647586808`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., -450.}, {29.27087967011855, 21.07045609073226}], \
+{{{-0.8807494230227515, -0.473582573417868}, {
+      0.473582573417868, -0.8807494230227515}}, {-1529.6367541539666`, \
+-514.8294389677305}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., -350.}, {21.32724037077621, 21.10439858461445}], {{{
+      0.8587945049356791, -0.5123202107005752}, {0.5123202107005752, 
+      0.8587945049356791}}, {-278.15592029022594`, 309.2022242178904}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., -250.}, {20.578717728978386`, 17.917467094813993`}], {{{
+      0.8474088507252119, -0.5309409003953034}, {0.5309409003953034, 
+      0.8474088507252119}}, {-239.5490295911775, 333.51084295801536`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., -150.}, {21.10203133901544, 20.708220260880662`}], \
+{{{-0.3214618940946926, -0.9469225156500677}, {
+      0.9469225156500677, -0.3214618940946926}}, {-1067.061703213795, 
+      464.62647684084345`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., -50.}, {29.25615561739726, 20.294087516230373`}], \
+{{{-0.3603960607958479, -0.9327993778743827}, {
+      0.9327993778743827, -0.3603960607958479}}, {-998.9172114508126, 
+      584.9397614722756}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., 50.}, {39.045837462105176`, 21.934586065783865`}], \
+{{{-0.3908913884130997, -0.9204368106852742}, {
+      0.9204368106852742, -0.3908913884130997}}, {-927.6021313549061, 
+      713.8503369003469}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., 150.}, {46.66061392033695, 20.783515368945817`}], \
+{{{-0.4694698252701705, -0.8829485167102301}, {
+      0.8829485167102301, -0.4694698252701705}}, {-896.1866001825848, 
+      838.4844354876866}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., 250.}, {50.18572023628176, 20.132533971172965`}], \
+{{{-0.562896279610356, -0.8265275424332935}, {
+      0.8265275424332935, -0.562896279610356}}, {-887.3955101189258, 
+      969.2933496058945}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., 350.}, {48.277260306784726`, 20.64466205920684}], \
+{{{-0.6876352477304998, -0.7260563105425186}, {
+      0.7260563105425186, -0.6876352477304998}}, {-927.2249647214683, 
+      1098.911754085438}}], 
+    GeometricTransformationBox[
+     DiskBox[{-700., 450.}, {39.96611821154581, 21.414761307371347`}], \
+{{{-0.8649024107229962, -0.501940056107848}, {
+      0.501940056107848, -0.8649024107229962}}, {-1079.5586622575656`, 
+      1190.5641241008418`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., -450.}, {29.57858195823963, 17.775614102539745`}], \
+{{{-0.7810001495832893, -0.6245308369895595}, {
+      0.6245308369895595, -0.7810001495832893}}, {-1171.5389514369465`, \
+-489.18464881770046`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., -350.}, {20.651256174626116`, 17.650987279994563`}], \
+{{{-0.662528174426461, -0.7490369938068084}, {
+      0.7490369938068084, -0.662528174426461}}, {-1093.4270350456134`, \
+-207.3663641458571}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., -250.}, {17.683644223805892`, 17.515592203826465`}], \
+{{{-0.8565866814709959, -0.5160031561206835}, {
+      0.5160031561206835, -0.8565866814709959}}, {-1057.294129765669, \
+-206.14509230740725`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., -150.}, {20.733511231281657`, 17.83611648815801}], \
+{{{-0.2619157916478451, -0.9650907304940207}, {
+      0.9650907304940207, -0.2619157916478451}}, {-775.7215053980257, 
+      293.25799649983355`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., -50.}, {28.532025806910845`, 17.658929832778902`}], \
+{{{-0.2118920210608148, -0.9772930836810231}, {
+      0.9772930836810231, -0.2118920210608148}}, {-654.8106647144585, 
+      428.0519407874708}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., 50.}, {39.889669079344515`, 17.635285989070834`}], \
+{{{-0.1978917646249764, -0.9802238772309175}, {
+      0.9802238772309175, -0.1978917646249764}}, {-549.9346884509423, 
+      550.0065268467076}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., 150.}, {48.311405384366715`, 17.636299076011696`}], \
+{{{-0.2555471556176562, -0.9667965924928187}, {
+      0.9667965924928187, -0.2555471556176562}}, {-482.7540889349053, 
+      671.7303695890578}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., 250.}, {50.93348025204701, 17.608551902127854`}], \
+{{{-0.3874272140622306, -0.9219002949364853}, {
+      0.9219002949364853, -0.3874272140622306}}, {-463.238533296994, 
+      807.8069509838002}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., 350.}, {48.336003252346046`, 17.44599733294948}], \
+{{{-0.5559964236030405, -0.831184682811605}, {
+      0.831184682811605, -0.5559964236030405}}, {-487.0835728174585, 
+      960.1910896668667}}], 
+    GeometricTransformationBox[
+     DiskBox[{-500., 450.}, {38.9303114863411, 17.711285315122204`}], \
+{{{-0.7518815050154964, -0.6592982651392555}, {
+      0.6592982651392555, -0.7518815050154964}}, {-579.2565331950832, 
+      1117.995809826601}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., -450.}, {29.822453616417057`, 20.718854073247755`}], \
+{{{-0.689738269355517, -0.7240587819966389}, {
+      0.7240587819966389, -0.689738269355517}}, {-832.7479327051426, \
+-543.1645866109909}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., -350.}, {21.514227365426564`, 20.68347471578805}], {{{
+      0.8723362353928475, -0.48890642501467957`}, {0.48890642501467957`, 
+      0.8723362353928475}}, {-209.41637813728357`, 101.9896098919005}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., -250.}, {20.887839507906023`, 17.260582603501362`}], {{{
+      0.9539576615506603, -0.2999412942040424}, {0.2999412942040424, 
+      0.9539576615506603}}, {-88.79802508581253, 78.47180364887777}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., -150.}, {20.946570214747045`, 20.453344328127756`}], {{{
+      0.9981147733754477, -0.061375069610376635`}, {0.061375069610376635`, 
+      0.9981147733754477}}, {-9.771828428922163, 18.12973688943015}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., -50.}, {30.057240320110715`, 20.83250046613117}], \
+{{{-0.05243710866030401, -0.9986242284439866}, {
+      0.9986242284439866, -0.05243710866030401}}, {-365.66234402029056`, 
+      246.9654131001808}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., 50.}, {39.48274860483301, 20.932277698739718`}], \
+{{{-0.0978501999075846, -0.9952011547310653}, {
+      0.9952011547310653, -0.0978501999075846}}, {-279.5950022357221, 
+      353.45285641469883`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., 150.}, {48.19123388578724, 21.28895498429109}], \
+{{{-0.1447503548147571, -0.9894682080698712}, {
+      0.9894682080698712, -0.1447503548147571}}, {-195.00487523394645`, 
+      468.55301564317494`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., 250.}, {51.03621243158551, 21.483982588082814`}], \
+{{{-0.2717303580552065, -0.9623734267482603}, {
+      0.9623734267482603, -0.2717303580552065}}, {-140.92575072949688`, 
+      606.6446175382798}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., 350.}, {48.72635689787118, 21.342252011487854`}], \
+{{{-0.44402091488578616`, -0.8960164212468371}, {
+      0.8960164212468371, -0.44402091488578616`}}, {-119.60052702934283`, 
+      774.2122465840763}}], 
+    GeometricTransformationBox[
+     DiskBox[{-300., 450.}, {38.78935553206048, 21.2954978897916}], \
+{{{-0.6732825901247693, -0.739385254001513}, {
+      0.739385254001513, -0.6732825901247693}}, {-169.26141273674997`, 
+      974.7927417566001}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., -450.}, {29.638327822234537`, 28.640233721791155`}], \
+{{{-0.9374062137205007, -0.34823783608073794`}, {
+      0.34823783608073794`, -0.9374062137205007}}, {-350.4476476083821, \
+-837.0090125661516}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., -350.}, {29.234978546696503`, 20.57255147149826}], {{{
+      0.9535426570573593, -0.301258030883811}, {0.301258030883811, 
+      0.9535426570573593}}, {-110.08604510359791`, 13.86573305845684}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., -250.}, {29.857479121549527`, 17.604034254874176`}], {{{
+      0.9853546994177718, -0.17051720246154864`}, {0.17051720246154864`, 
+      0.9853546994177718}}, {-44.09383067360998, 13.3903951005978}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., -150.}, {29.539248671036695`, 21.269471360137462`}], {{{
+      0.9968673463205607, -0.07909167996574075}, {0.07909167996574075, 
+      0.9968673463205607}}, {-12.177017362805046`, 7.439269944658179}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., -50.}, {29.38834362659619, 29.24688017678512}], \
+{{{-0.7515109285233686, -0.6597206411125427}, {
+      0.6597206411125427, -0.7515109285233686}}, {-208.137124907964, \
+-21.60348231491416}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., 50.}, {39.277221316862764`, 29.20654671583638}], {{{
+      0.019592798869219826`, -0.9998080426924312}, {0.9998080426924312, 
+      0.019592798869219826`}}, {-48.050317978456455`, 149.00116432578213`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., 150.}, {47.88389789891145, 28.832133113011693`}], \
+{{{-0.08188397468990558, -0.9966418688219871}, {
+      0.9966418688219871, -0.08188397468990558}}, {41.30788285430751, 
+      261.94678308568456`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., 250.}, {50.60321672810949, 28.335529304496184`}], \
+{{{-0.20198190775996525`, -0.9793892530233548}, {
+      0.9793892530233548, -0.20198190775996525`}}, {124.64912247984216`, 
+      398.43440224232677`}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., 350.}, {48.107371945993165`, 28.92315436640373}], \
+{{{-0.384990147428663, -0.9229206826065045}, {
+      0.9229206826065045, -0.384990147428663}}, {184.5232241694103, 
+      577.0386198606825}}], 
+    GeometricTransformationBox[
+     DiskBox[{-100., 450.}, {40.00614583623917, 28.720419096188245`}], \
+{{{-0.6243132104867117, -0.7811741260511479}, {
+      0.7811741260511479, -0.6243132104867117}}, {189.09703567434536`, 
+      809.0583573241352}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., -450.}, {38.97465810307926, 30.446706859684596`}], {{{
+      0.797428927710401, -0.603412881243548}, {0.603412881243548, 
+      0.797428927710401}}, {-251.27868933063667`, -151.49827065467434`}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., -350.}, {40.53946122791343, 20.381344167978835`}], {{{
+      0.9273608791727996, -0.37416814372665685`}, {0.37416814372665685`, 
+      0.9273608791727996}}, {-123.69493822160985`, -62.84050666218582}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., -250.}, {39.59071404028731, 17.7124694489101}], {{{
+      0.9809199969100106, -0.19441183004659118`}, {0.19441183004659118`, 
+      0.9809199969100106}}, {-46.69495720264885, -24.211183777156435`}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., -150.}, {38.45447862929261, 20.906258602057665`}], {{{
+      0.9971452974123102, -0.07550666095461693}, {0.07550666095461693, 
+      0.9971452974123102}}, {-11.040528884423566`, -7.978871483615194}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., -50.}, {38.97273155472675, 30.83599786527609}], {{{
+      0.989928883796209, -0.1415655502796908}, {0.1415655502796908, 
+      0.989928883796209}}, {-6.071165893605453, -14.66011083815863}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., 50.}, {40.509396091011524`, 39.47834104709645}], {{{
+      0.9999861143027227, -0.005269838872497191}, {0.005269838872497191, 
+      0.9999861143027227}}, {0.264880513352594, -0.5262896023858517}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., 150.}, {47.16579188893537, 40.92025506503413}], \
+{{{-0.03688368901440175, -0.9993195652466177}, {
+      0.9993195652466177, -0.03688368901440175}}, {253.58630368843285`, 
+      55.60059682749849}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., 250.}, {51.03978741452074, 40.118908228224164`}], \
+{{{-0.24685053594622594`, -0.9690535655489128}, {
+      0.9690535655489128, -0.24685053594622594`}}, {366.9484449818508, 
+      214.80727743166523`}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., 350.}, {47.77135622656285, 39.76849063871876}], \
+{{{-0.3592228778574849, -0.933251800975378}, {
+      0.933251800975378, -0.3592228778574849}}, {462.5604181271308, 
+      382.40282715258195`}}], 
+    GeometricTransformationBox[
+     DiskBox[{100., 450.}, {41.26496788630861, 39.72548121215017}], {{{
+      0.8894301896082983, -0.45707104241391894`}, {0.45707104241391894`, 
+      0.8894301896082983}}, {216.7389501254337, 4.04931043487386}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., -450.}, {47.51463033729045, 29.813276890707307`}], {{{
+      0.7671664507454702, -0.6414480780629076}, {0.6414480780629076, 
+      0.7671664507454702}}, {-218.80157035194952`, -297.2095205834107}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., -350.}, {48.56487764121163, 20.957298025095213`}], {{{
+      0.900457889784017, -0.4349432017237597}, {0.4349432017237597, 
+      0.900457889784017}}, {-122.367487538521, -165.322699092722}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., -250.}, {48.150426330697215`, 17.727464673275556`}], {{{
+      0.9624531935719013, -0.27144769327302876`}, {0.27144769327302876`, 
+      0.9624531935719013}}, {-56.59788138982759, -90.82100958893332}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., -150.}, {49.50275671097811, 21.552696599010208`}], {{{
+      0.9886792830742249, -0.15004424420762244`}, {0.15004424420762244`, 
+      0.9886792830742249}}, {-19.110421553410845`, -46.711380801152984`}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., -50.}, {46.35079199093904, 30.400043239523686`}], {{{
+      0.9976573355705632, -0.06840936180264058}, {0.06840936180264058, 
+      0.9976573355705632}}, {-2.717668761301013, -20.639941762264012`}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., 50.}, {49.10621760599189, 39.54977509157539}], {{{
+      0.998669529719492, -0.05156714467418887}, {0.05156714467418887, 
+      0.998669529719492}}, {2.97749831786183, -15.403619888231262`}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., 150.}, {49.496201800282506`, 49.107109662526334`}], \
+{{{-0.014866795617215977`, -0.999889483087044}, {
+      0.999889483087044, -0.014866795617215977`}}, {
+      454.4434611482214, -147.7368255835308}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., 250.}, {50.667135702007016`, 47.33468290143073}], \
+{{{-0.33622030418441673`, -0.9417833652460306}, {
+      0.9417833652460306, -0.33622030418441673`}}, {636.3119325668326, 
+      51.520066472294985`}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., 350.}, {47.692862480186854`, 47.41877742073522}], \
+{{{-0.8985680832056238, -0.43883413705427615`}, {
+      0.43883413705427615`, -0.8985680832056238}}, {723.1623729306838, 
+      532.8485880056854}}], 
+    GeometricTransformationBox[
+     DiskBox[{300., 450.}, {47.906300266253766`, 39.34782572578837}], {{{
+      0.7403076265259239, -0.6722682634986968}, {0.6722682634986968, 
+      0.7403076265259239}}, {380.42843061663643`, -84.81891098627477}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., -450.}, {51.97310904953926, 29.386207044803708`}], {{{
+      0.6717443322014793, -0.7407830668658596}, {0.7407830668658596, 
+      0.6717443322014793}}, {-169.2245461903765, -518.106583942264}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., -350.}, {51.60814456702702, 20.427287762462356`}], {{{
+      0.8432588738886007, -0.5375076479531516}, {0.5375076479531516, 
+      0.8432588738886007}}, {-109.7571137279034, -323.6132181155656}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., -250.}, {50.443235912600784`, 17.862693117587085`}], {{{
+      0.9088886590851833, -0.41703885356922965`}, {0.41703885356922965`, 
+      0.9088886590851833}}, {-58.70404293489912, -231.297262013319}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., -150.}, {52.45075763287798, 21.478017262552527`}], {{{
+      0.9621075153690927, -0.27267036668899525`}, {0.27267036668899525`, 
+      0.9621075153690927}}, {-21.954312687895595`, -142.01905603913374`}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., -50.}, {51.48257300590451, 29.402054877819126`}], {{{
+      0.9778680793043601, -0.20922241628850777`}, {0.20922241628850777`, 
+      0.9778680793043601}}, {0.6048395333945678, -105.71780417903588`}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., 50.}, {52.18142308152428, 40.58623556050745}], {{{
+      0.983508476582316, -0.18086203717400703`}, {0.18086203717400703`, 
+      0.983508476582316}}, {17.288863567542364`, -89.60644241611931}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., 150.}, {51.14601984431542, 47.5232543411731}], {{{
+      0.8365588581486488, -0.5478770636310932}, {0.5478770636310932, 
+      0.8365588581486488}}, {163.90213047033956`, -249.42236053784393`}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., 250.}, {52.47427967970878, 50.932254666469554`}], \
+{{{-0.8933467166372828, -0.4493680494576648}, {
+      0.4493680494576648, -0.8933467166372828}}, {1059.0153706830577`, 
+      248.65265443048833`}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., 350.}, {51.65213604523945, 47.63403456399428}], {{{
+      0.8408438726263067, -0.5412777308062797}, {0.5412777308062797, 
+      0.8408438726263067}}, {269.0252694690446, -214.93422082234724`}}], 
+    GeometricTransformationBox[
+     DiskBox[{500., 450.}, {50.86021884699175, 39.87494694369488}], {{{
+      0.6838748988937781, -0.729599289105345}, {0.729599289105345, 
+      0.6838748988937781}}, {486.3822306505162, -222.54334905487258`}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., -450.}, {47.714226376491254`, 28.72227072916746}], {{{
+      0.5722808962489644, -0.8200576661360358}, {0.8200576661360358, 
+      0.5722808962489644}}, {-69.62257713549116, -766.5139629831912}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., -350.}, {49.111068718417734`, 21.628603616640447`}], {{{
+      0.7259960803943993, -0.6876988376113259}, {0.6876988376113259, 
+      0.7259960803943993}}, {-48.89184944004364, -577.2905581898883}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., -250.}, {49.75514845822426, 17.84961940032883}], {{{
+      0.8505100316336516, -0.5259588254707064}, {0.5259588254707064, 
+      0.8505100316336516}}, {-26.846728511232754`, -405.5436699210816}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., -150.}, {48.91357890901249, 21.086095849405112`}], {{{
+      0.9188287907335316, -0.39465637372169204`}, {0.39465637372169204`, 
+      0.9188287907335316}}, {-2.378609571725974, -288.4351429951547}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., -50.}, {48.24243961985309, 29.507090382473468`}], {{{
+      0.9283260570104301, -0.3717670397916788}, {0.3717670397916788, 
+      0.9283260570104301}}, {31.58340810311506, -263.8206250036537}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., 50.}, {50.091525571615506`, 40.01165041527604}], {{{
+      0.9193315111152229, -0.39348389124664407`}, {0.39348389124664407`, 
+      0.9193315111152229}}, {76.14213678167619, -271.405299428412}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., 150.}, {48.79270781285018, 48.401033036117354`}], {{{
+      0.8995890407166494, -0.4367374014467945}, {0.4367374014467945, 
+      0.8995890407166494}}, {135.79828171536474`, -290.6545371202536}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., 250.}, {50.83668556188417, 47.65047098297468}], \
+{{{-0.6682094267347694, -0.7439732266841266}, {
+      0.7439732266841266, -0.6682094267347694}}, {
+      1353.73990538537, -103.72890199519622`}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., 350.}, {49.45013342694454, 47.91979533480004}], {{{
+      0.7074468098080856, -0.7067665889757115}, {0.7067665889757115, 
+      0.7074468098080856}}, {452.1555392758391, -392.342995715828}}], 
+    GeometricTransformationBox[
+     DiskBox[{700., 450.}, {48.152346051880585`, 39.95848031852945}], {{{
+      0.4789935311938249, -0.8778184305848621}, {0.8778184305848621, 
+      0.4789935311938249}}, {759.7228219275105, -380.01999044662466`}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., -450.}, {39.64465779173736, 29.215328210676894`}], {{{
+      0.2899429153327102, -0.9570439414407098}, {0.9570439414407098, 
+      0.2899429153327102}}, {208.38160255224147`, -1180.8652353969192`}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., -350.}, {38.21874716522754, 21.484211098435427`}], {{{
+      0.48710629876141187`, -0.8733426897312178}, {0.8733426897312178, 
+      0.48710629876141187`}}, {155.9343897088031, -965.5212161916019}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., -250.}, {42.657859126937936`, 17.421312529113504`}], {{{
+      0.7435039859696748, -0.6687315028075211}, {0.6687315028075211, 
+      0.7435039859696748}}, {63.66353692541247, -665.9823560343503}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., -150.}, {40.79342595309841, 21.390164795835418`}], {{{
+      0.7806035016753341, -0.625026537974354}, {0.625026537974354, 
+      0.7806035016753341}}, {103.70286779604623`, -595.4333589256184}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., -50.}, {39.05962298325598, 29.225871271905632`}], {{{
+      0.7865275454494122, -0.617555196115556}, {0.617555196115556, 
+      0.7865275454494122}}, {161.24744928975122`, -566.4732992315297}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., 50.}, {39.26070383945142, 38.761143462172086`}], \
+{{{-0.9677049821243305, -0.2520854370481348}, {
+      0.2520854370481348, -0.9677049821243305}}, {
+      1783.5387557643044`, -128.4916442371048}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., 150.}, {48.28592603595938, 40.17522367136923}], \
+{{{-0.679395527965274, -0.7337722511657051}, {
+      0.7337722511657051, -0.679395527965274}}, {
+      1621.5218128436022`, -408.4856968543435}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., 250.}, {52.753359519506084`, 38.71308706304864}], \
+{{{-0.7296500543503496, -0.6838207354172086}, {
+      0.6838207354172086, -0.7296500543503496}}, {
+      1727.640232769617, -183.0261482879003}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., 350.}, {49.369265200998356`, 39.84783895589314}], \
+{{{-0.8868996701305456, -0.46196209273308275`}, {
+      0.46196209273308275`, -0.8868996701305456}}, {1859.89643557407, 
+      244.64900108591644`}}], 
+    GeometricTransformationBox[
+     DiskBox[{900., 450.}, {41.0347063784893, 38.24360819204367}], {{{
+      0.44173927893540216`, -0.8971434720520631}, {0.8971434720520631, 
+      0.44173927893540216`}}, {906.1492113815664, -556.2118003677878}}], 
     {EdgeForm[None], FaceForm[{RGBColor[1, 0, 0], Opacity[0.3]}]}}, 
    {EdgeForm[{GrayLevel[0], Opacity[0.8], Thickness[Tiny]}], FaceForm[None], 
     GeometricTransformationBox[
@@ -9827,8 +9994,6 @@ Cell["\<\
 The full power of Mathematica and manipulate can be leveraged\
 \>", "Subsubtitle"],
 
-Cell[CellGroupData[{
-
 Cell[BoxData[
  RowBox[{"Manipulate", "[", "\[IndentingNewLine]", "\[IndentingNewLine]", 
   RowBox[{
@@ -9870,52 +10035,8 @@ Cell[BoxData[
    "\[IndentingNewLine]", "\[IndentingNewLine]", ",", "\[IndentingNewLine]", 
    RowBox[{"{", 
     RowBox[{"s", ",", "1", ",", 
-     RowBox[{"Length", "@", "STRIDES"}], ",", "1"}], "}"}]}], "]"}]], "Input"],
-
-Cell[BoxData[
- TagBox[
-  StyleBox[
-   DynamicModuleBox[{$CellContext`s$$ = 1, Typeset`show$$ = True, 
-    Typeset`bookmarkList$$ = {}, Typeset`bookmarkMode$$ = "Menu", 
-    Typeset`animator$$, Typeset`animvar$$ = 1, Typeset`name$$ = 
-    "\"untitled\"", Typeset`specs$$ = {{
-      Hold[$CellContext`s$$], 1, 3, 1}}, Typeset`size$$ = {
-    576., {152., 155.}}, Typeset`update$$ = 0, Typeset`initDone$$, 
-    Typeset`skipInitDone$$ = True, $CellContext`s$11171$$ = 0}, 
-    DynamicBox[Manipulate`ManipulateBoxes[
-     1, StandardForm, "Variables" :> {$CellContext`s$$ = 1}, 
-      "ControllerVariables" :> {
-        Hold[$CellContext`s$$, $CellContext`s$11171$$, 0]}, 
-      "OtherVariables" :> {
-       Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
-        Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
-        Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
-         Typeset`skipInitDone$$}, "Body" :> 
-      DiffusiveDynamics`Visualize2D`DrawDiffusionTensorRepresentations[{
-         Part[$CellContext`diffs, All, $CellContext`s$$], 
-         Part[$CellContext`modelDiffs, All, $CellContext`s$$]}, 1, Scale -> 
-        3.5, ImageSize -> Large, PlotLabel -> 
-        StringJoin["Sampling Timescale: ", 
-          ToString[$CellContext`s$$ $CellContext`STEP]], PlotStyle -> {
-          Directive[Thick, Red, 
-           Opacity[0.6]], 
-          Directive[Thick, Black, 
-           Opacity[0.6]]}, LabelStyle -> {14, FontFamily -> "Arial"}, 
-        FrameLabel -> {"X", "Y"}], 
-      "Specifications" :> {{$CellContext`s$$, 1, 3, 1}}, "Options" :> {}, 
-      "DefaultOptions" :> {}],
-     ImageSizeCache->{627., {198., 203.}},
-     SingleEvaluation->True],
-    Deinitialization:>None,
-    DynamicModuleValues:>{},
-    SynchronousInitialization->True,
-    UnsavedVariables:>{Typeset`initDone$$},
-    UntrackedVariables:>{Typeset`size$$}], "Manipulate",
-   Deployed->True,
-   StripOnInput->False],
-  Manipulate`InterpretManipulate[1]]], "Output"]
-}, Open  ]]
-}, Closed]],
+     RowBox[{"Length", "@", "STRIDES"}], ",", "1"}], "}"}]}], "]"}]], "Input"]
+}, Open  ]],
 
 Cell[CellGroupData[{
 

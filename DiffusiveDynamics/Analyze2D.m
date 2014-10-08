@@ -183,6 +183,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
        $SignificanceLevel=OptionValue@"NormalitySignificanceLevel"}, 
     Module[ {steps,t,m,mm,bincenter,binwidth,stride,cellwidth},
             Puts["***GetDiffusionInBin****"];
+            (*TODO: These checks are not good enough. Because of these checks all the trajectory lenghts must be of the same size.*)
             Assert[Last@Dimensions@rwData==3,"Must be a list of triplets in the form {t,x,y}"];
             Assert[Length@Dimensions@rwData==3,"rwData must be a list of lists of triplets!"];
             Puts[Row@{"\ndt: ",dt,"\nmin: ",min,"\nmax: ",max,"\ncellMin: ",cellMin,"\ncellMax: ",cellMax},LogLevel->2];

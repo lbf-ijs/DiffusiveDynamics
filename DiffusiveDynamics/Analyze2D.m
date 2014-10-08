@@ -86,6 +86,11 @@ EstimateDiffusionError::usage="";
 EstimateDiffusionErrorAndSave::usage="";
 GetDiffusionsRMSD::usage="";
 
+MoveDiffusionBins::usage="MoveDiffusionBins[diff_, x_, y_]
+Moves the bin centers by x and y." 
+JoinDiffusionBins::usage="JoinDiffusionBins[diff1_,diff2_] 
+diff1 and diff2 are lists of list of difusion rules [[bins, strides, rules]]"
+
 Begin["`Private`"]
 (* Implementation of the package *)
 $SignificanceLevel = 0.05;

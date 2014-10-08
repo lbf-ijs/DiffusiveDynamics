@@ -1443,6 +1443,19 @@ Block[ {$VerboseIndentLevel = $VerboseIndentLevel+1,i,covars1,covars2,rmsdList,d
      ]
 ];
 
+Clear[MoveDiffusionBins];
+MoveDiffusionBins::usage="MoveDiffusionBins[diff_, x_, y_]
+Moves the bin centers by x and y." 
+MoveDiffusionBins[diff_, x_, y_]:=Module[{result},
+    result=diff/.("x"->ax_):>("x"->ax+x);
+    result=result/.("y"->ay_):>("y"->ay+y);
+    result
+]
+Clear[JoinDiffusionBins];
+JoinDiffusionBins::usage="JoinDiffusionBins[diff1_,diff2_] 
+diff1 and diff2 are lists of list of difusion rules [[bins, strides, rules]] "
+JoinDiffusionBins[diff1_,diff2_]:=Join[diff1,diff2]
+
 (*Distribution Fit Test leaks memory. This fixes it.*)
 ClearAll@CleariHypothesisTestFunctionMemory;
 CleariHypothesisTestFunctionMemory[] :=

@@ -88,7 +88,7 @@ GetDiffusionsRMSD::usage="";
 
 MoveDiffusionBins::usage="MoveDiffusionBins[diff_, x_, y_]
 Moves the bin centers by x and y." 
-JoinDiffusionBins::usage="JoinDiffusionBins[diff1_,diff2_] 
+JoinDiffusionBins::usage="JoinDiffusionBins[{diff1_,diff2_, diff_n}] 
 diff1 and diff2 are lists of list of difusion rules [[bins, strides, rules]]"
 
 Begin["`Private`"]
@@ -1457,9 +1457,15 @@ MoveDiffusionBins[diff_, x_, y_]:=Module[{result},
     result
 ]
 Clear[JoinDiffusionBins];
-JoinDiffusionBins::usage="JoinDiffusionBins[diff1_,diff2_] 
-diff1 and diff2 are lists of list of difusion rules [[bins, strides, rules]] "
-JoinDiffusionBins[diff1_,diff2_]:=Join[diff1,diff2]
+JoinDiffusionBins::usage="JoinDiffusionBins[{diff1_,diff2_, diffn_}] 
+a list of  diffusion structures {\"Diffusions\"->, \"Metadata\"->} "
+JoinDiffusionBins[diffs_] := Module[{rawdiffs, metas, steps},
+  rawdiffs = "Diffusions" /. diffs;
+  metas = "Metadata" /. diffs;
+  steps = "RawSteps" /. diffs;
+  rawdiffs = Join @@ rawdiffs;
+  {"Diffusions" -> rawdiffs, "Metadata" -> metas, 
+   "RawSteps" -> steps}]
 
 (*Distribution Fit Test leaks memory. This fixes it.*)
 ClearAll@CleariHypothesisTestFunctionMemory;

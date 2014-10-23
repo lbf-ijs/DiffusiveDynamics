@@ -489,7 +489,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
 
 		Puts["Length of values: "Length@values,LogLevel->3];
 		PutsE["DiffValues:\n",values,LogLevel->5];
-		
+
 		     
 		nonNormals=GetValues["IsNormal",diffInfos];
 		PutsE["nonNormals:\n",nonNormals,LogLevel->3];
@@ -537,7 +537,8 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
         
         reps=Graphics[reps
         	,PlotRange->plotRange,AspectRatio->aspectRatio,FilterRules[{opts}~Join~Options@DrawDiffusionTensorRepresentations,Options@Graphics]];
-        
+
+
         If[ OptionValue@"Clickable",
             
             reps = WrapBinClickEventHandler[binIndex,bins,reps,OptionValue@"TransposeDiffusions"];
@@ -570,11 +571,11 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
          
         
         If[ OptionValue@"Clickable",
+            bins=GetValues[{{"x", "y"}, {"xWidth", "yWidth"}}, First@diffInfos];
             If[OptionValue@"TransposeDiffusions",
-                bins=GetValues[{{"x", "y"}, {"xWidth", "yWidth"}},First@diffInfos];
-            ,(*else*)
-                bins=GetValues[{{"y", "x"}, {"yWidth", "xWidth"}},First@diffInfos];
-            ];    
+                 bins=bins/. {{x_, y_}, {xWidth_, yWidth_}}:>{{y, x}, {yWidth, xWidth}};
+            ];
+            
             plots =  WrapBinClickEventHandler[binIndex,bins,plots,OptionValue@"TransposeDiffusions"];
         ];              
         plots    

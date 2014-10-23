@@ -632,7 +632,7 @@ Attributes[GetDiffsFromSteps]={HoldFirst};
 GetDiffsFromSteps[data_,dt_,ds_, StepsOverlap_] :=  Block[{$VerboseIndentLevel = $VerboseIndentLevel+1},
     Module[ {ux,uy,sx,sy,rDx,rDy,rDa,pVal,isNormal,
              xMinWidth,yMinWidth,allMissing,result},
-        allMissing={"Dx"->Missing[],"Dy"->Missing[],"Da"->Missing[],"ux"->Missing[],"uy"->Missing[]y,"sx"->Missing[],"sy"->Missing[],
+        allMissing={"Dx"->Missing[],"Dy"->Missing[],"Da"->Missing[],"ux"->Missing[],"uy"->Missing[],"sx"->Missing[],"sy"->Missing[],
                     "PValue"->Null,"IsNormal"->Null (*Must be null here, otherwise it breaks a Pick later on*),
                     "xMinWidth"->Missing[],"yMinWidth"->Missing[]};
         Puts["***GetDiffsFromSteps***"];

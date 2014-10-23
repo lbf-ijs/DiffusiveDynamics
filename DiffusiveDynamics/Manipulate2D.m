@@ -105,6 +105,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
        
        normals = GetValues["IsNormal",binInfos[[binIndex]] ];       
        strides = GetValues["Stride",binInfos[[binIndex]]];
+       
        stridex = GetValues[{"Stride","Dx"},binInfos[[binIndex]]];
 
        (*If all stridex are missing just return empty graphics*)
@@ -277,7 +278,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
         If[ isDiffInfosWithStride, (*One set of diffusions*)
             tensors = DrawDiffusionTensorRepresentations[diffs[[All,strideIndex]],binIndex, Evaluate@tensorRepOpts];
             ,(*else multiple sets of diffusion*)
-            tensors = DrawDiffusionTensorRepresentations[diffs[[All,All,strideIndex]],binIndex, Evaluate@tensorRepOpts];
+            tensors = DrawDiffusionTensorRepresentations[diffs[[All,All,strideIndex]], binIndex, Evaluate@tensorRepOpts];
         ];
         
         stridePlotOpts=FilterRules[{opts}~Join~Options[DrawDiffsWithStridePlots],Options@DrawStridePlotsFromBinInfo];

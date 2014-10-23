@@ -95,7 +95,7 @@ binIndex ,strideIndex must be symbols *)
 DrawStridePlotsFromBinInfo[binInfos:diffInfosWithStride,binIndex_,strideIndex_,opts:OptionsPattern[]] := 
 Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseLevel"],$VerboseIndentLevel=$VerboseIndentLevel+1}, 
     Block[ {strides,stridex,stridexPlot,stridey,strideN, strideA, strideyPlot,strideplotopts,strideHistogram, plotStyle,
-            bin,strideAPlot,strideNPlot,normals,nonNormalX,nonNormalY, nonNormalN, nonNormalA, injectedOptions, normalstr,Dx,Dy,Da,histDraw,histIs3D,allStrideNEmpty},
+            bin,strideAPlot,strideNPlot,normals,nonNormalX,nonNormalY, nonNormalN, nonNormalA, injectedOptions, normalstr,Dx,Dy,Da,histDraw,histIs3D,allStrideNEmpty, dts},
        Puts["***DrawStridePlotsFromBinInfo****"];
        PutsOptions[DrawStridePlotsFromBinInfo, {opts}, LogLevel->2];
 
@@ -105,8 +105,9 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
        
        normals = GetValues["IsNormal",binInfos[[binIndex]] ];       
        strides = GetValues["Stride",binInfos[[binIndex]]];
-       
-       stridex = GetValues[{"Stride","Dx"},binInfos[[binIndex]]];
+       dts = GetValues["dt", binInfos[[binIndex]]];
+       dts = dts*strides; (*Timescale in "real" units*)
+       stridex = Transpose@{dts,GetValues["Dx",binInfos[[binIndex]]]};
 
        (*If all stridex are missing just return empty graphics*)
        If[And@@(MatchQ[#,Missing[___]]&/@stridex[[All,2]]), 
@@ -116,12 +117,12 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
 	            "StridePlotA"->Graphics[],"StridePlotN"->Graphics[]}
 	            ];     
        ];
-       stridey = GetValues[{"Stride","Dy"},binInfos[[binIndex]]];
-       strideN = GetValues[{"Stride","StepsInBin"},binInfos[[binIndex]]];
+       stridey = Transpose@{dts,GetValues["Dy",binInfos[[binIndex]]]};
+       strideN = Transpose@{dts,GetValues["StepsInBin",binInfos[[binIndex]]]};
        (*carefull. Null devided by anything will not match this*)
        allStrideNEmpty=And@@(MatchQ[#,Null]&/@strideN[[All,2]]);
        strideN[[All,2]] = N@Log[10,strideN[[All,2]]];
-       strideA= GetValues[{"Stride","Da"},binInfos[[binIndex]]];
+       strideA= Transpose@{dts,GetValues["Da",binInfos[[binIndex]]]};
        
 
        strideplotopts = Sequence[
@@ -132,11 +133,11 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
                           PlotMarkers->OptionValue@PlotMarkers
                         ];
   
-       stridexPlot = ListPlot[stridex,FrameLabel->{"Stride","Dx"},strideplotopts]; 
-       strideyPlot = ListPlot[stridey,FrameLabel->{"Stride","Dy"},strideplotopts];        
-       strideAPlot = ListPlot[strideA,FrameLabel->{"Stride","Da"},PlotRange->{Automatic,{0,180}},strideplotopts];
+       stridexPlot = ListPlot[stridex,FrameLabel->{"Timescale","Dx"},strideplotopts]; 
+       strideyPlot = ListPlot[stridey,FrameLabel->{"Timescale","Dy"},strideplotopts];        
+       strideAPlot = ListPlot[strideA,FrameLabel->{"Timescale","Da"},PlotRange->{Automatic,{0,180}},strideplotopts];
        strideNPlot = If[allStrideNEmpty, Graphics[],
-                     ListPlot[strideN,FrameLabel->{"Stride","Log(StepsInBin)"},strideplotopts]];       
+                     ListPlot[strideN,FrameLabel->{"Timescale","Log(StepsInBin)"},strideplotopts]];       
        
        If[OptionValue@"MarkNonNormal", (*then*)
            nonNormalX=Pick[stridex,normals,False];

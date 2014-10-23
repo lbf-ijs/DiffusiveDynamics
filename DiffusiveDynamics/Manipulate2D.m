@@ -67,10 +67,11 @@ WrapStrideClickEventHandler[strideIndex_,strideList_,plot_]:=
     (*Change the stride on clicks*)
           {"MouseClicked", 1}:>Block[{pt},
             pt=First@MousePosition["Graphics"];
-(*                  Print[Unevaluated@strideIndex, ": ", strideIndex];
+                 Print[Unevaluated@strideIndex, ": ", strideIndex];
                     Print[strideList];
-                    Print["pt: ",pt, " si: ",GetIndexFromList[pt,strideList]];*)
+                    Print["pt: ",pt, " si: ",GetIndexFromList[pt,strideList]];
             strideIndex=GetIndexFromList[pt, strideList];
+            Print["strideIndex: ",strideIndex]
             ]
     ,PassEventsDown->True],"LinkHand"];                    
 
@@ -156,10 +157,10 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
        ];
 
        If[OptionValue@"Clickable", (*then*)
-           stridexPlot = WrapStrideClickEventHandler[strideIndex,strides,stridexPlot];             
-           strideyPlot = WrapStrideClickEventHandler[strideIndex,strides,strideyPlot];              
-           strideAPlot = WrapStrideClickEventHandler[strideIndex,strides,strideAPlot];  
-           strideNPlot = WrapStrideClickEventHandler[strideIndex,strides,strideNPlot];  
+           stridexPlot = WrapStrideClickEventHandler[strideIndex,dts,stridexPlot];             
+           strideyPlot = WrapStrideClickEventHandler[strideIndex,dts,strideyPlot];              
+           strideAPlot = WrapStrideClickEventHandler[strideIndex,dts,strideAPlot];  
+           strideNPlot = WrapStrideClickEventHandler[strideIndex,dts,strideNPlot];  
        ];
           
        strideHistogram = "StepsHistogram"/.(binInfos[[binIndex,strideIndex]]);
@@ -192,7 +193,7 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
 
 DrawStridePlotsFromBinInfo[diffInfos:listOfDiffInfosWithStride,binIndex_,strideIndex_,opts:OptionsPattern[]] := 
 Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseLevel"],$VerboseIndentLevel=$VerboseIndentLevel+1,i}, 
-    Module[{plotStyles,plots,stridexPlot,strideyPlot,strideAPlot,strideNPlot,strides,histograms},
+    Module[{plotStyles,plots,stridexPlot,strideyPlot,strideAPlot,strideNPlot,strides,histograms, dts},
         Puts["***DrawStridePlotsFromBinInfo (multiple lists)****"];
 
         PutsOptions[DrawStridePlotsFromBinInfo, {opts}, LogLevel->2];
@@ -219,10 +220,12 @@ Block[{$VerbosePrint=OptionValue["Verbose"], $VerboseLevel=OptionValue["VerboseL
        (*Only the first binInfo is made clickable*)
        If[OptionValue@"Clickable", (*then*)
            strides = GetValues["Stride",diffInfos[[1,binIndex]]];
-           stridexPlot = WrapStrideClickEventHandler[strideIndex,strides,stridexPlot];             
-           strideyPlot = WrapStrideClickEventHandler[strideIndex,strides,strideyPlot];              
-           strideAPlot = WrapStrideClickEventHandler[strideIndex,strides,strideAPlot];  
-           strideNPlot = WrapStrideClickEventHandler[strideIndex,strides,strideNPlot];  
+           dts = GetValues["dt", diffInfos[[1,binIndex]]];
+           dts = dts*strides; (*Timescale in "real" units*)
+           stridexPlot = WrapStrideClickEventHandler[strideIndex,dts,stridexPlot];             
+           strideyPlot = WrapStrideClickEventHandler[strideIndex,dts,strideyPlot];              
+           strideAPlot = WrapStrideClickEventHandler[strideIndex,dts,strideAPlot];  
+           strideNPlot = WrapStrideClickEventHandler[strideIndex,dts,strideNPlot];  
        ];
       
    

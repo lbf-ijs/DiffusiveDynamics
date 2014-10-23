@@ -437,7 +437,7 @@ WrapBinClickEventHandler[binIndex_,binsList_,plot_,transpose_:False]:=
          binIndex = GetBinIndexFromPoint[pt,binsList];
          (*Print["pt: ",pt, " binIndex: ",binIndex];*)
          If[ binIndex==-1,binIndex = 1];
-     ]},PassEventsDown->False],"LinkHand"];                   
+     ]},PassEventsDown->True],"LinkHand"];                   
 
  
 (*takes a list of diffusion info rules and plots the tensor represntation in each bin*)

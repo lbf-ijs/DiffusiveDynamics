@@ -286,7 +286,7 @@ Block[ {$VerbosePrint = OptionValue["Verbose"], $VerboseLevel = OptionValue["Ver
         ];
         
         stridePlotOpts=FilterRules[{opts}~Join~Options[DrawDiffsWithStridePlots],Options@DrawStridePlotsFromBinInfo];
-     
+
         binfo = DrawStridePlotsFromBinInfo[diffs,binIndex,strideIndex,Evaluate@stridePlotOpts];
         selectedStr=Style[StringForm["Slected bin `1` Stride `2`",GetValue["SelectedBinCenter",binfo],GetValue["SelectedStride",binfo]],Medium];
         legendRow=If[(Length@OptionValue["LegendCaptions"]>1) && (Length@diffsDim==4),

@@ -1405,6 +1405,7 @@ EstimateDiffusionErrorAndSave[else___]:=Throw["Wrong arguments for EstimateDiffu
 ClearAll@GetDiffusionsRMSD   
 Options@GetDiffusionsRMSD={
                 DistanceFunction->EuclideanDistance,
+                "Scale2" -> 1,
                 "ReturnErrors"->False
             };
 
@@ -1424,7 +1425,7 @@ Block[ {$VerboseIndentLevel = $VerboseIndentLevel+1,i,covars1,covars2,rmsdList,d
      
      (*devided by two since it has 2*sigma in the definition of the CovarianceTensor. devided by 3 to get per component deviation*)
      covars1=(Get2DCovarianceFromDiff/@GetValues[{"Dx","Dy","Da"},diffs1])/2;
-     covars2=(Get2DCovarianceFromDiff/@GetValues[{"Dx","Dy","Da"},diffs2])/2;
+     covars2=(Get2DCovarianceFromDiff/@GetValues[{"Dx","Dy","Da"},diffs2])/2*OptionValue["Scale2"];
      
         
      (*Handle missing casses*)
